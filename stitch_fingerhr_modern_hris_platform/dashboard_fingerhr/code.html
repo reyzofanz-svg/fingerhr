@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FingerHR - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-container": "#400071",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "tertiary": "#ddb7ff",
+                        "surface-container-low": "#1c1b1b",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "outline": "#908fa0",
+                        "inverse-primary": "#494bd6",
+                        "surface-bright": "#3a3939",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#004395",
+                        "primary-container": "#8083ff",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-secondary-fixed": "#001a42",
+                        "outline-variant": "#464554",
+                        "surface-dim": "#131313",
+                        "error-container": "#93000a",
+                        "surface-tint": "#c0c1ff",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary": "#490080",
+                        "tertiary-container": "#b76dff",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#0d0096",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#07006c",
+                        "on-secondary": "#002e6a",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "secondary": "#adc6ff",
+                        "surface": "#131313",
+                        "on-surface-variant": "#c7c4d7",
+                        "tertiary-fixed": "#f0dbff",
+                        "background": "#131313",
+                        "on-secondary-container": "#e6ecff",
+                        "primary": "#c0c1ff",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#0566d9",
+                        "on-primary": "#1000a9",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-highest": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "element-gap": "16px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "section-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-sm": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e2e1;
+        }
+        .glass-card {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-indigo-gradient {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-x-hidden min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-gutter fixed left-0 top-0 w-sidebar-width bg-surface/70 backdrop-blur-xl border-r border-white/10 shadow-2xl shadow-primary/5 z-40">
+<div class="px-6 pb-6">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">FingerHR</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Enterprise Tier</p>
+</div>
+<div class="flex flex-col gap-2 px-2 flex-grow">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-primary/5 border-l-4 border-primary active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="biometric_setup">phonelink_setup</span>
+<span class="font-body-md text-body-md">Devices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-body-md text-body-md">Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+<div class="px-6 py-4 mt-auto">
+<button class="w-full bg-indigo-gradient text-white font-body-md text-body-md py-3 rounded-DEFAULT hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-shadow">
+                Quick Action
+            </button>
+</div>
+<div class="flex flex-col gap-2 px-2 mt-4 pt-4 border-t border-white/10">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-body-sm text-body-sm">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="md:ml-sidebar-width min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-gutter docked full-width top-0 bg-surface/70 backdrop-blur-md shadow-sm border-b border-white/5 z-30 sticky top-0">
+<div class="flex items-center gap-6">
+<!-- Search (on_left logic) -->
+<div class="relative focus-within:ring-2 focus-within:ring-primary/50 rounded-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-surface-container-high border border-white/10 rounded-full py-1.5 pl-10 pr-4 text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary transition-colors w-64 placeholder-on-surface-variant" placeholder="Search..." type="text"/>
+</div>
+<nav class="hidden lg:flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Docs</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">API</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Status</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="command_key">communities</span>
+</button>
+<button class="bg-indigo-gradient text-white font-body-sm text-body-sm px-4 py-1.5 rounded-full hover:shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-shadow">
+                    Deploy
+                </button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden ml-2">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A close up professional headshot of a corporate user, modern lighting, sharp focus, clean background, futuristic subtle corporate uniform, photorealistic high resolution." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_ylmoq_Suz3EifEOXgPxMpzH5122I9IqwUM2lYqYdWTXdbJY8Ir0uCD_OXQpHv-n8KCCSWzf3QeYqErusRXwdkRPajRcn2Y_yX-l2wq3RKmpZYqcFkKv5-Is5NzhTYPC9YQ9zbgQG8xQ_J54ReqVkOE9Xos8Eth3jfaodfwcF5Xa39bIUlTFhMENEJ-k8PLOMuZDtBC4Sy0QsI9hZOknCZCQAQcvY_VEVr5VOd-YK7hxlt9NedzgiXtufATEY9AqeMBqGkoI_WVQS"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-grow p-gutter max-w-container mx-auto w-full flex flex-col gap-gutter">
+<!-- Page Header & Quick Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Core Dashboard</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time biometric intelligence and workforce metrics.</p>
+</div>
+<div class="flex gap-3">
+<button class="glass-card px-4 py-2 rounded-DEFAULT font-body-sm text-body-sm text-on-surface hover:bg-white/5 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="download">download</span> Export Report
+                    </button>
+<button class="glass-card px-4 py-2 rounded-DEFAULT font-body-sm text-body-sm text-on-surface hover:bg-white/5 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="devices">devices</span> Register Device
+                    </button>
+<button class="bg-indigo-gradient text-white px-4 py-2 rounded-DEFAULT font-body-sm text-body-sm hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span> Add Employee
+                    </button>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-element-gap">
+<!-- Stat Card 1 -->
+<div class="glass-card p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Attendance Rate</p>
+<span class="material-symbols-outlined text-primary" data-icon="analytics">analytics</span>
+</div>
+<h3 class="font-headline-xl text-headline-xl text-on-surface">94.2%</h3>
+<div class="mt-4 flex items-center gap-2 text-emerald-400 font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+<span>+1.2% from last week</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-card p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-tertiary/10 rounded-full blur-2xl group-hover:bg-tertiary/20 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Total Employees</p>
+<span class="material-symbols-outlined text-tertiary" data-icon="badge">badge</span>
+</div>
+<h3 class="font-headline-xl text-headline-xl text-on-surface">1,492</h3>
+<div class="mt-4 flex items-center gap-2 text-on-surface-variant font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[16px]" data-icon="person_add">person_add</span>
+<span>12 onboarded today</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="glass-card p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-secondary/10 rounded-full blur-2xl group-hover:bg-secondary/20 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active Devices</p>
+<span class="material-symbols-outlined text-secondary" data-icon="fingerprint">fingerprint</span>
+</div>
+<h3 class="font-headline-xl text-headline-xl text-on-surface">128</h3>
+<div class="mt-4 flex items-center gap-2 text-emerald-400 font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span>
+<span>All systems operational</span>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="glass-card p-6 rounded-lg relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 w-24 h-24 bg-error/10 rounded-full blur-2xl group-hover:bg-error/20 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pending Logs</p>
+<span class="material-symbols-outlined text-error" data-icon="sync_problem">sync_problem</span>
+</div>
+<h3 class="font-headline-xl text-headline-xl text-on-surface">34</h3>
+<div class="mt-4 flex items-center gap-2 text-error font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span>
+<span>Requires attention</span>
+</div>
+</div>
+</div>
+<!-- Complex Layout: Charts & Feed -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-element-gap">
+<!-- Analytics Chart Area (Spans 2 cols) -->
+<div class="glass-card p-6 rounded-xl lg:col-span-2 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Attendance Trends</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-label-mono font-label-mono bg-white/5 rounded-full text-on-surface">7D</button>
+<button class="px-3 py-1 text-label-mono font-label-mono text-on-surface-variant hover:bg-white/5 rounded-full transition-colors">30D</button>
+</div>
+</div>
+<!-- Faux Line Chart Visualization -->
+<div class="flex-grow relative min-h-[300px] flex items-end">
+<!-- Y-axis lines -->
+<div class="absolute inset-0 flex flex-col justify-between pt-4 pb-8 border-l border-white/5 ml-8 z-0">
+<div class="border-t border-white/5 w-full"></div>
+<div class="border-t border-white/5 w-full"></div>
+<div class="border-t border-white/5 w-full"></div>
+<div class="border-t border-white/5 w-full"></div>
+</div>
+<!-- Y-axis labels -->
+<div class="absolute left-0 top-0 bottom-8 flex flex-col justify-between pt-2 pb-2 text-label-mono font-label-mono text-on-surface-variant text-right w-6 z-10">
+<span>100%</span>
+<span>80%</span>
+<span>60%</span>
+<span>40%</span>
+</div>
+<!-- Data Area (Mockup using SVG/CSS) -->
+<div class="relative w-full h-[85%] ml-8 border-b border-white/20 z-10 overflow-hidden flex items-end">
+<!-- Gradient fill below line -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-50" style="clip-path: polygon(0 100%, 0 60%, 20% 40%, 40% 70%, 60% 30%, 80% 50%, 100% 20%, 100% 100%);"></div>
+<!-- The 'Line' -->
+<svg class="absolute inset-0 h-full w-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<polyline fill="none" points="0,60 20,40 40,70 60,30 80,50 100,20" stroke="#6366f1" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+<!-- Data Points (Glowing) -->
+<circle class="hover:fill-primary hover:r-3 cursor-pointer transition-all drop-shadow-[0_0_5px_rgba(99,102,241,1)]" cx="20" cy="40" fill="#fff" r="1.5"></circle>
+<circle class="hover:fill-primary hover:r-3 cursor-pointer transition-all drop-shadow-[0_0_5px_rgba(99,102,241,1)]" cx="40" cy="70" fill="#fff" r="1.5"></circle>
+<circle class="hover:fill-primary hover:r-3 cursor-pointer transition-all drop-shadow-[0_0_5px_rgba(99,102,241,1)]" cx="60" cy="30" fill="#fff" r="1.5"></circle>
+<circle class="hover:fill-primary hover:r-3 cursor-pointer transition-all drop-shadow-[0_0_5px_rgba(99,102,241,1)]" cx="80" cy="50" fill="#fff" r="1.5"></circle>
+<circle class="hover:fill-primary hover:r-3 cursor-pointer transition-all drop-shadow-[0_0_5px_rgba(99,102,241,1)]" cx="100" cy="20" fill="#fff" r="1.5"></circle>
+</svg>
+</div>
+<!-- X-axis labels -->
+<div class="absolute bottom-0 left-8 right-0 flex justify-between text-label-mono font-label-mono text-on-surface-variant pt-2">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+</div>
+</div>
+</div>
+<!-- Real-time Feed -->
+<div class="glass-card rounded-xl flex flex-col h-[400px]">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">Live Clock-ins</h3>
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+</div>
+<div class="p-4 flex-grow overflow-y-auto flex flex-col gap-4">
+<!-- Feed Item -->
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface border border-white/10 overflow-hidden relative">
+<img alt="Sarah J." class="w-full h-full object-cover" data-alt="A small circular avatar of a professional woman with glasses, smiling slightly, dark background, sharp focus, corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2E3rFBNKAJ-QfROSg-yT1xn6bTGxmnKF110plAwCudXLq0HL7GHElFBSxATb1KTVXVUI2rOPHAQz9Xp583DiYxtwqoKzrdxwD7H5gc6P7DKO7OYr1vJ8gPRXPae2DKGkLgVG3Lzia0krAT6_I5YoxwmTddRNMCvgO6dpxNEdbr_H68NlwHEgb7TaI2NtxHIbt_fESIMDZ1q2ilpWZ1edT9XjQAKG5v1cjDg_eUlDPu6qsrptbI1hM2iJ1k5UQo65woDBjPB4hFEjN"/>
+<div class="absolute inset-0 rounded-full border border-primary/0 group-hover:border-primary/50 transition-colors"></div>
+</div>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">Sarah Jenkins</p>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Eng Dept • HQ-Terminal-02</p>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-label-mono text-primary">08:42 AM</p>
+<p class="font-label-mono text-label-mono text-emerald-400 text-[10px]">Success</p>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface border border-white/10 overflow-hidden relative">
+<div class="w-full h-full bg-tertiary/20 flex items-center justify-center text-tertiary font-body-sm">
+                                    MK
+                                </div>
+</div>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">Michael Kwan</p>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Sales • Remote-Mobile</p>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-label-mono text-primary">08:55 AM</p>
+<p class="font-label-mono text-label-mono text-emerald-400 text-[10px]">Success</p>
+</div>
+</div>
+<!-- Feed Item (Failure) -->
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface border border-white/10 overflow-hidden relative">
+<img alt="David M." class="w-full h-full object-cover" data-alt="A small circular avatar of a man with short hair, serious expression, dark background, sharp focus, tech corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA0cn4gjIaV5Q1Xvti8FTsv3j7GMnZB4WI73t_ZBS206jMBoSwd5WpOBTuV3XVU_SZ5fd8lwnvYHbvWGEbWuddk8gi8tzJXCEaFDk9LEtjO7ms9XEjyRpq7_e6iGa3VDvUdtEbON_hhTXPnncwbm9xrv2TNFkTfzV3YbQ0oHTZOz4oxfl_26RlypRv5Dovqxlu6EZCAIaUBHlpM1cycr-165s-eo8IWcm7k4jQzRYwubCZFoc5za-1OXRLBe5P81V9_6_U6cwU_6M-"/>
+</div>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">David Miller</p>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Design • HQ-Terminal-01</p>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-label-mono text-on-surface-variant">09:01 AM</p>
+<p class="font-label-mono text-label-mono text-error text-[10px]">Retry req.</p>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface border border-white/10 overflow-hidden relative">
+<img alt="Elena R." class="w-full h-full object-cover" data-alt="A small circular avatar of a young woman with curly hair, smiling, dark background, sharp focus, corporate tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqc_1av0I3vb-d8tSVI9voqkT_dlbn1rGr-U0XbEZ1dFt0SskZVuDobw5bLHPHmuKI_z-gDwsTeC1tw9DDEIPqOVk71IAMqLEImgS0WcM9UKomlLd46pXmoltJJK2AAfxaXdQP8JvtC0xjUw3zoo7kOXq8L_t--mYHp90zHoyk-CHEBdMMliXkQf_wKiliLr2QRmnpwEwcDFff1wKCZ17Z9aMzQu1fSCn_MCAXDN28PNuLmG6j4pCjkETNYNCxGZnHmWGosZno_0to"/>
+</div>
+<div class="flex-grow">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">Elena Rodriguez</p>
+<p class="font-label-mono text-label-mono text-on-surface-variant">Marketing • East-Terminal-04</p>
+</div>
+<div class="text-right">
+<p class="font-label-mono text-label-mono text-primary">09:15 AM</p>
+<p class="font-label-mono text-label-mono text-emerald-400 text-[10px]">Success</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface border-t border-outline-variant mt-auto">
+<div class="max-w-container mx-auto py-6 px-gutter flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="font-headline-md text-primary text-[20px]">
+                    FingerHR
+                </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                    © 2024 FingerHR Biometrics Inc.
+                </div>
+<div class="flex gap-4">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Privacy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Terms</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Security</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

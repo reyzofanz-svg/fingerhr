@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FingerHR - Employee Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#e5e2e1",
+                        "on-tertiary-container": "#400071",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-high": "#2a2a2a",
+                        "on-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "tertiary": "#ddb7ff",
+                        "surface-container-low": "#1c1b1b",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "outline": "#908fa0",
+                        "inverse-primary": "#494bd6",
+                        "surface-bright": "#3a3939",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#004395",
+                        "primary-container": "#8083ff",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-secondary-fixed": "#001a42",
+                        "outline-variant": "#464554",
+                        "surface-dim": "#131313",
+                        "error-container": "#93000a",
+                        "surface-tint": "#c0c1ff",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary": "#490080",
+                        "tertiary-container": "#b76dff",
+                        "surface-variant": "#353534",
+                        "on-primary-container": "#0d0096",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#07006c",
+                        "on-secondary": "#002e6a",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "secondary": "#adc6ff",
+                        "surface": "#131313",
+                        "on-surface-variant": "#c7c4d7",
+                        "tertiary-fixed": "#f0dbff",
+                        "background": "#131313",
+                        "on-secondary-container": "#e6ecff",
+                        "primary": "#c0c1ff",
+                        "primary-fixed": "#e1e0ff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "secondary-container": "#0566d9",
+                        "on-primary": "#1000a9",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-highest": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "element-gap": "16px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "section-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-sm": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0a0a0a; color: #e5e2e1; overflow-x: hidden; }
+        .glass-panel {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #6366f1, #3b82f6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+        .input-field {
+            background: #171717;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex bg-background">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface/70 backdrop-blur-xl shadow-2xl shadow-primary/5 fixed left-0 top-0 h-full w-sidebar-width border-r border-white/10 flex-col h-full py-gutter z-40">
+<div class="px-gutter mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">FingerHR</h1>
+<p class="font-label-mono text-label-mono text-on-surface-variant mt-1 opacity-70 uppercase tracking-widest">Enterprise Tier</p>
+</div>
+<div class="flex-1 overflow-y-auto px-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-primary/5 border-l-4 border-primary rounded-r-lg transition-all duration-200 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="group" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-bold">Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="biometric_setup">phonelink_setup</span>
+<span>Devices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span>Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<div class="px-4 mt-auto space-y-2 pt-8 border-t border-white/5">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span>Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-sidebar-width min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/70 backdrop-blur-md shadow-sm border-b border-white/5 flex justify-between items-center h-16 px-gutter sticky top-0 z-30">
+<div class="flex items-center gap-6">
+<!-- Search on left -->
+<div class="relative hidden sm:block focus-within:ring-2 focus-within:ring-primary/50 rounded-full transition-all">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="input-field pl-10 pr-4 py-2 rounded-full text-sm font-body-sm w-64 text-on-surface placeholder-on-surface-variant/50" placeholder="Search FingerHR..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 font-body-sm text-body-sm">
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">Docs</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">API</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">Status</a>
+</nav>
+<div class="flex items-center gap-4 border-l border-white/10 pl-6">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="command_key">communities</span>
+</button>
+<button class="btn-primary px-4 py-1.5 rounded-full font-label-mono text-label-mono uppercase tracking-wider">Deploy</button>
+<div class="h-8 w-8 rounded-full bg-surface-variant border border-white/10 overflow-hidden ml-2 cursor-pointer">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A highly detailed portrait of a professional business person in a futuristic office setting. Soft, cool lighting illuminates their face, creating a high-end, cinematic corporate mood. Dark background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnIb29KRBkciYTLvOZMH4Cl4vyIl5iJXGycE2VXaPNw4cJ5vPfgkACl5gPtFKzeZanaw9uboAvvXGFCq5MLWwGKs-3lMCQFMbOKerswzTls6kJd4zyfBNU767JQ2Xr3cgRrr1N7MtLwTlBU0ZjPkUpKvxn9nzyQn96L6ekNnRfDMIgfieLF2hijJ6YMm0kjjFdA87aFz742TiReTWrrQSLYgkCGmE0ocbZqznE-FDinxHOpGqDXVhXLmpvgfi3upi4ms3ziokf-vP3"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-gutter max-w-container mx-auto w-full flex flex-col xl:flex-row gap-gutter">
+<!-- Left Column: Employee List -->
+<div class="flex-1 flex flex-col">
+<!-- Page Header & Filters -->
+<div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Employee Directory</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage personnel, biometric access, and live status.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<select class="input-field appearance-none pl-4 pr-10 py-2.5 rounded-lg text-sm text-on-surface cursor-pointer">
+<option>All Departments</option>
+<option>Engineering</option>
+<option>Design</option>
+<option>Operations</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<div class="relative">
+<select class="input-field appearance-none pl-4 pr-10 py-2.5 rounded-lg text-sm text-on-surface cursor-pointer">
+<option>Active Status</option>
+<option>On Leave</option>
+<option>Terminated</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+<button class="btn-primary px-4 py-2.5 rounded-lg flex items-center gap-2 font-label-mono text-label-mono uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">add</span> Add New
+                        </button>
+</div>
+</div>
+<!-- List View (Glass Panel) -->
+<div class="glass-panel rounded-xl overflow-hidden flex-1 flex flex-col">
+<div class="grid grid-cols-12 gap-4 px-6 py-4 border-b border-white/5 bg-white/5 font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest">
+<div class="col-span-4 sm:col-span-5">Employee</div>
+<div class="col-span-4 sm:col-span-3">Status</div>
+<div class="col-span-4 sm:col-span-4 text-right">Biometric Auth</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<!-- Employee Row (Active) -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer bg-primary/5 border-l-2 border-l-primary group">
+<div class="col-span-4 sm:col-span-5 flex items-center gap-4">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-surface-variant border border-white/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female software engineer in her 30s. She is smiling subtly in a high-tech, modern workspace. Lighting is cool and cinematic, emphasizing a futuristic corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuQp3FbcfMlB4Ie6-bpX7YyzNXCHMtC3YGsrlZq6OA5dvwT2BH2ma6FZjH6nd5DE4AWBsOortwKP4dCl_jfCo-q6vBvkMuggT5csp6qLIO-iyMcv0UgAvoI93T14TR2jV9a5cEtqKgIQQtUYFc_O9vbNVo_nO5KbMaRacL5HvpFpoECZo3y8k47JC_5SFw9sIvjSGaAMrl3rIRplofJh4uPF87wwoIMNrXymZTyVvXxrAOTcaW0M-2tRMvbNQvZ9Zl0fWBW8DMaWzv"/>
+</div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#171717]"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md font-bold text-on-surface group-hover:text-primary transition-colors">Sarah Jenkins</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Lead Security Engineer</div>
+</div>
+</div>
+<div class="col-span-4 sm:col-span-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 font-label-mono text-label-mono text-[10px] uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                    Clocked In (08:42)
+                                </div>
+</div>
+<div class="col-span-4 sm:col-span-4 flex items-center justify-end gap-6 text-right">
+<div class="hidden sm:block text-sm text-on-surface-variant">Last Auth: 12m ago</div>
+<span class="material-symbols-outlined text-primary" title="Fingerprint Enrolled">fingerprint</span>
+</div>
+</div>
+<!-- Employee Row -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer border-l-2 border-l-transparent group">
+<div class="col-span-4 sm:col-span-5 flex items-center gap-4">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-surface-variant border border-white/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a male HR manager in a modern, dark-themed office. He wears a smart casual outfit. Lighting is dramatic yet clean, fitting a high-end enterprise platform look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdobTak37C6hX4MGEc8-1kiETywhfHanb5ZbE1D2vrb9pGBdb6RvljiDLqi7kcebdGEH-juULnfooF8kZoPtUHWmdyBZcPIXwOMOZVz5ihc8SJRLcfIU60UYvT7M6nR5hspm33pAR_L0SHneETHeFzL_Qvvb_NnQqoZei2rODpRgQ8suW_1LXL_YPtZgJCnCxoKzHPdRLINaqjXkV1msRYk9ogzByHYhY4Cw4FBw1sRKghcTd21tw2HURH0brsma4l_rT393DWoAqo"/>
+</div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-outline rounded-full border-2 border-[#171717]"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md font-bold text-on-surface group-hover:text-primary transition-colors">David Chen</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Operations Director</div>
+</div>
+</div>
+<div class="col-span-4 sm:col-span-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-bright border border-white/10 text-on-surface-variant font-label-mono text-label-mono text-[10px] uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                    Clocked Out (18:15)
+                                </div>
+</div>
+<div class="col-span-4 sm:col-span-4 flex items-center justify-end gap-6 text-right">
+<div class="hidden sm:block text-sm text-on-surface-variant">Last Auth: Yesterday</div>
+<span class="material-symbols-outlined text-primary" title="Facial Scan Enrolled">face</span>
+</div>
+</div>
+<!-- Employee Row -->
+<div class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-white/5 hover:bg-white/[0.02] transition-colors cursor-pointer border-l-2 border-l-transparent group">
+<div class="col-span-4 sm:col-span-5 flex items-center gap-4">
+<div class="relative">
+<div class="h-10 w-10 rounded-full bg-surface-variant border border-white/10 flex items-center justify-center font-bold text-lg text-primary">
+                                        MJ
+                                    </div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-error rounded-full border-2 border-[#171717]"></div>
+</div>
+<div>
+<div class="font-body-md text-body-md font-bold text-on-surface group-hover:text-primary transition-colors">Marcus Johnson</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Backend Developer</div>
+</div>
+</div>
+<div class="col-span-4 sm:col-span-3">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error/10 border border-error/20 text-error font-label-mono text-label-mono text-[10px] uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                    Missing Scan
+                                </div>
+</div>
+<div class="col-span-4 sm:col-span-4 flex items-center justify-end gap-6 text-right">
+<div class="hidden sm:block text-sm text-on-surface-variant">Last Auth: 2 days ago</div>
+<span class="material-symbols-outlined text-error opacity-50" title="Auth Failed">warning</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Detail Panel (Visible on xl screens, slide-over on smaller) -->
+<aside class="hidden xl:flex w-96 flex-col gap-6">
+<!-- Profile Card -->
+<div class="glass-panel rounded-xl p-6 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary"></div>
+<div class="flex items-start justify-between mb-6">
+<div class="flex items-center gap-4">
+<div class="h-16 w-16 rounded-full bg-surface-variant border-2 border-primary/30 p-1">
+<img class="w-full h-full object-cover rounded-full" data-alt="A professional headshot of a female software engineer in her 30s. She is smiling subtly in a high-tech, modern workspace. Lighting is cool and cinematic, emphasizing a futuristic corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCk_a0urqZAKMfDPG2h22xobn2kreVudiQoThap-EJEtOmvdf22Ud5Co--MvrihjMtoYzLqA7RrhCmNmBhecJ2OqH_VhTa-MReNqo3AFboKDMsaKT54F0djs16s7Llr1KVTIDcksMPqnCbrirncWehi8bf0c2dU1ojUfaVH1EsGzYX-O01aynsNYsxIG5k5kcEsSXIotAE13YUDzLBShvJGRnzEVa-nm2HraVz3NoSzj6wcHk7D7el-Pp11n5KcOJHrSQKY86ISxnj6"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sarah Jenkins</h3>
+<p class="font-body-sm text-body-sm text-primary">#EMP-8492</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="bg-surface/50 p-3 rounded-lg border border-white/5">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase mb-1">Department</p>
+<p class="font-body-sm text-on-surface">Security</p>
+</div>
+<div class="bg-surface/50 p-3 rounded-lg border border-white/5">
+<p class="font-label-mono text-[10px] text-on-surface-variant uppercase mb-1">Location</p>
+<p class="font-body-sm text-on-surface">HQ - Floor 3</p>
+</div>
+</div>
+<button class="w-full bg-transparent border border-white/10 hover:border-primary/50 hover:bg-primary/5 text-on-surface py-2 rounded-lg transition-all text-sm font-label-mono uppercase tracking-wider flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit</span> Edit Profile
+                    </button>
+</div>
+<!-- Biometric & Device Logs -->
+<div class="glass-panel rounded-xl p-6 flex-1 flex flex-col">
+<h4 class="font-body-md font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span> Live Device Logs
+                    </h4>
+<div class="relative flex-1">
+<!-- Timeline Line -->
+<div class="absolute left-3 top-2 bottom-2 w-[1px] bg-white/10"></div>
+<div class="space-y-6 relative">
+<!-- Log Item -->
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-[12px]">fingerprint</span>
+</div>
+<div>
+<p class="font-body-sm text-on-surface flex items-center gap-2">
+                                        Server Room B Access <span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+</p>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1">12 mins ago • Scanner #402</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-surface-bright border border-white/20 text-on-surface-variant flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-[12px]">login</span>
+</div>
+<div>
+<p class="font-body-sm text-on-surface">Main Entrance Clock-In</p>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1">Today, 08:42 AM • Turnstile A</p>
+</div>
+</div>
+<!-- Log Item -->
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-surface-bright border border-white/20 text-on-surface-variant flex items-center justify-center shrink-0 z-10">
+<span class="material-symbols-outlined text-[12px]">logout</span>
+</div>
+<div>
+<p class="font-body-sm text-on-surface-variant">Main Entrance Clock-Out</p>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1">Yesterday, 17:30 PM • Turnstile C</p>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-4 w-full text-center text-primary text-sm font-label-mono hover:text-primary-fixed transition-colors">View Full History →</button>
+</div>
+</aside>
+</main>
+</div>
+</body></html>

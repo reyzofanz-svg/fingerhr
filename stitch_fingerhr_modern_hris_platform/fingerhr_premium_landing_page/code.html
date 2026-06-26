@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FingerHR - Biometrics meets the Cloud</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#0d0096",
+                        "tertiary-fixed": "#f0dbff",
+                        "primary-container": "#8083ff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "tertiary": "#ddb7ff",
+                        "surface-tint": "#c0c1ff",
+                        "background": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-tertiary-container": "#400071",
+                        "surface-dim": "#131313",
+                        "tertiary-container": "#b76dff",
+                        "outline": "#908fa0",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "surface-container-highest": "#353534",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#494bd6",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "surface": "#131313",
+                        "surface-container-high": "#2a2a2a",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-variant": "#353534",
+                        "on-secondary-container": "#e6ecff",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-bright": "#3a3939",
+                        "inverse-on-surface": "#313030",
+                        "primary": "#c0c1ff",
+                        "primary-fixed": "#e1e0ff",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "outline-variant": "#464554",
+                        "on-secondary-fixed-variant": "#004395",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-primary-fixed": "#07006c",
+                        "secondary-container": "#0566d9",
+                        "secondary": "#adc6ff",
+                        "on-background": "#e5e2e1",
+                        "on-error": "#690005",
+                        "on-tertiary": "#490080",
+                        "on-primary": "#1000a9",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#002e6a",
+                        "on-tertiary-fixed": "#2c0051",
+                        "on-surface-variant": "#c7c4d7",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-surface": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "gutter": "24px",
+                        "element-gap": "16px",
+                        "container-max": "1440px",
+                        "section-padding": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Geist"],
+                        "body-md": ["Geist"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-lg": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "body-sm": ["Geist"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: theme('colors.primary');
+            transition: all 0.3s ease;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, theme('colors.primary'), theme('colors.tertiary'));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter py-4 max-w-container mx-auto bg-background/70 backdrop-blur-md border-b border-white/10 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-on-surface tracking-tighter" href="#">FingerHR</a>
+<div class="hidden md:flex gap-6">
+<a class="font-label-mono text-label-mono text-primary font-bold" href="#">Platform</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Features</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">API</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Pricing</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a class="hidden md:block font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface transition-colors" href="#">Login</a>
+<a class="btn-primary rounded-full px-6 py-2 font-label-mono text-label-mono font-bold" href="#">Get Started</a>
+</div>
+</nav>
+<main class="flex-grow pt-24 pb-20">
+<!-- Hero Section -->
+<section class="relative px-gutter py-section-padding max-w-container mx-auto min-h-[80vh] flex flex-col md:flex-row items-center justify-between gap-12">
+<!-- Background Glow -->
+<div class="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="flex-1 flex flex-col items-start gap-6 z-10 relative">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">bolt</span>
+<span class="font-label-mono text-label-mono text-primary">New: Real-time Webhooks</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface">
+                    Biometrics meets <br/> <span class="gradient-text">the Cloud.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Seamlessly bridge Fingerspot biometric hardware with modern cloud infrastructure. Real-time sync, API-first architecture, and enterprise-grade security.
+                </p>
+<div class="flex flex-wrap items-center gap-4 mt-4">
+<a class="btn-primary rounded-full px-8 py-3 font-body-md text-body-md font-bold" href="#">Get Started</a>
+<a class="btn-ghost rounded-full px-8 py-3 font-body-md text-body-md font-bold flex items-center gap-2" href="#">
+<span class="material-symbols-outlined">code</span>
+                        View Documentation
+                    </a>
+</div>
+</div>
+<div class="flex-1 relative z-10 w-full max-w-lg">
+<div class="relative w-full aspect-square rounded-[3rem] overflow-hidden glass-card glow-effect flex items-center justify-center p-8">
+<!-- Ambient inner glow -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent pointer-events-none"></div>
+<img alt="Fingerspot Biometric Device 3D Render" class="w-full h-full object-contain relative z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-700 ease-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo1WzWUbRaQKBpfbDKHUoznedFmDamw0uvz9nXPW_WYz-8Zp1lTg4HiKFZepr65mz_uVXz8EUUmW7STwo4VTFF5CRQJwvbxua3Pb2RjhnrMDBIgsWmpkYN0xd2f_wjA1VtspeQ8BUVCkwrlHL7zRXeWHGkew5VzeXi_RaSl_bFd6wDkYHIxrePyqI7_JXUwz1dsMHIw2Op3aDsLpSQQPOyVA24dFBQLajpzdZBKe1dRKx-mLjlCCOYL84FZBS-_B1yCtf0am5XsI-p"/>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-20 relative">
+<div class="absolute bottom-0 right-1/4 w-64 h-64 bg-tertiary/10 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Enterprise-Grade Infrastructure</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Built for scale, security, and developer experience. FingerHR handles the complexity of biometric hardware communication so you don't have to.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-element-gap">
+<!-- Feature 1 -->
+<div class="glass-card rounded-[2rem] p-8 flex flex-col gap-4 group hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">sync</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Real-time Sync</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Data flows instantly from terminals to the cloud. No more manual polling or batch jobs. Webhooks notify your systems the millisecond a punch occurs.
+                    </p>
+</div>
+<!-- Feature 2 -->
+<div class="glass-card rounded-[2rem] p-8 flex flex-col gap-4 group hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">lock</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Enterprise Security</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        End-to-end encryption ensures biometric template data is never exposed. SOC2 Type II compliance and role-based access control built-in.
+                    </p>
+</div>
+<!-- Feature 3 -->
+<div class="glass-card rounded-[2rem] p-8 flex flex-col gap-4 group hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">api</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">API First</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Designed for developers. Modern REST and GraphQL endpoints. Comprehensive documentation, SDKs for major languages, and an active community.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Technical Showcase -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-20">
+<div class="glass-card rounded-[3rem] p-12 relative overflow-hidden flex flex-col items-center justify-center min-h-[400px]">
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background pointer-events-none"></div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-12 relative z-10 text-center">The Biometric Bridge</h2>
+<div class="flex items-center justify-center gap-8 w-full max-w-3xl relative z-10">
+<!-- Terminal Side -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 rounded-2xl bg-surface-container-highest border border-white/10 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-on-surface text-4xl">fingerprint</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">Fingerspot Terminal</span>
+</div>
+<!-- Bridge Connection -->
+<div class="flex-1 h-px bg-white/10 relative flex items-center justify-center">
+<!-- Animated glowing line effect (simulated with CSS for simplicity here, actual animation would need JS/SVG) -->
+<div class="absolute left-0 w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div class="w-8 h-8 rounded-full bg-background border border-primary/50 flex items-center justify-center glow-effect z-10">
+<span class="material-symbols-outlined text-primary text-sm" style="font-size: 16px;">sync_alt</span>
+</div>
+</div>
+<!-- Cloud Side -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 rounded-2xl bg-surface-container-highest border border-white/10 flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-primary text-4xl">cloud</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">FingerHR Cloud</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-20 relative">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Transparent Pricing</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Scalable plans designed for businesses of all sizes. No hidden fees.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+<!-- Starter -->
+<div class="glass-card rounded-[2rem] p-8 flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Starter</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-on-surface">$49</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/mo</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Up to 3 Devices
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> 15 Min Sync Interval
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Standard API Access
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined text-sm">cancel</span> Real-time Webhooks
+                        </li>
+</ul>
+<a class="btn-ghost rounded-full py-3 text-center font-label-mono text-label-mono font-bold w-full" href="#">Start Free Trial</a>
+</div>
+<!-- Pro (Popular) -->
+<div class="glass-card rounded-[2.5rem] p-10 flex flex-col relative border-primary/30 glow-effect transform md:-translate-y-4">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-on-primary font-label-mono text-[10px] px-3 py-1 rounded-full uppercase tracking-wider font-bold">
+                        Most Popular
+                    </div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Pro</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-on-surface">$149</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/mo</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Up to 15 Devices
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Real-time Sync
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Real-time Webhooks
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Priority Support
+                        </li>
+</ul>
+<a class="btn-primary rounded-full py-3 text-center font-label-mono text-label-mono font-bold w-full" href="#">Get Started</a>
+</div>
+<!-- Enterprise -->
+<div class="glass-card rounded-[2rem] p-8 flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Enterprise</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-on-surface">Custom</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Unlimited Devices
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Custom Integrations
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Dedicated Account Manager
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> On-premise Deployment Options
+                        </li>
+</ul>
+<a class="btn-ghost rounded-full py-3 text-center font-label-mono text-label-mono font-bold w-full" href="#">Contact Sales</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-section-padding px-gutter flex flex-col md:flex-row justify-between items-center max-w-container mx-auto bg-background border-t border-white/5 transition-opacity duration-200">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface mb-4 md:mb-0">
+            © 2024 FingerHR. Precision biometric intelligence.
+        </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-mono text-label-mono text-outline hover:text-on-surface transition-colors hover:underline" href="#">Privacy Policy</a>
+<a class="font-label-mono text-label-mono text-outline hover:text-on-surface transition-colors hover:underline" href="#">Terms of Service</a>
+<a class="font-label-mono text-label-mono text-outline hover:text-on-surface transition-colors hover:underline" href="#">Security</a>
+<a class="font-label-mono text-label-mono text-outline hover:text-on-surface transition-colors hover:underline" href="#">Status</a>
+<a class="font-label-mono text-label-mono text-outline hover:text-on-surface transition-colors hover:underline" href="#">Github</a>
+</div>
+</footer>
+</body></html>

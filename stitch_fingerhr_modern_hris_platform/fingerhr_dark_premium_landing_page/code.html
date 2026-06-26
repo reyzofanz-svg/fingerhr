@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FingerHR - Manajemen Absensi Cloud</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-fixed-dim": "#ddb7ff",
+                        "surface-variant": "#353534",
+                        "on-tertiary-fixed": "#2c0051",
+                        "tertiary-fixed": "#f0dbff",
+                        "inverse-surface": "#e5e2e1",
+                        "error": "#ffb4ab",
+                        "tertiary": "#ddb7ff",
+                        "surface": "#131313",
+                        "on-surface-variant": "#c7c4d7",
+                        "inverse-primary": "#494bd6",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#e1e0ff",
+                        "outline": "#908fa0",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#6900b3",
+                        "error-container": "#93000a",
+                        "surface-container": "#201f1f",
+                        "on-secondary-container": "#e6ecff",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary-container": "#400071",
+                        "secondary-container": "#0566d9",
+                        "on-secondary-fixed": "#001a42",
+                        "on-primary-fixed": "#07006c",
+                        "on-tertiary": "#490080",
+                        "on-background": "#e5e2e1",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary-container": "#0d0096",
+                        "primary": "#c0c1ff",
+                        "secondary": "#adc6ff",
+                        "surface-container-highest": "#353534",
+                        "outline-variant": "#464554",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-tint": "#c0c1ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "primary-container": "#8083ff",
+                        "on-secondary": "#002e6a",
+                        "on-primary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "background": "#131313",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-error": "#690005",
+                        "surface-bright": "#3a3939",
+                        "tertiary-container": "#b76dff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "section-padding": "40px",
+                        "gutter": "24px",
+                        "element-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "headline-xl": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "headline-lg": ["Geist"]
+                    },
+                    "fontSize": {
+                        "label-mono": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0a;
+            color: #e5e2e1;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-indigo-gradient {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: theme('colors.primary');
+            transition: all 0.3s ease;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md overflow-x-hidden relative">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-gutter py-4 max-w-container mx-auto bg-[#0a0a0a]/70 backdrop-blur-md border-b border-white/5 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-primary tracking-tighter" href="#">FingerHR</a>
+<div class="hidden md:flex gap-6">
+<a class="font-label-mono text-label-mono text-primary font-bold" href="#">Platform</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-white transition-colors" href="#">Fitur</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-white transition-colors" href="#">API</a>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-white transition-colors" href="#">Harga</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<a class="hidden md:block font-label-mono text-label-mono text-on-surface-variant hover:text-white transition-colors" href="#">Masuk</a>
+<a class="btn-primary rounded-full px-6 py-2 font-label-mono text-label-mono font-bold" href="#">Mulai Gratis</a>
+</div>
+</nav>
+<main class="flex-grow pt-24 pb-20 relative z-10">
+<!-- Hero Section -->
+<section class="relative px-gutter py-section-padding max-w-container mx-auto min-h-[85vh] flex flex-col md:flex-row items-center justify-between gap-12 overflow-visible">
+<div class="flex-1 flex flex-col items-start gap-6 z-20 relative">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary" style="font-size: 16px;">bolt</span>
+<span class="font-label-mono text-label-mono text-primary">Baru: Webhooks Real-time</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface leading-tight">
+                    Revolusi Pengelolaan <br/> <span class="text-gradient">Data Absensi Biometrik.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Hubungkan perangkat biometrik Fingerspot dengan infrastruktur cloud modern secara mulus. Sinkronisasi kehadiran real-time, pantau metrik karyawan, dan kelola akses dengan keamanan tingkat enterprise.
+                </p>
+<div class="flex flex-wrap items-center gap-4 mt-4">
+<a class="btn-primary rounded-full px-8 py-3 font-body-md text-body-md font-bold hover:shadow-[0_0_15px_rgba(99,102,241,0.5)]" href="#">Mulai Sekarang</a>
+<a class="btn-ghost rounded-full px-8 py-3 font-body-md text-body-md font-bold flex items-center gap-2 hover:bg-white/5" href="#">
+<span class="material-symbols-outlined">code</span>
+                        Lihat Dokumentasi API
+                    </a>
+</div>
+</div>
+<div class="flex-1 relative z-0 w-full flex justify-end h-full min-h-[500px]">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+<img alt="Fingerspot Biometric Device 3D Render" class="w-full max-w-[800px] h-auto object-contain relative z-10 drop-shadow-[0_0_40px_rgba(99,102,241,0.3)] transform scale-110 translate-x-12" src="https://lh3.googleusercontent.com/aida/AP1WRLsGFiK7vojgzfEJe6S3Ei0cz921Ngnb6LBur15nmHMEax0QNSbj-BIwy8vVkIML1Pb937jFer5_gWSwm2YRcn7cLEKyehfIekrXI6c04FJsC0F-klNZ9zzQcvopDRcfo75TvjD96DudETweOUfde1osVwd_rNWl5lanOrHJ1uEdAIuSi9VZx-A9d7rSeo0FNbioeR6emuU0MjufXENnVyf0jUS0tzrKmpuaOAAgiRebRCw7cNPyhsf80dNm"/>
+</div>
+</section>
+<!-- Features Section -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-10 relative z-10">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Infrastruktur Skala Enterprise</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Dibangun untuk skala, keamanan, dan pengalaman developer. FingerHR menangani kompleksitas komunikasi hardware biometrik sehingga Anda tidak perlu repot.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-element-gap">
+<!-- Feature 1 -->
+<div class="glass-card rounded-xl p-8 flex flex-col gap-4 group hover:border-primary/50 transition-colors duration-300">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">sync</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Sinkronisasi Real-time</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Data log kehadiran mengalir secara instan dari terminal ke cloud. Tidak ada lagi penarikan data manual. Webhooks memberikan notifikasi ke sistem Anda pada milidetik terjadinya absensi.
+                    </p>
+</div>
+<!-- Feature 2 -->
+<div class="glass-card rounded-xl p-8 flex flex-col gap-4 group hover:border-primary/50 transition-colors duration-300">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">lock</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Keamanan Enterprise</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Enkripsi end-to-end memastikan data template biometrik tidak pernah terekspos. Kompatibel dengan SOC2 Type II dan dilengkapi dengan kontrol akses berbasis peran.
+                    </p>
+</div>
+<!-- Feature 3 -->
+<div class="glass-card rounded-xl p-8 flex flex-col gap-4 group hover:border-primary/50 transition-colors duration-300">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-primary text-2xl">api</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">API First</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Dirancang untuk developer. Endpoint REST dan GraphQL yang modern. Dokumentasi komprehensif, SDK untuk berbagai bahasa pemrograman, dan komunitas aktif.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Technical Showcase -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-20 relative z-10">
+<div class="glass-card rounded-xl p-12 relative overflow-hidden flex flex-col items-center justify-center min-h-[400px]">
+<div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none"></div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-12 relative z-10 text-center">Jembatan Biometrik</h2>
+<div class="flex items-center justify-center gap-8 w-full max-w-3xl relative z-10">
+<!-- Terminal Side -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 rounded-2xl glass-card flex items-center justify-center shadow-lg group hover:border-primary/50 transition-colors">
+<span class="material-symbols-outlined text-on-surface text-4xl group-hover:text-primary transition-colors">fingerprint</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">Terminal Fingerspot</span>
+</div>
+<!-- Bridge Connection -->
+<div class="flex-1 h-px bg-white/10 relative flex items-center justify-center">
+<div class="absolute left-0 w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div class="w-10 h-10 rounded-full bg-surface border border-primary/50 flex items-center justify-center glow-effect z-10 shadow-[0_0_15px_rgba(99,102,241,0.5)]">
+<span class="material-symbols-outlined text-primary text-sm animate-spin-slow" style="font-size: 20px;">sync</span>
+</div>
+</div>
+<!-- Cloud Side -->
+<div class="flex flex-col items-center gap-4">
+<div class="w-24 h-24 rounded-2xl glass-card flex items-center justify-center shadow-lg border-primary/30">
+<span class="material-symbols-outlined text-primary text-4xl">cloud</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">FingerHR Cloud</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="px-gutter py-section-padding max-w-container mx-auto mt-20 relative z-10">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Harga Transparan</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Paket terukur yang dirancang untuk bisnis skala apapun. Tanpa biaya tersembunyi.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+<!-- Starter -->
+<div class="glass-card rounded-xl p-8 flex flex-col hover:border-white/20 transition-colors">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Pemula</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-on-surface">$49</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/bln</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Hingga 3 Perangkat
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Interval Sync 15 Menit
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Akses API Standar
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant opacity-50">
+<span class="material-symbols-outlined text-sm">cancel</span> Webhooks Real-time
+                        </li>
+</ul>
+<a class="btn-ghost rounded-DEFAULT py-3 text-center font-label-mono text-label-mono font-bold w-full hover:bg-white/5" href="#">Mulai Uji Coba</a>
+</div>
+<!-- Pro (Popular) -->
+<div class="glass-card rounded-xl p-10 flex flex-col relative border-primary/50 shadow-[0_0_30px_rgba(99,102,241,0.15)] transform md:-translate-y-4">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-gradient text-white font-label-mono text-[10px] px-4 py-1.5 rounded-full uppercase tracking-wider font-bold shadow-lg">
+                        Paling Populer
+                    </div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Pro</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-white">$149</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">/bln</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-white">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Hingga 15 Perangkat
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-white">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Sync Absensi Real-time
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-white">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Webhooks Real-time
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-white">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Dukungan Prioritas
+                        </li>
+</ul>
+<a class="btn-primary rounded-DEFAULT py-3 text-center font-label-mono text-label-mono font-bold w-full" href="#">Pilih Pro</a>
+</div>
+<!-- Enterprise -->
+<div class="glass-card rounded-xl p-8 flex flex-col hover:border-white/20 transition-colors">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Enterprise</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="font-headline-xl text-headline-xl text-on-surface">Kustom</span>
+</div>
+<ul class="flex flex-col gap-3 mb-8 flex-grow">
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Perangkat Tak Terbatas
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Integrasi Kustom (HRIS/Payroll)
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Manajer Akun Khusus
+                        </li>
+<li class="flex items-center gap-3 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span> Opsi Deployment On-premise
+                        </li>
+</ul>
+<a class="btn-ghost rounded-DEFAULT py-3 text-center font-label-mono text-label-mono font-bold w-full hover:bg-white/5" href="#">Hubungi Penjualan</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-[#0a0a0a] border-t border-white/5 z-10 relative mt-auto">
+<div class="max-w-container mx-auto py-8 px-gutter flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex flex-col items-center md:items-start">
+<div class="font-headline-md text-primary text-[20px] font-bold">
+                    FingerHR
+                </div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                    © 2024 FingerHR. Intelijen biometrik presisi.
+                </div>
+</div>
+<div class="flex gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-white transition-colors" href="#">Privasi</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-white transition-colors" href="#">Ketentuan</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-white transition-colors" href="#">Keamanan</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-white transition-colors" href="#">Status</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-white transition-colors" href="#">Kontak</a>
+</div>
+</div>
+</footer>
+</body></html>

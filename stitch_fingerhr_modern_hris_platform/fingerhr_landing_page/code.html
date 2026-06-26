@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FingerHR - Biometrics meets the Cloud</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#e5e2e1",
+                      "on-tertiary-container": "#400071",
+                      "secondary-fixed": "#d8e2ff",
+                      "surface-container-high": "#2a2a2a",
+                      "on-surface": "#e5e2e1",
+                      "surface-container": "#201f1f",
+                      "primary-fixed-dim": "#c0c1ff",
+                      "tertiary": "#ddb7ff",
+                      "surface-container-low": "#1c1b1b",
+                      "tertiary-fixed-dim": "#ddb7ff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "outline": "#908fa0",
+                      "inverse-primary": "#494bd6",
+                      "surface-bright": "#3a3939",
+                      "on-error": "#690005",
+                      "on-secondary-fixed-variant": "#004395",
+                      "primary-container": "#8083ff",
+                      "on-tertiary-fixed": "#2c0051",
+                      "on-secondary-fixed": "#001a42",
+                      "outline-variant": "#464554",
+                      "surface-dim": "#131313",
+                      "error-container": "#93000a",
+                      "surface-tint": "#c0c1ff",
+                      "on-background": "#e5e2e1",
+                      "on-tertiary": "#490080",
+                      "tertiary-container": "#b76dff",
+                      "surface-variant": "#353534",
+                      "on-primary-container": "#0d0096",
+                      "error": "#ffb4ab",
+                      "on-primary-fixed": "#07006c",
+                      "on-secondary": "#002e6a",
+                      "on-tertiary-fixed-variant": "#6900b3",
+                      "secondary": "#adc6ff",
+                      "surface": "#131313",
+                      "on-surface-variant": "#c7c4d7",
+                      "tertiary-fixed": "#f0dbff",
+                      "background": "#131313",
+                      "on-secondary-container": "#e6ecff",
+                      "primary": "#c0c1ff",
+                      "primary-fixed": "#e1e0ff",
+                      "on-primary-fixed-variant": "#2f2ebe",
+                      "surface-container-lowest": "#0e0e0e",
+                      "on-error-container": "#ffdad6",
+                      "secondary-container": "#0566d9",
+                      "on-primary": "#1000a9",
+                      "inverse-on-surface": "#313030",
+                      "surface-container-highest": "#353534"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sidebar-width": "260px",
+                      "element-gap": "16px",
+                      "container-max": "1440px",
+                      "gutter": "24px",
+                      "section-padding": "40px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Geist"
+                      ],
+                      "headline-xl": [
+                              "Geist"
+                      ],
+                      "label-mono": [
+                              "JetBrains Mono"
+                      ],
+                      "body-sm": [
+                              "Geist"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Geist"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.04em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-mono": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            background-image: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                              linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphic Utilities */
+        .glass-card {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        /* Button Gradients */
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: theme('colors.on-surface');
+            transition: all 0.3s ease;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+    </style>
+</head>
+<body class="font-body-md antialiased min-h-screen flex flex-col">
+<!-- Top Navigation (Extracted from JSON) -->
+<nav class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-md text-primary font-body-sm text-body-sm border-b border-white/5 shadow-sm flex justify-between items-center h-16 px-gutter ml-sidebar-width hidden md:flex">
+<div class="flex items-center gap-8">
+<div class="font-headline-md text-headline-md font-black text-on-surface">FingerHR</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">Docs</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">API</a>
+<a class="text-on-surface-variant hover:text-on-surface hover:text-primary transition-colors" href="#">Status</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="btn-primary px-4 py-2 rounded-full font-label-mono text-label-mono">Deploy</button>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="command_key">communities</span>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-white/10" data-alt="A small circular user avatar showing a modern, abstract geometric pattern in shades of deep indigo and soft grey, representing a tech-savvy enterprise user profile in a high-end HR dashboard context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsj1d1F4CkyKxlAGBzBZDCuklZYUbKUYbYNqTJLGa1oss8SdSyq9edcAty9Ji0plhDLYKKDGSKcfnh4W964-OmhC5tg1GAXFoEIjFy81VjGqKOFJxwV3LXNuRETcS5yz4m8hhiMFOskFHyh2B6F9QBtNaSjOu4h46k7SxHBocilrtklzkAyHRgHQ0H0XQqCoddXGlPkFHtztIT_PRMb9e8Wi7HJ_hPL6wqWdCxCUjttuZf1qdk4tuM18iVlyx79k-BkigVZZZGAGU0"/>
+</div>
+</nav>
+<!-- Side Navigation (Extracted from JSON) -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width z-40 bg-surface/70 backdrop-blur-xl text-primary font-body-md text-body-md border-r border-white/10 shadow-2xl shadow-primary/5 flex flex-col h-full py-gutter hidden md:flex">
+<div class="px-6 mb-8 flex items-center gap-3">
+<img alt="FingerHR Logo" class="w-10 h-10 rounded-lg" data-alt="A sophisticated, minimalist logo for FingerHR, featuring abstract biometric lines morphing into cloud shapes, rendered in sharp white against a deep, dark grey background, exuding enterprise precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdvMHlzSQJgCM1Fj76zLVLd6trp6z7Jc3ujYtSIdd4ynNnhJBx1IVjYQ9xzOAgPwn-mRz8Du1N6JJnkPeRlbjfkCDQ9cLWbGretmW8_b1V08SdR_Q7um9pujL8_AHYwbJyBJVBZwrKSbzmycqDHHDyGFka3iSRZBGn3CR5Jy8SvzJdSHuj0wnst4jjLuwUTsk-ll3e1vM4aHouIxwIjdocvAQX7WXfhbWAh2Zw8ExHwKT652xbfVLwoA7DtVMkfn8rsc2xYdaKvWdK"/>
+<div>
+<div class="font-headline-md text-headline-md font-bold text-primary">FingerHR</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant">Enterprise Tier</div>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="btn-primary w-full py-2.5 rounded-lg flex items-center justify-center gap-2 font-label-mono text-label-mono shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span> Quick Action
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="group">group</span>
+<span>Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="biometric_setup">phonelink_setup</span>
+<span>Devices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="terminal">terminal</span>
+<span>Integrations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<div class="px-2 mt-auto border-t border-white/5 pt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="help">help</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200 rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary transition-colors" data-icon="account_circle">account_circle</span>
+<span>Account</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-sidebar-width pt-16 md:pt-24 pb-20 px-4 md:px-gutter max-w-container-max mx-auto w-full flex flex-col gap-32">
+<!-- Hero Section -->
+<section class="flex flex-col items-center text-center mt-12 md:mt-24 relative z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-label-mono text-label-mono mb-8 backdrop-blur-md">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                v2.0 Beta is Live
+            </div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface max-w-4xl mb-6 tracking-tight leading-tight">
+                Biometrics meets the Cloud.
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-10">
+                Seamlessly bridge Fingerspot biometric hardware with modern cloud infrastructure. Real-time sync, API-first architecture, and enterprise-grade security for next-gen workforce management.
+            </p>
+<div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+<button class="btn-primary px-8 py-4 rounded-lg font-body-md text-body-md font-semibold flex items-center justify-center gap-2">
+                    Get Started <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="btn-ghost px-8 py-4 rounded-lg font-body-md text-body-md font-medium">
+                    View Documentation
+                </button>
+</div>
+</section>
+<!-- Visual Mockup Section -->
+<section class="relative w-full max-w-5xl mx-auto z-10">
+<!-- Glow background -->
+<div class="absolute inset-0 bg-primary/20 blur-[100px] rounded-full z-0 transform -translate-y-1/4"></div>
+<div class="relative z-10 glass-card rounded-xl p-2 border border-white/10 shadow-2xl overflow-hidden aspect-[16/9] flex items-center justify-center">
+<img alt="Dashboard Mockup" class="w-full h-full object-cover rounded-lg opacity-80 mix-blend-screen" data-alt="A high-fidelity, ultra-modern UI dashboard mockup showcasing biometric data sync. The design features dark glassmorphic panels, neon indigo charts, and real-time event logs of employee attendance, all set against a deep, sophisticated dark grey canvas. The style is pristine, tech-driven, and highly detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGEkS56MuuANfPsFFeEovsls9-yMY3jC2gwIjfL4LvB_917DNBJJNp2NY1oAgcJlWxF52d81CrEARcc35zvFC3_DP1oZl5bz8-USANYxUoAwXZ1KrvHJ1ULyV7ZiIKAUHTFm5wEErR1P3HU4bDrODxSZUWRFrkz_XbZn_8fLJKSEe2dsBzId3oN2mYt_ly81DnLQrZc33YzXkL7XrCV2JXDmmJ88stlnivuTzal_Whqc7jrDeLaM6nz3keiKYOe6fumviB9pzKE0MW"/>
+<!-- Overlay UI Elements for depth -->
+<div class="absolute top-10 left-10 glass-panel p-4 rounded-lg border border-white/10 flex items-center gap-4 animate-bounce" style="animation-duration: 3s;">
+<div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/50">
+<span class="material-symbols-outlined text-green-400" data-icon="fingerprint">fingerprint</span>
+</div>
+<div>
+<div class="font-label-mono text-label-mono text-on-surface">Sync Successful</div>
+<div class="text-[10px] text-on-surface-variant font-mono">Device #X-992</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Grid (Bento Style) -->
+<section class="max-w-6xl mx-auto w-full relative z-10">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Engineered for Scale</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Everything you need to build reliable, high-performance attendance systems.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Realtime Sync (Spans 2 columns) -->
+<div class="glass-card p-8 rounded-2xl md:col-span-2 glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[60px] group-hover:bg-primary/20 transition-all duration-500"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary text-4xl mb-6" data-icon="sync">sync</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">Realtime Sync</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-md">Data flows instantly from physical biometric terminals directly to your cloud databases via low-latency WebSockets.</p>
+<!-- Abstract Visual -->
+<div class="h-32 w-full mt-4 flex items-end gap-2 border-b border-white/10 pb-2">
+<div class="w-full bg-primary/20 h-[20%] rounded-t-sm relative"><div class="absolute bottom-0 w-full bg-primary h-[2px]"></div></div>
+<div class="w-full bg-primary/20 h-[50%] rounded-t-sm relative"><div class="absolute bottom-0 w-full bg-primary h-[2px]"></div></div>
+<div class="w-full bg-primary/40 h-[80%] rounded-t-sm relative"><div class="absolute bottom-0 w-full bg-primary h-[2px]"></div></div>
+<div class="w-full bg-primary/20 h-[40%] rounded-t-sm relative"><div class="absolute bottom-0 w-full bg-primary h-[2px]"></div></div>
+<div class="w-full bg-primary/60 h-[100%] rounded-t-sm relative glow-hover"><div class="absolute bottom-0 w-full bg-white h-[2px]"></div></div>
+</div>
+</div>
+</div>
+<!-- Enterprise Security -->
+<div class="glass-card p-8 rounded-2xl glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-[40px] group-hover:bg-purple-500/20 transition-all duration-500"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-tertiary text-4xl mb-6" data-icon="shield_lock">shield_lock</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">Enterprise Security</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">End-to-end encryption for all biometric payload data.</p>
+<div class="mt-8 space-y-3">
+<div class="flex items-center gap-3 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-green-400 text-sm" data-icon="check_circle">check_circle</span> TLS 1.3 Transport</div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-green-400 text-sm" data-icon="check_circle">check_circle</span> SOC2 Compliant</div>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant"><span class="material-symbols-outlined text-green-400 text-sm" data-icon="check_circle">check_circle</span> AES-256 Storage</div>
+</div>
+</div>
+</div>
+<!-- API First -->
+<div class="glass-card p-8 rounded-2xl glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-4xl mb-6" data-icon="api">api</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">API First</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">REST and GraphQL endpoints built for developers, by developers.</p>
+</div>
+<div class="mt-6 bg-surface-container-high p-4 rounded-lg font-mono text-xs text-on-surface-variant border border-white/5 overflow-hidden">
+<span class="text-primary">POST</span> /v1/attendance<br/>
+<span class="text-gray-500">{</span><br/>
+                              <span class="text-blue-300">"device_id"</span>: <span class="text-green-300">"FS-881"</span>,<br/>
+                              <span class="text-blue-300">"timestamp"</span>: <span class="text-orange-300">1698765432</span><br/>
+<span class="text-gray-500">}</span>
+</div>
+</div>
+</div>
+<!-- Biometric Bridge (Spans 2 columns) -->
+<div class="glass-card p-8 rounded-2xl md:col-span-2 glow-hover transition-all duration-300 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1 relative z-10">
+<span class="material-symbols-outlined text-primary text-4xl mb-6" data-icon="hub">hub</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">The Biometric Bridge</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Our proprietary bridge software translates legacy Fingerspot protocols into modern webhooks, seamlessly connecting your hardware to your HRIS.</p>
+</div>
+<div class="flex-1 w-full h-40 bg-surface-container-highest rounded-xl border border-white/5 relative flex items-center justify-center">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center border border-white/10"><span class="material-symbols-outlined text-on-surface-variant" data-icon="router">router</span></div>
+<div class="w-16 h-[2px] bg-gradient-to-r from-transparent to-primary relative overflow-hidden"><div class="absolute top-0 left-0 h-full w-full bg-white/50 animate-[ping_1.5s_infinite]"></div></div>
+<div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center border border-primary/50 shadow-[0_0_15px_rgba(99,102,241,0.5)]"><span class="material-symbols-outlined text-primary" data-icon="cloud">cloud</span></div>
+<div class="w-16 h-[2px] bg-gradient-to-r from-primary to-transparent relative overflow-hidden"><div class="absolute top-0 left-0 h-full w-full bg-white/50 animate-[ping_1.5s_infinite_0.5s]"></div></div>
+<div class="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center border border-white/10"><span class="material-symbols-outlined text-on-surface-variant" data-icon="database">database</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="max-w-5xl mx-auto w-full mb-12 relative z-10">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Transparent Pricing</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Scale your infrastructure without unexpected costs.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Starter -->
+<div class="glass-card p-8 rounded-2xl flex flex-col border border-white/5 hover:border-white/10 transition-colors">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Starter</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 h-10">Perfect for small teams and single locations.</p>
+<div class="mb-8">
+<span class="font-headline-xl text-headline-xl text-on-surface">$49</span><span class="text-on-surface-variant font-body-sm">/mo</span>
+</div>
+<ul class="space-y-4 mb-8 flex-1">
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Up to 3 Devices</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Standard Sync Delay</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Email Support</li>
+</ul>
+<button class="btn-ghost w-full py-3 rounded-lg font-body-md font-medium">Start Free Trial</button>
+</div>
+<!-- Pro (Highlighted) -->
+<div class="glass-card p-8 rounded-2xl flex flex-col border-2 border-primary/50 relative transform md:-translate-y-4 shadow-[0_0_30px_rgba(99,102,241,0.15)] bg-surface-container-high/80">
+<div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-primary text-white font-label-mono text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 text-primary">Pro</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 h-10">For growing businesses needing real-time data.</p>
+<div class="mb-8">
+<span class="font-headline-xl text-headline-xl text-on-surface">$149</span><span class="text-on-surface-variant font-body-sm">/mo</span>
+</div>
+<ul class="space-y-4 mb-8 flex-1">
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Up to 15 Devices</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface font-semibold"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Real-time Webhooks</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Priority Support</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Advanced Analytics</li>
+</ul>
+<button class="btn-primary w-full py-3 rounded-lg font-body-md font-medium shadow-lg shadow-primary/20">Get Started</button>
+</div>
+<!-- Enterprise -->
+<div class="glass-card p-8 rounded-2xl flex flex-col border border-white/5 hover:border-white/10 transition-colors">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Enterprise</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 h-10">Custom solutions for massive scale operations.</p>
+<div class="mb-8">
+<span class="font-headline-xl text-headline-xl text-on-surface">Custom</span>
+</div>
+<ul class="space-y-4 mb-8 flex-1">
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Unlimited Devices</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Dedicated Infrastructure</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> 24/7 Phone Support</li>
+<li class="flex items-center gap-3 text-body-sm text-on-surface"><span class="material-symbols-outlined text-sm text-primary" data-icon="check">check</span> Custom Integrations</li>
+</ul>
+<button class="btn-ghost w-full py-3 rounded-lg font-body-md font-medium">Contact Sales</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Extracted from JSON) -->
+<footer class="bg-surface text-primary font-body-sm text-body-sm w-full border-t border-outline-variant mt-auto relative z-20">
+<div class="max-w-container mx-auto py-section-padding px-gutter flex justify-between items-center md:ml-sidebar-width flex-col sm:flex-row gap-4">
+<div class="font-headline-md text-primary text-headline-md font-bold text-on-surface">FingerHR</div>
+<div class="text-on-surface-variant">© 2024 FingerHR Biometrics Inc.</div>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Privacy</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Terms</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Security</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-opacity hover:opacity-80" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</body></html>
