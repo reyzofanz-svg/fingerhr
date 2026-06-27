@@ -8,6 +8,7 @@ import {
   restartDevice,
   setUserInfo,
   deleteUserInfo,
+  getDevice,
   formatDateForAPI,
 } from "@/lib/fingerspot";
 
@@ -18,7 +19,7 @@ export async function POST(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { command, startDate, endDate, pin, userData, timezone } = body;
+    const { command, startDate, endDate, pin, userData, timezone, transId } = body;
 
     // Find device
     const device = await prisma.device.findUnique({
@@ -48,6 +49,10 @@ export async function POST(
 
     try {
       switch (command) {
+        case "GET_DEVICE":
+          result = await getDevice(transId || "1");
+          break;
+
         case "GET_ATTLOG": {
           const start = startDate || formatDateForAPI(new Date(Date.now() - 86400000));
           const end = endDate || formatDateForAPI(new Date());

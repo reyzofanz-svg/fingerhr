@@ -9,12 +9,21 @@ interface WebhookPayload {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
+  const timestamp = new Date().toISOString();
+
+  console.log("=== FINGERSPOT WEBHOOK RECEIVED ===");
+  console.log("Timestamp:", timestamp);
+  console.log("Method:", request.method);
+  console.log("URL:", request.url);
 
   try {
     const body: WebhookPayload = await request.json();
     const { type, cloud_id, data } = body;
 
-    console.log("[Webhook] Received:", { type, cloud_id, data });
+    console.log("[Webhook] Parsed body:", JSON.stringify(body, null, 2));
+    console.log("[Webhook] Type:", type);
+    console.log("[Webhook] Cloud ID:", cloud_id);
+    console.log("[Webhook] Data:", JSON.stringify(data, null, 2));
 
     // Find device by cloud_id
     const device = await prisma.device.findUnique({
@@ -72,9 +81,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ status: "ok" });
+    const duration = Date.now() - startTime;
+    console.log("[Webhook] Processing completed successfully");
+    console.log("[Webhook] Duration:", duration, "ms");
+    console.log("=== END WEBHOOK ===");
+
+    return NextResponse.json({ 
+      status: "ok",
+      duration,
+      timestamp,
+    });
   } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error("=== WEBHOOK ERROR ===");
     console.error("[Webhook] Error:", error);
+    console.error("[Webhook] Error type:", error instanceof Error ? error.constructor.name : typeof error);
+    
+    if (error instanceof Error) {
+      console.error("[Webhook] Error message:", error.message);
+      console.error("[Webhook] Error stack:", error.stack);
+    }
+    
+    console.error("[Webhook] Duration before error:", duration, "ms");
 
     // Try to log the failed webhook
     try {

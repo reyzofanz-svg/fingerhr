@@ -269,9 +269,28 @@ export default function DevicesPage() {
           {/* Quick Actions */}
           {selectedDevice && selectedDeviceObj && (
             <QuickActions
+              deviceId={selectedDeviceObj.id}
               deviceCloudId={selectedDevice}
               deviceName={selectedDeviceObj.name}
               disabled={commandLoading}
+              onCommandExecute={async (command) => {
+                // Add to command history
+                setApiLogs((prev) => [
+                  {
+                    id: Date.now().toString(),
+                    command,
+                    deviceCloudId: selectedDeviceObj.cloudId,
+                    transId: null,
+                    status: "SUCCESS",
+                    duration: null,
+                    errorMessage: null,
+                    createdAt: new Date().toISOString(),
+                  },
+                  ...prev,
+                ]);
+                // Refresh devices
+                fetchDevices();
+              }}
             />
           )}
 

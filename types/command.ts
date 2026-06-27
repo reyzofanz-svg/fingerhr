@@ -1,4 +1,5 @@
 export type CommandType =
+  | "get_device"
   | "get_attlog"
   | "get_userinfo"
   | "get_all_pin"

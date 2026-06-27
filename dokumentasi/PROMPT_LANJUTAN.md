@@ -26,7 +26,7 @@ Yang sudah ada:
 
 Yang perlu dikerjakan (sesuai dokumentasi/PLAN.md):
 
-PHASE 1 - FOUNDATION:
+PHASE 1 - FOUNDATION(DONE):
 1. Update Prisma schema (tambah Employee, AttendanceLog, Schedule, EmployeeSchedule, Permission, ApiLog, WebhookLog - lihat PLAN.md section 3)
 2. Setup NextAuth (login/register yang berfungsi)
 3. Buat lib/fingerspot.ts (API client untuk developer.fingerspot.io)

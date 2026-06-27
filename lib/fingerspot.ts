@@ -139,6 +139,15 @@ export async function restartDevice() {
 }
 
 /**
+ * Get Device Info
+ */
+export async function getDevice(transId: string = "1") {
+  return callFingerspotAPI("get_device", {
+    trans_id: transId,
+  });
+}
+
+/**
  * Helper: Format date untuk API
  */
 export function formatDateForAPI(date: Date): string {
