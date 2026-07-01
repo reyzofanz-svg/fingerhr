@@ -12,6 +12,7 @@ interface FingerspotResponse<T = any> {
   message?: string;
   data?: T;
   error?: string;
+  errorCode?: string;
 }
 
 /**
@@ -47,10 +48,14 @@ async function callFingerspotAPI(
       };
     }
     
-    if (!response.ok) {
+    // Fingerspot API returns HTTP 200 even on business errors (ERR_02)
+    // Check the body-level "success" field too
+    if (!response.ok || data.success === false) {
       return {
         success: false,
-        error: data.message || `API error ${response.status}`,
+        error: data.message || data.error || `API error ${response.status}`,
+        errorCode: data.error_code,
+        data,
       };
     }
 
@@ -118,8 +123,8 @@ export async function setUserInfo(userData: {
     dataBody.template = templateBase64;
   }
 
-  // Fingerspot API requires user data wrapped in "data" object
-  return callFingerspotAPI("set_userinfo", { data: dataBody });
+  // Fingerspot API requires user data wrapped in "data" object + trans_id
+  return callFingerspotAPI("set_userinfo", { trans_id: "1", data: dataBody });
 }
 
 /**
@@ -127,6 +132,7 @@ export async function setUserInfo(userData: {
  */
 export async function deleteUserInfo(pin: string) {
   return callFingerspotAPI("delete_userinfo", {
+    trans_id: "1",
     pin,
   });
 }
