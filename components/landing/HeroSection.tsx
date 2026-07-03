@@ -6,7 +6,7 @@ import Link from "next/link";
 
 function DeviceShowcase() {
   return (
-    <div className="relative w-full h-full flex items-center justify-center p-8">
+    <div className="relative w-full h-full flex items-center justify-center p-8 perspective-[1200px]">
       {/* Animated glow rings */}
       <div className="absolute inset-0 flex items-center justify-center">
         {[1, 2, 3, 4].map((i) => (
@@ -31,27 +31,50 @@ function DeviceShowcase() {
         ))}
       </div>
 
-      {/* Product image */}
+      {/* 3D Rotating device */}
       <motion.div
         className="relative z-10"
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          transformStyle: "preserve-3d",
+          perspective: "1200px",
+        }}
+        animate={{
+          y: [0, -10, 0],
+          rotateY: [-15, 15, -15],
+          rotateX: [5, -5, 5],
+        }}
+        transition={{
+          y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          rotateY: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+          rotateX: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+        }}
       >
         <div className="relative">
           {/* Glow behind device */}
-          <div className="absolute inset-0 bg-indigo-500/20 blur-[40px] rounded-full scale-75" />
+          <div className="absolute -inset-8 bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-blue-500/30 blur-[50px] rounded-full" />
+
+          {/* Color overlay tint */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 rounded-2xl z-10 mix-blend-overlay" />
+
+          {/* Device image */}
           <img
             src="/fingerspot-device.png"
             alt="Fingerspot Revo W-202BNC"
-            className="relative w-64 sm:w-72 lg:w-80 h-auto drop-shadow-[0_0_30px_rgba(99,102,241,0.3)]"
+            className="relative w-64 sm:w-72 lg:w-80 h-auto drop-shadow-[0_20px_60px_rgba(99,102,241,0.4)]"
+            style={{
+              filter: "drop-shadow(0 0 40px rgba(99,102,241,0.25)) saturate(1.1) brightness(1.05)",
+            }}
           />
+
+          {/* Reflection effect */}
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-indigo-500/15 blur-xl rounded-full" />
         </div>
       </motion.div>
 
       {/* Scanning line */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-56 h-0.5 bg-gradient-to-r from-transparent via-indigo-400 to-transparent z-20"
-        animate={{ y: [-100, 100, -100] }}
+        className="absolute left-1/2 -translate-x-1/2 w-56 h-px bg-gradient-to-r from-transparent via-indigo-400/60 to-transparent z-20"
+        animate={{ y: [-120, 120, -120] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
