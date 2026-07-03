@@ -1,12 +1,20 @@
-import { HeroSection, FeaturesSection, TechnicalShowcase, PricingSection } from "@/components/landing";
+"use client";
+
+import { HeroSection } from "@/components/landing/HeroSection";
+import { FeaturesSection } from "@/components/landing/FeaturesSection";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { StatsSection, CTASection } from "@/components/landing/StatsCTA";
 
 export default function LandingPage() {
   return (
     <>
       <HeroSection />
       <FeaturesSection />
-      <TechnicalShowcase />
-      <PricingSection />
+      <div id="how-it-works">
+        <HowItWorks />
+      </div>
+      <StatsSection />
+      <CTASection />
     </>
   );
 }
