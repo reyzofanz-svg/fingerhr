@@ -95,5 +95,5 @@ export async function getTemplate(): Promise<string> {
   } catch {
     // fallback
   }
-  return "Halo <b>{name}</b>,\nAbsensi tercatat: <b>{status}</b> pukul <b>{time}</b>";
+  return "═════════════════\n  FINGERHR - NOTIFIKASI\n═════════════════\n\nHalo, <b>{name}</b>\n\nAbsensi kamu sudah tercatat:\n├ Status : <b>{status}</b>\n├ Waktu : <b>{time}</b>\n└ Tanggal : <b>{date}</b>\n\nJangan lupa absen pulang ya!";
 }
