@@ -184,10 +184,10 @@ export default function SettingsPage() {
 
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
           Pengaturan
         </h1>
-        <p className="mt-1 text-sm text-on-surface-variant">
+        <p className="mt-1 text-sm text-slate-400">
           Kelola pengaturan aplikasi dan integrasi
         </p>
       </div>
@@ -196,12 +196,12 @@ export default function SettingsPage() {
         {/* Company Profile */}
         <Card variant="glass-high">
           <div className="border-b border-white/[0.08] px-6 py-4">
-            <h3 className="text-sm font-semibold text-on-surface">Profil Perusahaan</h3>
+            <h3 className="text-sm font-semibold text-white">Profil Perusahaan</h3>
           </div>
           <CardContent className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
               </div>
             ) : (
               <div className="space-y-4">
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, companyPhone: e.target.value })}
                 />
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-on-surface">Alamat</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Alamat</label>
                   <textarea
                     value={settings.companyAddress}
                     onChange={(e) => setSettings({ ...settings, companyAddress: e.target.value })}
@@ -239,7 +239,7 @@ export default function SettingsPage() {
         {/* Fingerspot API Config */}
         <Card variant="glass-high">
           <div className="border-b border-white/[0.08] px-6 py-4">
-            <h3 className="text-sm font-semibold text-on-surface">Konfigurasi Fingerspot API</h3>
+            <h3 className="text-sm font-semibold text-white">Konfigurasi Fingerspot API</h3>
           </div>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -259,10 +259,10 @@ export default function SettingsPage() {
                 disabled
               />
               <div className="rounded-xl bg-white/[0.03] p-4">
-                <p className="text-xs text-on-surface-variant">
+                <p className="text-xs text-slate-400">
                   Webhook URL: Setelah deploy ke Railway, masukkan URL webhook ke dashboard Fingerspot.
                 </p>
-                <p className="mt-2 font-mono text-xs text-primary">
+                <p className="mt-2 font-mono text-xs text-indigo-400">
                   https://[app-name].up.railway.app/api/webhook/fingerspot
                 </p>
               </div>
@@ -290,8 +290,8 @@ export default function SettingsPage() {
           <div className="border-b border-white/[0.08] px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-on-surface">Notifikasi Telegram</h3>
-                <p className="mt-1 text-xs text-on-surface-variant">
+                <h3 className="text-sm font-semibold text-white">Notifikasi Telegram</h3>
+                <p className="mt-1 text-xs text-slate-400">
                   Kirim notifikasi otomatis ke karyawan saat scan masuk/keluar
                 </p>
               </div>
@@ -304,8 +304,8 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-on-surface">Aktifkan Notifikasi</p>
-                  <p className="text-xs text-on-surface-variant">Kirim notifikasi absensi via Telegram bot</p>
+                  <p className="text-sm font-medium text-white">Aktifkan Notifikasi</p>
+                  <p className="text-xs text-slate-400">Kirim notifikasi absensi via Telegram bot</p>
                 </div>
                 <button
                   type="button"
@@ -334,7 +334,7 @@ export default function SettingsPage() {
               />
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">
+                <label className="mb-2 block text-sm font-medium text-white">
                   Template Pesan
                 </label>
                 <textarea
@@ -344,18 +344,18 @@ export default function SettingsPage() {
                   className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Halo {name}, Absensi tercatat: {status} pukul {time}"
                 />
-                <p className="mt-1 text-xs text-on-surface-variant">
+                <p className="mt-1 text-xs text-slate-400">
                   Variabel: {"{name}"}, {"{status}"}, {"{time}"}, {"{date}"}
                 </p>
               </div>
 
               <div className="rounded-xl bg-white/[0.03] p-4">
-                <p className="text-xs font-medium text-on-surface">Cara Mengatur:</p>
-                <ol className="mt-2 space-y-1 text-xs text-on-surface-variant">
+                <p className="text-xs font-medium text-white">Cara Mengatur:</p>
+                <ol className="mt-2 space-y-1 text-xs text-slate-400">
                   <li>1. Buat bot Telegram via @BotFather, copy token-nya</li>
                   <li>2. Paste token di atas, lalu simpan</li>
                   <li>3. Klik tombol "Set Webhook" di bawah</li>
-                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-primary">/start &lt;PIN&gt;</span></li>
+                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-indigo-400">/start &lt;PIN&gt;</span></li>
                 </ol>
               </div>
 
@@ -371,8 +371,8 @@ export default function SettingsPage() {
       {/* Office Locations */}
       <Card variant="glass-high">
         <div className="border-b border-white/[0.08] px-6 py-4">
-          <h3 className="text-sm font-semibold text-on-surface">Lokasi Kantor</h3>
-          <p className="mt-1 text-xs text-on-surface-variant">
+          <h3 className="text-sm font-semibold text-white">Lokasi Kantor</h3>
+          <p className="mt-1 text-xs text-slate-400">
             Konfigurasi lokasi kantor untuk validasi GPS absensi
           </p>
         </div>
@@ -386,8 +386,8 @@ export default function SettingsPage() {
                   className="flex items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3"
                 >
                   <div>
-                    <p className="text-sm font-medium text-on-surface">{loc.name}</p>
-                    <p className="text-xs text-on-surface-variant">
+                    <p className="text-sm font-medium text-white">{loc.name}</p>
+                    <p className="text-xs text-slate-400">
                       Lat: {loc.lat}, Lng: {loc.lng} | Radius: {loc.radius}m
                     </p>
                   </div>

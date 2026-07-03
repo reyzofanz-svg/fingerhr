@@ -1,8 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui";
 import { cn } from "@/lib/utils/cn";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from "recharts";
 
 interface DashboardStats {
   totalEmployees: number;
@@ -51,6 +61,7 @@ export default function DashboardPage() {
   const [recentAttendance, setRecentAttendance] = useState<RecentAttendance[]>([]);
   const [recentPermissions, setRecentPermissions] = useState<RecentPermission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [weeklyData, setWeeklyData] = useState<{ day: string; masuk: number; keluar: number }[]>([]);
 
   const fetchDashboardData = async () => {
     try {
@@ -64,6 +75,13 @@ export default function DashboardPage() {
       const today = new Date().toISOString().split("T")[0];
       const attRes = await fetch(`/api/attendance/logs?startDate=${today}&endDate=${today}`);
       const attendance = await attRes.json();
+
+      // Fetch last 7 days for chart
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 6);
+      const weekStart = weekAgo.toISOString().split("T")[0];
+      const weekRes = await fetch(`/api/attendance/logs?startDate=${weekStart}&endDate=${today}`);
+      const weekAttendance = await weekRes.json();
 
       const permRes = await fetch("/api/permissions?status=PENDING");
       const permissions = await permRes.json();
@@ -82,6 +100,22 @@ export default function DashboardPage() {
 
       setRecentAttendance(attendance.slice(0, 10));
       setRecentPermissions(recentPerms.slice(0, 5));
+
+      // Generate weekly chart data
+      const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+      const now = new Date();
+      const weekData = days.map((day, i) => {
+        const d = new Date(now);
+        d.setDate(now.getDate() - (6 - i));
+        const dateStr = d.toISOString().split("T")[0];
+        const dayAtt = weekAttendance.filter((a: any) => a.scanTime?.startsWith(dateStr));
+        return {
+          day,
+          masuk: dayAtt.filter((a: any) => a.status === "IN").length,
+          keluar: dayAtt.filter((a: any) => a.status === "OUT").length,
+        };
+      });
+      setWeeklyData(weekData);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -212,6 +246,82 @@ export default function DashboardPage() {
             </a>
           </div>
         </div>
+      </div>
+
+      {/* Attendance Chart */}
+      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-sm font-semibold text-white">Absensi Minggu Ini</h3>
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-2 rounded-full bg-indigo-500" />
+              <span className="text-slate-400">Masuk</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-2 rounded-full bg-purple-500" />
+              <span className="text-slate-400">Keluar</span>
+            </div>
+          </div>
+        </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+          </div>
+        ) : (
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={weeklyData}>
+                <defs>
+                  <linearGradient id="colorMasuk" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorKeluar" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1a1a24",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: "12px",
+                    color: "#fff",
+                    fontSize: "12px",
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="masuk"
+                  stroke="#6366f1"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorMasuk)"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="keluar"
+                  stroke="#a855f7"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorKeluar)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
 
       {/* Recent Attendance */}

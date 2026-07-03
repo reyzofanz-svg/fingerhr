@@ -79,10 +79,10 @@ export default function ApiLogsPage() {
 
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
           API Logs
         </h1>
-        <p className="mt-1 text-sm text-on-surface-variant">
+        <p className="mt-1 text-sm text-slate-400">
           Riwayat panggilan API ke Fingerspot
         </p>
       </div>
@@ -124,18 +124,18 @@ export default function ApiLogsPage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Waktu</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Command</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Device</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Durasi</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Waktu</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Command</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Device</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Durasi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -145,11 +145,11 @@ export default function ApiLogsPage() {
                       className="cursor-pointer transition-colors hover:bg-surface-container/50"
                       onClick={() => setSelectedLog(log)}
                     >
-                      <td className="px-6 py-4 text-sm text-on-surface">{formatTime(log.createdAt)}</td>
+                      <td className="px-6 py-4 text-sm text-white">{formatTime(log.createdAt)}</td>
                       <td className="px-6 py-4">
-                        <span className="font-mono text-sm text-on-surface">{log.command}</span>
+                        <span className="font-mono text-sm text-white">{log.command}</span>
                       </td>
-                      <td className="px-6 py-4 font-mono text-sm text-on-surface-variant">
+                      <td className="px-6 py-4 font-mono text-sm text-slate-400">
                         {log.deviceCloudId}
                       </td>
                       <td className="px-6 py-4">
@@ -170,7 +170,7 @@ export default function ApiLogsPage() {
                             : "Menunggu"}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 text-sm text-on-surface-variant">
+                      <td className="px-6 py-4 text-sm text-slate-400">
                         {formatDuration(log.duration)}
                       </td>
                     </tr>
@@ -179,7 +179,7 @@ export default function ApiLogsPage() {
               </table>
               {logs.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-on-surface-variant">Belum ada API logs</p>
+                  <p className="text-sm text-slate-400">Belum ada API logs</p>
                 </div>
               )}
             </div>
@@ -193,8 +193,8 @@ export default function ApiLogsPage() {
           <div className="glass mx-4 w-full max-w-2xl rounded-3xl border border-white/[0.08] p-6">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-on-surface">Detail API Log</h3>
-                <p className="mt-1 text-sm text-on-surface-variant">{selectedLog.command}</p>
+                <h3 className="text-lg font-semibold text-white">Detail API Log</h3>
+                <p className="mt-1 text-sm text-slate-400">{selectedLog.command}</p>
               </div>
               <button
                 type="button"
@@ -208,11 +208,11 @@ export default function ApiLogsPage() {
             </div>
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Waktu</span>
-                <span className="text-sm text-on-surface">{formatTime(selectedLog.createdAt)}</span>
+                <span className="text-sm text-slate-400">Waktu</span>
+                <span className="text-sm text-white">{formatTime(selectedLog.createdAt)}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Status</span>
+                <span className="text-sm text-slate-400">Status</span>
                 <Badge
                   variant={
                     selectedLog.status === "SUCCESS"
@@ -227,25 +227,25 @@ export default function ApiLogsPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Durasi</span>
-                <span className="text-sm text-on-surface">{formatDuration(selectedLog.duration)}</span>
+                <span className="text-sm text-slate-400">Durasi</span>
+                <span className="text-sm text-white">{formatDuration(selectedLog.duration)}</span>
               </div>
               {selectedLog.errorMessage && (
                 <div className="rounded-xl bg-error/10 px-4 py-3">
-                  <p className="text-sm font-medium text-error">Error</p>
-                  <p className="mt-1 text-sm text-on-surface-variant">{selectedLog.errorMessage}</p>
+                  <p className="text-sm font-medium text-red-400">Error</p>
+                  <p className="mt-1 text-sm text-slate-400">{selectedLog.errorMessage}</p>
                 </div>
               )}
               {!!selectedLog.requestPayload && (
                 <div className="rounded-xl bg-white/[0.03] px-4 py-3">
-                  <p className="text-sm font-medium text-on-surface">Request Payload</p>
-                  <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-all text-xs text-on-surface-variant">{JSON.stringify(selectedLog.requestPayload, null, 2)}</pre>
+                  <p className="text-sm font-medium text-white">Request Payload</p>
+                  <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-all text-xs text-slate-400">{JSON.stringify(selectedLog.requestPayload, null, 2)}</pre>
                 </div>
               )}
               {!!selectedLog.responsePayload && (
                 <div className="rounded-xl bg-white/[0.03] px-4 py-3">
-                  <p className="text-sm font-medium text-on-surface">Response Payload</p>
-                  <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-all text-xs text-on-surface-variant">{JSON.stringify(selectedLog.responsePayload, null, 2)}</pre>
+                  <p className="text-sm font-medium text-white">Response Payload</p>
+                  <pre className="mt-2 max-h-40 overflow-auto whitespace-pre-wrap break-all text-xs text-slate-400">{JSON.stringify(selectedLog.responsePayload, null, 2)}</pre>
                 </div>
               )}
             </div>

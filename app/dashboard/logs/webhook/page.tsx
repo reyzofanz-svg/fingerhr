@@ -69,10 +69,10 @@ export default function WebhookLogsPage() {
 
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
           Webhook Logs
         </h1>
-        <p className="mt-1 text-sm text-on-surface-variant">
+        <p className="mt-1 text-sm text-slate-400">
           Riwayat webhook yang diterima dari Fingerspot (auto-refresh 10 detik)
         </p>
       </div>
@@ -113,17 +113,17 @@ export default function WebhookLogsPage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Waktu</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Tipe</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Device</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Waktu</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tipe</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Device</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -133,11 +133,11 @@ export default function WebhookLogsPage() {
                       className="cursor-pointer transition-colors hover:bg-surface-container/50"
                       onClick={() => setSelectedLog(log)}
                     >
-                      <td className="px-6 py-4 text-sm text-on-surface">{formatTime(log.createdAt)}</td>
+                      <td className="px-6 py-4 text-sm text-white">{formatTime(log.createdAt)}</td>
                       <td className="px-6 py-4">
-                        <span className="font-mono text-sm text-on-surface">{log.type}</span>
+                        <span className="font-mono text-sm text-white">{log.type}</span>
                       </td>
-                      <td className="px-6 py-4 font-mono text-sm text-on-surface-variant">
+                      <td className="px-6 py-4 font-mono text-sm text-slate-400">
                         {log.deviceCloudId}
                       </td>
                       <td className="px-6 py-4">
@@ -154,7 +154,7 @@ export default function WebhookLogsPage() {
               </table>
               {logs.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-on-surface-variant">Belum ada webhook logs</p>
+                  <p className="text-sm text-slate-400">Belum ada webhook logs</p>
                 </div>
               )}
             </div>
@@ -168,8 +168,8 @@ export default function WebhookLogsPage() {
           <div className="glass mx-4 w-full max-w-lg rounded-3xl border border-white/[0.08] p-6">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-on-surface">Detail Webhook Log</h3>
-                <p className="mt-1 text-sm text-on-surface-variant">{selectedLog.type}</p>
+                <h3 className="text-lg font-semibold text-white">Detail Webhook Log</h3>
+                <p className="mt-1 text-sm text-slate-400">{selectedLog.type}</p>
               </div>
               <button
                 type="button"
@@ -183,15 +183,15 @@ export default function WebhookLogsPage() {
             </div>
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Waktu</span>
-                <span className="text-sm text-on-surface">{formatTime(selectedLog.createdAt)}</span>
+                <span className="text-sm text-slate-400">Waktu</span>
+                <span className="text-sm text-white">{formatTime(selectedLog.createdAt)}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Tipe</span>
-                <span className="font-mono text-sm text-on-surface">{selectedLog.type}</span>
+                <span className="text-sm text-slate-400">Tipe</span>
+                <span className="font-mono text-sm text-white">{selectedLog.type}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-on-surface-variant">Status</span>
+                <span className="text-sm text-slate-400">Status</span>
                 <Badge
                   variant={selectedLog.status === "SUCCESS" ? "success" : "error"}
                   size="sm"
@@ -201,8 +201,8 @@ export default function WebhookLogsPage() {
               </div>
               {!!selectedLog.payload && (
                 <div className="rounded-xl bg-white/[0.03] px-4 py-3">
-                  <p className="text-sm font-medium text-on-surface">Payload</p>
-                  <pre className="mt-2 max-h-60 overflow-auto whitespace-pre-wrap break-all text-xs text-on-surface-variant">{JSON.stringify(selectedLog.payload, null, 2)}</pre>
+                  <p className="text-sm font-medium text-white">Payload</p>
+                  <pre className="mt-2 max-h-60 overflow-auto whitespace-pre-wrap break-all text-xs text-slate-400">{JSON.stringify(selectedLog.payload, null, 2)}</pre>
                 </div>
               )}
             </div>

@@ -151,10 +151,10 @@ export default function DevicesPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Manajemen Perangkat
           </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <p className="mt-1 text-sm text-slate-400">
             Monitor status mesin absensi dan jalankan perintah
           </p>
         </div>
@@ -174,11 +174,11 @@ export default function DevicesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Total Perangkat</p>
-                <p className="mt-1 text-2xl font-semibold text-on-surface">{devices.length}</p>
+                <p className="text-xs font-medium text-slate-400">Total Perangkat</p>
+                <p className="mt-1 text-2xl font-semibold text-white">{devices.length}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10">
+                <svg className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
                 </svg>
               </div>
@@ -190,7 +190,7 @@ export default function DevicesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Online</p>
+                <p className="text-xs font-medium text-slate-400">Online</p>
                 <p className="mt-1 text-2xl font-semibold text-emerald-400">
                   {devices.filter((d) => d.status === "ONLINE").length}
                 </p>
@@ -208,8 +208,8 @@ export default function DevicesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Total Scan Hari Ini</p>
-                <p className="mt-1 text-2xl font-semibold text-on-surface">
+                <p className="text-xs font-medium text-slate-400">Total Scan Hari Ini</p>
+                <p className="mt-1 text-2xl font-semibold text-white">
                   {devices.reduce((sum, d) => sum + d.totalScans, 0)}
                 </p>
               </div>
@@ -229,17 +229,17 @@ export default function DevicesPage() {
           {/* Device Cards */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-on-surface">Mesin Absensi</h2>
-              <span className="text-sm text-on-surface-variant">{devices.length} perangkat</span>
+              <h2 className="text-lg font-semibold text-white">Mesin Absensi</h2>
+              <span className="text-sm text-slate-400">{devices.length} perangkat</span>
             </div>
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
               </div>
             ) : devices.length === 0 ? (
               <Card variant="glass">
                 <CardContent className="py-12 text-center">
-                  <p className="text-sm text-on-surface-variant">Belum ada perangkat yang terdaftar</p>
+                  <p className="text-sm text-slate-400">Belum ada perangkat yang terdaftar</p>
                 </CardContent>
               </Card>
             ) : (

@@ -398,10 +398,10 @@ export default function EmployeesPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Manajemen Karyawan
           </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <p className="mt-1 text-sm text-slate-400">
             Kelola data karyawan dan sinkronisasi dengan mesin absensi
           </p>
         </div>
@@ -436,11 +436,11 @@ export default function EmployeesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Total Karyawan</p>
-                <p className="mt-1 text-2xl font-semibold text-on-surface">{employees.length}</p>
+                <p className="text-xs font-medium text-slate-400">Total Karyawan</p>
+                <p className="mt-1 text-2xl font-semibold text-white">{employees.length}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <svg className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10">
+                <svg className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                 </svg>
               </div>
@@ -452,7 +452,7 @@ export default function EmployeesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Aktif</p>
+                <p className="text-xs font-medium text-slate-400">Aktif</p>
                 <p className="mt-1 text-2xl font-semibold text-emerald-400">
                   {employees.filter((e) => e.isActive).length}
                 </p>
@@ -470,7 +470,7 @@ export default function EmployeesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Tidak Aktif</p>
+                <p className="text-xs font-medium text-slate-400">Tidak Aktif</p>
                 <p className="mt-1 text-2xl font-semibold text-slate-400">
                   {employees.filter((e) => !e.isActive).length}
                 </p>
@@ -501,7 +501,7 @@ export default function EmployeesPage() {
         </div>
         {selectedIds.length > 0 && (
           <div className="flex items-center gap-3">
-            <span className="text-sm text-on-surface-variant">
+            <span className="text-sm text-slate-400">
               {selectedIds.length} dipilih
             </span>
             <Button variant="danger" size="sm" onClick={handleBulkDelete}>
@@ -525,13 +525,13 @@ export default function EmployeesPage() {
                     className="h-4 w-4 rounded border-white/20 bg-white/5 text-primary focus:ring-primary/50"
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">PIN</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Nama</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Dept</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Telegram</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Absensi Terakhir</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-on-surface-variant">Aksi</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">PIN</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Nama</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Dept</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Telegram</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Absensi Terakhir</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-slate-400">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -539,13 +539,13 @@ export default function EmployeesPage() {
                 <tr>
                     <td colSpan={8} className="px-4 py-12 text-center">
                     <div className="flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
                     </div>
                   </td>
                 </tr>
               ) : employees.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-on-surface-variant">
+                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-slate-400">
                     Belum ada karyawan
                   </td>
                 </tr>
@@ -563,16 +563,16 @@ export default function EmployeesPage() {
                         className="h-4 w-4 rounded border-white/20 bg-white/5 text-primary focus:ring-primary/50"
                       />
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm text-primary">{emp.pin}</td>
+                    <td className="px-4 py-3 font-mono text-sm text-indigo-400">{emp.pin}</td>
                     <td className="px-4 py-3">
                       <div>
-                        <p className="text-sm font-medium text-on-surface">{emp.name}</p>
+                        <p className="text-sm font-medium text-white">{emp.name}</p>
                         {emp.email && (
-                          <p className="text-xs text-on-surface-variant">{emp.email}</p>
+                          <p className="text-xs text-slate-400">{emp.email}</p>
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-on-surface-variant">{emp.department || "-"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-400">{emp.department || "-"}</td>
                     <td className="px-4 py-3">
                       <Badge variant={emp.isActive ? "success" : "default"}>
                         {emp.isActive ? "Aktif" : "Nonaktif"}
@@ -585,10 +585,10 @@ export default function EmployeesPage() {
                           Terhubung
                         </span>
                       ) : (
-                        <span className="text-xs text-on-surface-variant">Belum</span>
+                        <span className="text-xs text-slate-400">Belum</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-on-surface-variant">
+                    <td className="px-4 py-3 text-sm text-slate-400">
                       {emp.lastAttendance
                         ? new Date(emp.lastAttendance).toLocaleDateString("id-ID")
                         : "Belum ada"}
@@ -597,7 +597,7 @@ export default function EmployeesPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setDeleteModal({ show: true, employee: emp, mode: "website" })}
-                          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-white/[0.05] hover:text-on-surface"
+                          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-white/[0.05] hover:text-white"
                           title="Hapus dari website"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -628,8 +628,8 @@ export default function EmployeesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowAddModal(false)}>
           <div className="glass max-w-lg w-full rounded-[2rem] p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-on-surface">Tambah Karyawan</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-on-surface-variant hover:text-on-surface">
+              <h3 className="text-lg font-semibold text-white">Tambah Karyawan</h3>
+              <button onClick={() => setShowAddModal(false)} className="text-on-surface-variant hover:text-white">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -680,11 +680,11 @@ export default function EmployeesPage() {
               {hasFaceDevice && (
                 <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                     </svg>
-                    <span className="text-sm font-medium text-on-surface">Foto Wajah (VIVO/VIDA/DS/DT)</span>
+                    <span className="text-sm font-medium text-white">Foto Wajah (VIVO/VIDA/DS/DT)</span>
                   </div>
                   <p className="text-xs text-on-surface-variant mb-3">
                     Maksimal 100KB, wajah harus terlihat jelas dan close-up
@@ -709,7 +709,7 @@ export default function EmployeesPage() {
                         </button>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm text-on-surface">Foto wajah siap</p>
+                        <p className="text-sm text-white">Foto wajah siap</p>
                         <p className="text-xs text-on-surface-variant mt-1">
                           Foto akan didaftarkan ke mesin absensi
                         </p>
@@ -724,7 +724,7 @@ export default function EmployeesPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                       </svg>
-                      <p className="text-sm text-on-surface-variant">Klik untuk upload foto wajah</p>
+                      <p className="text-sm text-slate-400">Klik untuk upload foto wajah</p>
                       <p className="text-xs text-on-surface-variant mt-1">JPG, PNG, maks 100KB</p>
                     </div>
                   )}
@@ -761,9 +761,9 @@ export default function EmployeesPage() {
               {loadingStep === "sending" && (
                 <div className="relative h-16 w-16 mb-4">
                   <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                     </svg>
                   </div>
@@ -830,7 +830,7 @@ export default function EmployeesPage() {
                         </svg>
                       )}
                     </div>
-                    <span className="text-xs text-on-surface-variant">Mengirim data karyawan</span>
+                    <span className="text-xs text-slate-400">Mengirim data karyawan</span>
                   </div>
                   {hasFaceDevice && (
                     <div className="flex items-center gap-3">
@@ -841,7 +841,7 @@ export default function EmployeesPage() {
                           <div className="h-2 w-2 rounded-full bg-white/30" />
                         )}
                       </div>
-                      <span className="text-xs text-on-surface-variant">Mendaftarkan foto wajah</span>
+                      <span className="text-xs text-slate-400">Mendaftarkan foto wajah</span>
                     </div>
                   )}
                 </div>
@@ -878,8 +878,8 @@ export default function EmployeesPage() {
                 onClick={() => handleDelete(deleteModal.employee!, false)}
                 className="w-full rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5"
               >
-                <p className="text-sm font-medium text-on-surface">Hapus dari Website saja</p>
-                <p className="mt-1 text-xs text-on-surface-variant">
+                <p className="text-sm font-medium text-white">Hapus dari Website saja</p>
+                <p className="mt-1 text-xs text-slate-400">
                   Data tetap ada di mesin absensi
                 </p>
               </button>
@@ -889,7 +889,7 @@ export default function EmployeesPage() {
                 className="w-full rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-left transition-all hover:border-red-500/40 hover:bg-red-500/10"
               >
                 <p className="text-sm font-medium text-red-400">Hapus dari Website + Mesin</p>
-                <p className="mt-1 text-xs text-on-surface-variant">
+                <p className="mt-1 text-xs text-slate-400">
                   Data dihapus dari website dan mesin absensi
                 </p>
               </button>
@@ -910,9 +910,9 @@ export default function EmployeesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="glass max-w-md w-full rounded-[2rem] p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-on-surface">Sinkronisasi dari Mesin</h3>
+              <h3 className="text-lg font-semibold text-white">Sinkronisasi dari Mesin</h3>
               {syncStatus === "done" && (
-                <button onClick={() => setShowSyncModal(false)} className="text-on-surface-variant hover:text-on-surface">
+                <button onClick={() => setShowSyncModal(false)} className="text-on-surface-variant hover:text-white">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -924,10 +924,10 @@ export default function EmployeesPage() {
             <div className="flex items-center gap-3 mb-6">
               {syncStatus === "requesting" && (
                 <>
-                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
                   <div>
-                    <p className="text-sm font-medium text-on-surface">Mengirim perintah...</p>
-                    <p className="text-xs text-on-surface-variant">Menghubungi mesin absensi</p>
+                    <p className="text-sm font-medium text-white">Mengirim perintah...</p>
+                    <p className="text-xs text-slate-400">Menghubungi mesin absensi</p>
                   </div>
                 </>
               )}
@@ -935,14 +935,14 @@ export default function EmployeesPage() {
                 <>
                   <div className="relative h-10 w-10">
                     <div className="absolute inset-0 rounded-full border-2 border-primary/20" />
-                    <div className="absolute inset-0 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    <div className="absolute inset-0 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-on-surface">Menunggu response dari mesin...</p>
-                    <p className="text-xs text-on-surface-variant">Data akan muncul via webhook</p>
+                    <p className="text-sm font-medium text-white">Menunggu response dari mesin...</p>
+                    <p className="text-xs text-slate-400">Data akan muncul via webhook</p>
                   </div>
                 </>
               )}
@@ -955,7 +955,7 @@ export default function EmployeesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-emerald-400">Sync selesai!</p>
-                    <p className="text-xs text-on-surface-variant">{syncEmployeeCount} karyawan ditemukan</p>
+                    <p className="text-xs text-slate-400">{syncEmployeeCount} karyawan ditemukan</p>
                   </div>
                 </>
               )}
@@ -968,7 +968,7 @@ export default function EmployeesPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-red-400">Gagal</p>
-                    <p className="text-xs text-on-surface-variant">Terjadi kesalahan</p>
+                    <p className="text-xs text-slate-400">Terjadi kesalahan</p>
                   </div>
                 </>
               )}
@@ -977,7 +977,7 @@ export default function EmployeesPage() {
             {/* Log */}
             <div className="max-h-48 overflow-y-auto rounded-xl bg-black/30 p-3 space-y-1">
               {syncLog.map((log, i) => (
-                <p key={i} className="text-xs font-mono text-on-surface-variant">
+                <p key={i} className="text-xs font-mono text-slate-400">
                   <span className="text-primary/60">›</span> {log}
                 </p>
               ))}
@@ -990,7 +990,7 @@ export default function EmployeesPage() {
                   Tutup
                 </Button>
               ) : (
-                <p className="text-center text-xs text-on-surface-variant">
+                <p className="text-center text-xs text-slate-400">
                   Jangan tutup halaman ini sampai sync selesai
                 </p>
               )}

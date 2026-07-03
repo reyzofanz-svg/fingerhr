@@ -130,8 +130,8 @@ export default function DetailReportsPage() {
       />
 
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-on-surface">Laporan Rincian Harian</h1>
-        <p className="mt-1 text-sm text-on-surface-variant">Rincian kehadiran per karyawan berdasarkan shift &amp; jadwal</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Laporan Rincian Harian</h1>
+        <p className="mt-1 text-sm text-slate-400">Rincian kehadiran per karyawan berdasarkan shift &amp; jadwal</p>
       </div>
 
       {/* Filter */}
@@ -139,7 +139,7 @@ export default function DetailReportsPage() {
         <CardContent className="p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-on-surface">Karyawan</label>
+              <label className="mb-2 block text-sm font-medium text-white">Karyawan</label>
               <select
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
@@ -152,11 +152,11 @@ export default function DetailReportsPage() {
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-on-surface">Dari Tanggal</label>
+              <label className="mb-2 block text-sm font-medium text-white">Dari Tanggal</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-on-surface">Sampai Tanggal</label>
+              <label className="mb-2 block text-sm font-medium text-white">Sampai Tanggal</label>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
             </div>
             <div className="flex items-end">
@@ -182,16 +182,16 @@ export default function DetailReportsPage() {
           <Card variant="glass-high">
             <CardContent className="p-4 sm:p-6">
               <div className="mb-4">
-                <h2 className="text-lg font-semibold text-on-surface">{report.employee.name}</h2>
-                <p className="text-sm text-on-surface-variant">
+                <h2 className="text-lg font-semibold text-white">{report.employee.name}</h2>
+                <p className="text-sm text-slate-400">
                   ID: {report.employee.pin} · {report.employee.department || "-"} · {report.employee.position || "-"}
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                 {recapItems.map(([label, value]) => (
                   <div key={label as string} className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-                    <div className="text-xs text-on-surface-variant">{label}</div>
-                    <div className="text-sm font-semibold text-on-surface">{value}</div>
+                    <div className="text-xs text-slate-400">{label}</div>
+                    <div className="text-sm font-semibold text-white">{value}</div>
                   </div>
                 ))}
               </div>
@@ -204,7 +204,7 @@ export default function DetailReportsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full whitespace-nowrap text-xs">
                   <thead>
-                    <tr className="border-b border-white/[0.08] text-on-surface-variant">
+                    <tr className="border-b border-white/[0.08] text-slate-400">
                       <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Tanggal</th>
                       <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Hari</th>
                       <th colSpan={3} className="border-r border-white/[0.06] px-2 py-2 text-center">Ketentuan</th>
@@ -215,7 +215,7 @@ export default function DetailReportsPage() {
                       <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Libur</th>
                       <th rowSpan={2} className="px-2 py-2 text-left">Keterangan</th>
                     </tr>
-                    <tr className="border-b border-white/[0.08] text-on-surface-variant">
+                    <tr className="border-b border-white/[0.08] text-slate-400">
                       <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Shift</th>
                       <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Masuk</th>
                       <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Pulang</th>
@@ -229,7 +229,7 @@ export default function DetailReportsPage() {
                   </thead>
                   <tbody className="divide-y divide-white/[0.05]">
                     {report.rows.map((row, i) => (
-                      <tr key={i} className={`text-on-surface ${row.libur === 1 ? "bg-white/[0.02] text-on-surface-variant" : ""}`}>
+                      <tr key={i} className={`text-on-surface ${row.libur === 1 ? "bg-white/[0.02] text-slate-400" : ""}`}>
                         <td className="border-r border-white/[0.06] px-2 py-1.5">{row.tanggal}</td>
                         <td className="border-r border-white/[0.06] px-2 py-1.5">{row.hari}</td>
                         <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.shiftName}</td>

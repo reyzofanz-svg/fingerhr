@@ -215,10 +215,10 @@ export default function PermissionsPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Kelola Izin
           </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <p className="mt-1 text-sm text-slate-400">
             Ajukan dan kelola izin karyawan (Sakit, CUTI, Izin)
           </p>
         </div>
@@ -236,7 +236,7 @@ export default function PermissionsPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Menunggu</p>
+                <p className="text-xs font-medium text-slate-400">Menunggu</p>
                 <p className="mt-1 text-2xl font-semibold text-amber-400">{pendingCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
@@ -252,7 +252,7 @@ export default function PermissionsPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Disetujui</p>
+                <p className="text-xs font-medium text-slate-400">Disetujui</p>
                 <p className="mt-1 text-2xl font-semibold text-emerald-400">{approvedCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
@@ -268,11 +268,11 @@ export default function PermissionsPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Ditolak</p>
-                <p className="mt-1 text-2xl font-semibold text-error">{rejectedCount}</p>
+                <p className="text-xs font-medium text-slate-400">Ditolak</p>
+                <p className="mt-1 text-2xl font-semibold text-red-400">{rejectedCount}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-error/10">
-                <svg className="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
+                <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.36m12.728 12.728L5.636 5.636" />
                 </svg>
               </div>
@@ -316,20 +316,20 @@ export default function PermissionsPage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Karyawan</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Tipe</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Tanggal</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Alasan</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Catatan</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Status</th>
-                    <th className="px-6 py-4 text-right text-xs font-medium text-on-surface-variant">Aksi</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Karyawan</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tipe</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tanggal</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Alasan</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Catatan</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-slate-400">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -337,13 +337,13 @@ export default function PermissionsPage() {
                     <tr key={perm.id} className="transition-colors hover:bg-surface-container/50">
                       <td className="px-6 py-4">
                         <div>
-                          <p className="text-sm font-medium text-on-surface">{perm.employee.name}</p>
-                          <p className="text-xs text-on-surface-variant">{perm.employee.department || "-"}</p>
+                          <p className="text-sm font-medium text-white">{perm.employee.name}</p>
+                          <p className="text-xs text-slate-400">{perm.employee.department || "-"}</p>
                         </div>
                       </td>
                       <td className="px-6 py-4">{getTypeBadge(perm.type)}</td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-on-surface">
+                        <div className="text-sm text-white">
                           {formatDate(perm.startDate)}
                           {perm.startDate !== perm.endDate && (
                             <span> - {formatDate(perm.endDate)}</span>
@@ -377,7 +377,7 @@ export default function PermissionsPage() {
                             <button
                               type="button"
                               onClick={() => openConfirmDialog(perm.id, perm.employee.name, "REJECTED")}
-                              className="rounded-lg p-2 text-error transition-colors hover:bg-error/10"
+                              className="rounded-lg p-2 text-error transition-colors hover:bg-red-500/10"
                               title="Tolak"
                             >
                               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -393,7 +393,7 @@ export default function PermissionsPage() {
               </table>
               {permissions.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-on-surface-variant">Belum ada data izin</p>
+                  <p className="text-sm text-slate-400">Belum ada data izin</p>
                 </div>
               )}
             </div>
@@ -405,11 +405,11 @@ export default function PermissionsPage() {
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="glass mx-4 w-full max-w-md rounded-3xl border border-white/[0.08] p-6">
-            <h3 className="text-lg font-semibold text-on-surface">Ajukan Izin Baru</h3>
-            <p className="mt-1 text-sm text-on-surface-variant">Isi form untuk mengajukan izin</p>
+            <h3 className="text-lg font-semibold text-white">Ajukan Izin Baru</h3>
+            <p className="mt-1 text-sm text-slate-400">Isi form untuk mengajukan izin</p>
             <div className="mt-6 space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Karyawan *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Karyawan *</label>
                 <select
                   value={formData.employeeId}
                   onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
@@ -424,7 +424,7 @@ export default function PermissionsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Tipe Izin *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Tipe Izin *</label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -450,7 +450,7 @@ export default function PermissionsPage() {
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Alasan</label>
+                <label className="mb-2 block text-sm font-medium text-white">Alasan</label>
                 <textarea
                   value={formData.reason}
                   onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
@@ -479,16 +479,16 @@ export default function PermissionsPage() {
       {confirmDialog.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="glass mx-4 w-full max-w-md rounded-3xl border border-white/[0.08] p-6">
-            <h3 className="text-lg font-semibold text-on-surface">
+            <h3 className="text-lg font-semibold text-white">
               {confirmDialog.action === "APPROVED" ? "Setujui Izin" : "Tolak Izin"}
             </h3>
-            <p className="mt-1 text-sm text-on-surface-variant">
+            <p className="mt-1 text-sm text-slate-400">
               {confirmDialog.action === "APPROVED"
                 ? `Menyetujui izin untuk ${confirmDialog.permissionName}?`
                 : `Menolak izin untuk ${confirmDialog.permissionName}?`}
             </p>
             <div className="mt-4">
-              <label className="mb-2 block text-sm font-medium text-on-surface">Catatan Admin (opsional)</label>
+              <label className="mb-2 block text-sm font-medium text-white">Catatan Admin (opsional)</label>
               <textarea
                 value={actionNotes}
                 onChange={(e) => setActionNotes(e.target.value)}

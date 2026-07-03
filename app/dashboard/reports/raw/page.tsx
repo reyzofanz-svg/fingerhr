@@ -287,10 +287,10 @@ export default function RawReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Laporan Absensi Perangkat
           </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <p className="mt-1 text-sm text-slate-400">
             Tarik data absensi langsung dari mesin fingerprint
           </p>
         </div>
@@ -307,7 +307,7 @@ export default function RawReportsPage() {
         <CardContent className="py-4 sm:py-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-on-surface">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Pilih Perangkat
               </label>
               <select
@@ -370,15 +370,15 @@ export default function RawReportsPage() {
                 downloadStatus.includes("Berhasil")
                   ? "bg-emerald-500/10 text-emerald-400"
                   : downloadStatus.includes("Gagal")
-                  ? "bg-error/10 text-error"
+                  ? "bg-error/10 text-red-400"
                   : "bg-blue-500/10 text-blue-400"
               }`}
             >
               {downloadStatus}
             </div>
           )}
-          <p className="mt-2 text-xs text-on-surface-variant">
-            Perangkat aktif: <span className="font-medium text-on-surface">{selectedDeviceName}</span> | Data webhook realtime + manual download
+          <p className="mt-2 text-xs text-slate-400">
+            Perangkat aktif: <span className="font-medium text-white">{selectedDeviceName}</span> | Data webhook realtime + manual download
           </p>
         </CardContent>
       </Card>
@@ -387,25 +387,25 @@ export default function RawReportsPage() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-on-surface-variant">Total Record</p>
+            <p className="text-xs font-medium text-slate-400">Total Record</p>
             <p className="mt-1 text-xl font-semibold text-on-surface sm:text-2xl">{logs.length}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-on-surface-variant">Scan Masuk</p>
+            <p className="text-xs font-medium text-slate-400">Scan Masuk</p>
             <p className="mt-1 text-xl font-semibold text-emerald-400 sm:text-2xl">{totalIn}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-on-surface-variant">Scan Keluar</p>
+            <p className="text-xs font-medium text-slate-400">Scan Keluar</p>
             <p className="mt-1 text-xl font-semibold text-blue-400 sm:text-2xl">{totalOut}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-on-surface-variant">Karyawan Unik</p>
+            <p className="text-xs font-medium text-slate-400">Karyawan Unik</p>
             <p className="mt-1 text-xl font-semibold text-on-surface sm:text-2xl">{uniqueEmployees}</p>
           </CardContent>
         </Card>
@@ -417,7 +417,7 @@ export default function RawReportsPage() {
           {/* Filter Bar */}
           <div className="flex flex-col gap-3 border-b border-white/[0.08] px-4 py-4 sm:flex-row sm:items-end sm:px-6">
             <div className="w-full sm:w-48">
-              <label className="mb-2 block text-sm font-medium text-on-surface">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Filter Karyawan
               </label>
               <select
@@ -434,7 +434,7 @@ export default function RawReportsPage() {
               </select>
             </div>
             <div className="w-full sm:w-48">
-              <label className="mb-2 block text-sm font-medium text-on-surface">
+              <label className="mb-2 block text-sm font-medium text-white">
                 Filter Perangkat
               </label>
               <select
@@ -498,13 +498,13 @@ export default function RawReportsPage() {
           {/* Table */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
             </div>
           ) : logs.length === 0 ? (
             <div className="py-16 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-container-high">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
                 <svg
-                  className="h-8 w-8 text-on-surface-variant"
+                  className="h-8 w-8 text-slate-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -517,10 +517,10 @@ export default function RawReportsPage() {
                   />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-on-surface">
+              <p className="text-sm font-medium text-white">
                 Belum ada data absensi
               </p>
-              <p className="mt-1 text-xs text-on-surface-variant">
+              <p className="mt-1 text-xs text-slate-400">
                 Klik &quot;Tarik Data dari Mesin&quot; untuk mengambil data dari perangkat
               </p>
             </div>
@@ -530,31 +530,31 @@ export default function RawReportsPage() {
               <table className="hidden w-full sm:table">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       No
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Tanggal & Jam
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       PIN
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Nama Karyawan
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Departemen
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Metode
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Perangkat
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Sumber
                     </th>
                   </tr>
@@ -565,22 +565,22 @@ export default function RawReportsPage() {
                       key={log.id}
                       className="transition-colors hover:bg-surface-container/50"
                     >
-                      <td className="px-6 py-3 text-xs text-on-surface-variant">
+                      <td className="px-6 py-3 text-xs text-slate-400">
                         {idx + 1}
                       </td>
                       <td className="px-6 py-3">
-                        <p className="text-sm text-on-surface">{formatDate(log.scanTime)}</p>
-                        <p className="font-mono text-xs text-on-surface-variant">
+                        <p className="text-sm text-white">{formatDate(log.scanTime)}</p>
+                        <p className="font-mono text-xs text-slate-400">
                           {formatTime(log.scanTime)}
                         </p>
                       </td>
-                      <td className="px-6 py-3 font-mono text-sm text-on-surface">
+                      <td className="px-6 py-3 font-mono text-sm text-white">
                         {log.employee.pin}
                       </td>
-                      <td className="px-6 py-3 text-sm font-medium text-on-surface">
+                      <td className="px-6 py-3 text-sm font-medium text-white">
                         {log.employee.name}
                       </td>
-                      <td className="px-6 py-3 text-sm text-on-surface-variant">
+                      <td className="px-6 py-3 text-sm text-slate-400">
                         {log.employee.department || "-"}
                       </td>
                       <td className="px-6 py-3">
@@ -591,10 +591,10 @@ export default function RawReportsPage() {
                           {log.status === "IN" ? "Masuk" : "Keluar"}
                         </Badge>
                       </td>
-                      <td className="px-6 py-3 text-sm text-on-surface-variant">
+                      <td className="px-6 py-3 text-sm text-slate-400">
                         {getVerifyMethod(log.verifyMethod)}
                       </td>
-                      <td className="px-6 py-3 text-sm text-on-surface-variant">
+                      <td className="px-6 py-3 text-sm text-slate-400">
                         {log.device.name}
                       </td>
                       <td className="px-6 py-3">
@@ -618,8 +618,8 @@ export default function RawReportsPage() {
                   <div key={log.id} className="px-4 py-3 space-y-2">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-sm font-medium text-on-surface">{log.employee.name}</p>
-                        <p className="font-mono text-xs text-on-surface-variant">PIN: {log.employee.pin}</p>
+                        <p className="text-sm font-medium text-white">{log.employee.name}</p>
+                        <p className="font-mono text-xs text-slate-400">PIN: {log.employee.pin}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant={log.status === "IN" ? "success" : "info"} size="sm">
@@ -630,13 +630,13 @@ export default function RawReportsPage() {
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-on-surface-variant">
+                    <div className="flex items-center gap-4 text-xs text-slate-400">
                       <span className="font-mono">{formatDate(log.scanTime)} {formatTime(log.scanTime)}</span>
                       <span>{getVerifyMethod(log.verifyMethod)}</span>
                       <span>{log.device.name}</span>
                     </div>
                     {log.employee.department && (
-                      <p className="text-xs text-on-surface-variant">{log.employee.department}</p>
+                      <p className="text-xs text-slate-400">{log.employee.department}</p>
                     )}
                   </div>
                 ))}
@@ -651,8 +651,8 @@ export default function RawReportsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setShowManualForm(false)}>
           <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-surface-container-high shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
-              <h2 className="text-lg font-semibold text-on-surface">Tambah Absensi Manual</h2>
-              <button onClick={() => setShowManualForm(false)} className="rounded-lg p-1 text-on-surface-variant hover:bg-surface-container">
+              <h2 className="text-lg font-semibold text-white">Tambah Absensi Manual</h2>
+              <button onClick={() => setShowManualForm(false)} className="rounded-lg p-1 text-on-surface-variant hover:bg-white/[0.03]">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -660,7 +660,7 @@ export default function RawReportsPage() {
             </div>
             <div className="space-y-4 px-6 py-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Karyawan *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Karyawan *</label>
                 <select
                   value={manualForm.employeeId}
                   onChange={(e) => setManualForm({ ...manualForm, employeeId: e.target.value })}
@@ -675,7 +675,7 @@ export default function RawReportsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Perangkat *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Perangkat *</label>
                 <select
                   value={manualForm.deviceId}
                   onChange={(e) => setManualForm({ ...manualForm, deviceId: e.target.value })}
@@ -691,7 +691,7 @@ export default function RawReportsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-on-surface">Tanggal *</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Tanggal *</label>
                   <Input
                     type="date"
                     value={manualForm.scanDate}
@@ -699,7 +699,7 @@ export default function RawReportsPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-on-surface">Jam *</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Jam *</label>
                   <Input
                     type="time"
                     value={manualForm.scanTime}
@@ -708,7 +708,7 @@ export default function RawReportsPage() {
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-on-surface">Metode Verifikasi</label>
+                <label className="mb-2 block text-sm font-medium text-white">Metode Verifikasi</label>
                 <select
                   value={manualForm.verifyMethod}
                   onChange={(e) => setManualForm({ ...manualForm, verifyMethod: e.target.value })}
@@ -719,12 +719,12 @@ export default function RawReportsPage() {
                   <option value="3">Kartu</option>
                 </select>
               </div>
-              <p className="text-xs text-on-surface-variant">
+              <p className="text-xs text-slate-400">
                 Status (Masuk/Keluar) akan ditentukan otomatis berdasarkan urutan absensi hari ini.
               </p>
             </div>
             {submitStatus && (
-              <div className={`mx-6 rounded-lg px-4 py-2 text-sm ${submitStatus.includes("berhasil") ? "bg-emerald-500/10 text-emerald-400" : "bg-error/10 text-error"}`}>
+              <div className={`mx-6 rounded-lg px-4 py-2 text-sm ${submitStatus.includes("berhasil") ? "bg-emerald-500/10 text-emerald-400" : "bg-error/10 text-red-400"}`}>
                 {submitStatus}
               </div>
             )}

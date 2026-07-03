@@ -115,16 +115,16 @@ export default function MyAttendancePage() {
       {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
+          <h1 className="text-2xl font-semibold tracking-tight text-white">
             Absensi Saya
           </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
+          <p className="mt-1 text-sm text-slate-400">
             {data ? `Selamat datang, ${data.employee.name}` : "Memuat data..."}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-sm text-on-surface-variant">Auto-refresh 15 detik</span>
+          <span className="text-sm text-slate-400">Auto-refresh 15 detik</span>
         </div>
       </div>
 
@@ -137,8 +137,8 @@ export default function MyAttendancePage() {
                 {data.employee.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
               </div>
               <div>
-                <p className="text-base font-semibold text-on-surface">{data.employee.name}</p>
-                <p className="text-sm text-on-surface-variant">
+                <p className="text-base font-semibold text-white">{data.employee.name}</p>
+                <p className="text-sm text-slate-400">
                   {data.employee.department || "-"} &bull; {data.employee.position || "-"}
                 </p>
               </div>
@@ -153,7 +153,7 @@ export default function MyAttendancePage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Total Hadir (IN)</p>
+                <p className="text-xs font-medium text-slate-400">Total Hadir (IN)</p>
                 <p className="mt-1 text-2xl font-semibold text-emerald-400">
                   {loading ? "-" : data?.summary.totalIn ?? 0}
                 </p>
@@ -171,7 +171,7 @@ export default function MyAttendancePage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Total Keluar (OUT)</p>
+                <p className="text-xs font-medium text-slate-400">Total Keluar (OUT)</p>
                 <p className="mt-1 text-2xl font-semibold text-blue-400">
                   {loading ? "-" : data?.summary.totalOut ?? 0}
                 </p>
@@ -189,8 +189,8 @@ export default function MyAttendancePage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-on-surface-variant">Jam Kerja Rata-rata</p>
-                <p className="mt-1 text-2xl font-semibold text-on-surface">
+                <p className="text-xs font-medium text-slate-400">Jam Kerja Rata-rata</p>
+                <p className="mt-1 text-2xl font-semibold text-white">
                   {loading ? "-" : `${data?.summary.avgWorkHours ?? 0}j`}
                 </p>
               </div>
@@ -208,7 +208,7 @@ export default function MyAttendancePage() {
       {todayStatus && (
         <Card variant="glass-high">
           <div className="border-b border-white/[0.08] px-6 py-4">
-            <h3 className="text-sm font-semibold text-on-surface">Status Hari Ini</h3>
+            <h3 className="text-sm font-semibold text-white">Status Hari Ini</h3>
           </div>
           <CardContent className="py-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -219,16 +219,16 @@ export default function MyAttendancePage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-on-surface-variant">Jam Masuk</p>
+                  <p className="text-xs font-medium text-slate-400">Jam Masuk</p>
                   {todayStatus.clockIn ? (
                     <>
                       <p className="font-mono text-lg font-semibold text-emerald-400">
                         {formatTime(todayStatus.clockIn.scanTime)}
                       </p>
-                      <p className="text-xs text-on-surface-variant">{todayStatus.clockIn.device.name}</p>
+                      <p className="text-xs text-slate-400">{todayStatus.clockIn.device.name}</p>
                     </>
                   ) : (
-                    <p className="text-sm text-on-surface-variant">Belum absen masuk</p>
+                    <p className="text-sm text-slate-400">Belum absen masuk</p>
                   )}
                 </div>
               </div>
@@ -240,16 +240,16 @@ export default function MyAttendancePage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-on-surface-variant">Jam Keluar</p>
+                  <p className="text-xs font-medium text-slate-400">Jam Keluar</p>
                   {todayStatus.clockOut ? (
                     <>
                       <p className="font-mono text-lg font-semibold text-blue-400">
                         {formatTime(todayStatus.clockOut.scanTime)}
                       </p>
-                      <p className="text-xs text-on-surface-variant">{todayStatus.clockOut.device.name}</p>
+                      <p className="text-xs text-slate-400">{todayStatus.clockOut.device.name}</p>
                     </>
                   ) : (
-                    <p className="text-sm text-on-surface-variant">Belum absen keluar</p>
+                    <p className="text-sm text-slate-400">Belum absen keluar</p>
                   )}
                 </div>
               </div>
@@ -295,8 +295,8 @@ export default function MyAttendancePage() {
       <Card variant="glass-high">
         <div className="border-b border-white/[0.08] px-6 py-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-on-surface">Riwayat Absensi</h3>
-            <span className="text-xs text-on-surface-variant">
+            <h3 className="text-sm font-semibold text-white">Riwayat Absensi</h3>
+            <span className="text-xs text-slate-400">
               {data ? `${data.logs.length} data` : ""}
             </span>
           </div>
@@ -305,11 +305,11 @@ export default function MyAttendancePage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/[0.08]">
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">Tanggal & Waktu</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">Perangkat</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">Verifikasi</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant">Tipe</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">Tanggal & Waktu</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">Perangkat</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">Verifikasi</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">Tipe</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.05]">
@@ -317,20 +317,20 @@ export default function MyAttendancePage() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
                     </div>
                   </td>
                 </tr>
               ) : data?.logs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-on-surface-variant">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-slate-400">
                     Tidak ada data absensi
                   </td>
                 </tr>
               ) : (
                 data?.logs.map((log) => (
                   <tr key={log.id} className="transition-colors hover:bg-surface-container/50">
-                    <td className="px-6 py-4 text-sm text-on-surface">{formatDateTime(log.scanTime)}</td>
+                    <td className="px-6 py-4 text-sm text-white">{formatDateTime(log.scanTime)}</td>
                     <td className="px-6 py-4">
                       <Badge variant={log.status === "IN" ? "success" : "info"} size="sm">
                         {log.status === "IN" ? "Masuk" : "Keluar"}
@@ -338,16 +338,16 @@ export default function MyAttendancePage() {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm text-on-surface">{log.device.name}</p>
+                        <p className="text-sm text-white">{log.device.name}</p>
                         {log.device.ip && (
-                          <p className="text-xs text-on-surface-variant">{log.device.ip}</p>
+                          <p className="text-xs text-slate-400">{log.device.ip}</p>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-on-surface-variant">
+                    <td className="px-6 py-4 text-sm text-slate-400">
                       {getVerifyMethod(log.verifyMethod)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-on-surface-variant">{log.type}</td>
+                    <td className="px-6 py-4 text-sm text-slate-400">{log.type}</td>
                   </tr>
                 ))
               )}
