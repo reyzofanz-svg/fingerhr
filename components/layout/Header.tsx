@@ -18,16 +18,19 @@ export function Header({ className, title, description, actions, onMenuClick }: 
   return (
     <header
       className={cn(
-        "flex h-16 items-center justify-between border-b border-white/[0.08] bg-surface-container-low/50 px-6 backdrop-blur-sm",
+        "relative flex h-16 items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/60 backdrop-blur-xl px-6",
         className
       )}
     >
+      {/* Gradient line at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+
       <div className="flex items-center gap-4">
         {/* Mobile menu button */}
         <button
           type="button"
           onClick={onMenuClick}
-          className="rounded-lg p-2 text-on-surface-variant hover:bg-white/[0.05] lg:hidden"
+          className="rounded-xl p-2 text-slate-400 hover:bg-white/[0.05] hover:text-white transition-all lg:hidden"
           aria-label="Open sidebar"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -38,7 +41,7 @@ export function Header({ className, title, description, actions, onMenuClick }: 
         {/* Search bar */}
         <div className="relative hidden md:block">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-on-surface-variant"
+            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -49,34 +52,34 @@ export function Header({ className, title, description, actions, onMenuClick }: 
           <input
             type="text"
             placeholder="Search devices, logs..."
-            className="h-10 w-80 rounded-full border border-white/[0.08] bg-surface-container pl-10 pr-4 text-sm text-on-surface placeholder-on-surface-variant/60 transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-10 w-80 rounded-xl border border-white/[0.06] bg-white/[0.03] pl-10 pr-4 text-sm text-white placeholder-slate-500 transition-all focus:border-indigo-500/40 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
           />
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {actions}
 
         {/* Nav links */}
         <div className="hidden items-center gap-1 lg:flex">
           <a
             href="#"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-white"
           >
             Docs
           </a>
           <a
             href="#"
-            className="rounded-full px-3 py-1.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
+            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/[0.04] hover:text-white"
           >
             API
           </a>
         </div>
 
         {/* Status indicator */}
-        <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium text-emerald-400">Status</span>
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
+          <span className="text-xs font-medium text-emerald-400">Live</span>
         </div>
 
         {/* Theme toggle */}
@@ -85,21 +88,10 @@ export function Header({ className, title, description, actions, onMenuClick }: 
         {/* Notifications */}
         <NotificationBell />
 
-        {/* Redeploy button */}
-        <button
-          type="button"
-          className="hidden items-center gap-2 rounded-full bg-gradient-to-r from-primary-container to-secondary-container px-4 py-2 text-sm font-medium text-white shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 sm:flex"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-          </svg>
-          Redeploy
-        </button>
-
         {/* User avatar */}
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-primary-container to-tertiary-container text-sm font-medium text-white"
+          className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 transition-all hover:shadow-indigo-500/30 hover:scale-105"
         >
           A
         </button>

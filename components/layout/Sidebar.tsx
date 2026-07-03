@@ -132,165 +132,168 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
         onClick={onClose}
         aria-hidden="true"
         className={cn(
-          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity lg:hidden",
+          "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       />
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col",
-          "bg-surface-container-low/80 backdrop-blur-xl",
-          "border-r border-white/[0.08]",
+          "bg-[#0d0d12]/90 backdrop-blur-2xl",
+          "border-r border-white/[0.06]",
           "transition-transform duration-300 ease-in-out",
           open ? "translate-x-0" : "-translate-x-full",
           "lg:relative lg:translate-x-0",
           className
         )}
       >
-      {/* Logo */}
-      <div className="flex h-16 items-center gap-3 px-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500">
-          <span className="text-sm font-bold text-white">F</span>
-        </div>
-        <div>
-          <span className="text-base font-semibold text-on-surface">FingerHR</span>
-          <span className="ml-1.5 rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-medium text-indigo-400">
-            MODERN
-          </span>
-        </div>
-      </div>
+        {/* Subtle gradient overlay at top */}
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-indigo-500/[0.03] to-transparent" />
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <ul className="space-y-1">
-          {navItems.map((item) => {
-            const hasChildren = item.children && item.children.length > 0;
-            const isExpanded = expandedItems.includes(item.label);
-            const isActive = item.href
-              ? pathname === item.href ||
-                (item.href !== "/dashboard" && pathname.startsWith(item.href))
-              : item.children?.some((child) => pathname === child.href);
+        {/* Logo */}
+        <div className="relative flex h-16 items-center gap-3 px-6">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
+            <span className="text-sm font-bold text-white">F</span>
+          </div>
+          <div>
+            <span className="text-base font-bold text-white tracking-tight">FingerHR</span>
+            <span className="ml-1.5 rounded-full bg-indigo-500/15 px-2 py-0.5 text-[10px] font-semibold text-indigo-400 border border-indigo-500/20">
+              MODERN
+            </span>
+          </div>
+        </div>
 
-            return (
-              <li key={item.label}>
-                {hasChildren ? (
-                  <>
-                    <button
-                      onClick={() => toggleExpanded(item.label)}
+        {/* Navigation */}
+        <nav className="relative flex-1 overflow-y-auto px-3 py-4">
+          <ul className="space-y-0.5">
+            {navItems.map((item) => {
+              const hasChildren = item.children && item.children.length > 0;
+              const isExpanded = expandedItems.includes(item.label);
+              const isActive = item.href
+                ? pathname === item.href ||
+                  (item.href !== "/dashboard" && pathname.startsWith(item.href))
+                : item.children?.some((child) => pathname === child.href);
+
+              return (
+                <li key={item.label}>
+                  {hasChildren ? (
+                    <>
+                      <button
+                        onClick={() => toggleExpanded(item.label)}
+                        className={cn(
+                          "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                          isActive
+                            ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-300 border border-indigo-500/10"
+                            : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "flex h-5 w-5 items-center justify-center transition-colors",
+                            isActive
+                              ? "text-indigo-400"
+                              : "text-slate-500 group-hover:text-slate-300"
+                          )}
+                        >
+                          {item.icon}
+                        </span>
+                        {item.label}
+                        <svg
+                          className={cn(
+                            "ml-auto h-4 w-4 transition-transform duration-200",
+                            isExpanded && "rotate-180"
+                          )}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      {isExpanded && (
+                        <ul className="mt-1 space-y-0.5 pl-8">
+                          {item.children?.map((child) => {
+                            const isChildActive = pathname === child.href;
+                            return (
+                              <li key={child.href}>
+                                <Link
+                                  href={child.href}
+                                  className={cn(
+                                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-200",
+                                    isChildActive
+                                      ? "font-medium text-indigo-300 bg-indigo-500/10"
+                                      : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]"
+                                  )}
+                                >
+                                  <span
+                                    className={cn(
+                                      "h-1.5 w-1.5 rounded-full transition-colors",
+                                      isChildActive
+                                        ? "bg-indigo-400"
+                                        : "bg-slate-600"
+                                    )}
+                                  />
+                                  {child.label}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </>
+                  ) : (
+                    <Link
+                      href={item.href!}
                       className={cn(
-                        "group flex w-full items-center gap-3 rounded-full px-3 py-2.5 text-sm font-medium transition-all",
+                        "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-on-surface-variant hover:bg-white/[0.05] hover:text-on-surface"
+                          ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-300 border border-indigo-500/10"
+                          : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
                       )}
                     >
                       <span
                         className={cn(
                           "flex h-5 w-5 items-center justify-center transition-colors",
                           isActive
-                            ? "text-primary"
-                            : "text-on-surface-variant group-hover:text-on-surface"
+                            ? "text-indigo-400"
+                            : "text-slate-500 group-hover:text-slate-300"
                         )}
                       >
                         {item.icon}
                       </span>
                       {item.label}
-                      <svg
-                        className={cn(
-                          "ml-auto h-4 w-4 transition-transform",
-                          isExpanded && "rotate-180"
-                        )}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {isExpanded && (
-                      <ul className="mt-1 space-y-1 pl-8">
-                        {item.children?.map((child) => {
-                          const isChildActive = pathname === child.href;
-                          return (
-                            <li key={child.href}>
-                              <Link
-                                href={child.href}
-                                className={cn(
-                                  "flex items-center gap-2 rounded-full px-3 py-2 text-sm transition-all",
-                                  isChildActive
-                                    ? "font-medium text-primary"
-                                    : "text-on-surface-variant hover:text-on-surface"
-                                )}
-                              >
-                                <span
-                                  className={cn(
-                                    "h-1.5 w-1.5 rounded-full",
-                                    isChildActive
-                                      ? "bg-primary"
-                                      : "bg-on-surface-variant/30"
-                                  )}
-                                />
-                                {child.label}
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </>
-                ) : (
-                  <Link
-                    href={item.href!}
-                    className={cn(
-                      "group flex items-center gap-3 rounded-full px-3 py-2.5 text-sm font-medium transition-all",
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-on-surface-variant hover:bg-white/[0.05] hover:text-on-surface"
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "flex h-5 w-5 items-center justify-center transition-colors",
-                        isActive
-                          ? "text-primary"
-                          : "text-on-surface-variant group-hover:text-on-surface"
+                      {isActive && (
+                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_rgba(129,140,248,0.5)]" />
                       )}
-                    >
-                      {item.icon}
-                    </span>
-                    {item.label}
-                    {isActive && (
-                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
-                    )}
-                  </Link>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-      {/* Footer */}
-      <div className="border-t border-white/[0.08] px-3 py-3">
-        <ul className="space-y-1">
-          <li>
-            <button
-              onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-full px-3 py-2 text-sm font-medium text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-              </svg>
-              Keluar
-            </button>
-          </li>
-        </ul>
-      </div>
+        {/* Footer */}
+        <div className="relative border-t border-white/[0.06] px-3 py-3">
+          <ul className="space-y-0.5">
+            <li>
+              <button
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                </svg>
+                Keluar
+              </button>
+            </li>
+          </ul>
+        </div>
       </aside>
     </>
   );
