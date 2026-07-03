@@ -41,7 +41,7 @@ function DeviceShowcase() {
           {/* Glow behind device */}
           <div className="absolute inset-0 bg-indigo-500/20 blur-[40px] rounded-full scale-75" />
           <img
-            src="https://fingerspot.com/upload/product_list/ori_oymXuUz7_20250123142759.png"
+            src="/fingerspot-device.png"
             alt="Fingerspot Revo W-202BNC"
             className="relative w-64 sm:w-72 lg:w-80 h-auto drop-shadow-[0_0_30px_rgba(99,102,241,0.3)]"
           />
