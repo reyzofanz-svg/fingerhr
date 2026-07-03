@@ -1,112 +1,79 @@
 "use client";
 
-import { useRef, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Sparkles } from "@react-three/drei";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import * as THREE from "three";
 
-function FingerprintModel() {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
-    }
-  });
-
-  // Create concentric fingerprint rings
-  const rings = Array.from({ length: 8 }, (_, i) => {
-    const radius = 0.3 + i * 0.15;
-    const segments = 64;
-    const points: THREE.Vector3[] = [];
-    for (let j = 0; j <= segments; j++) {
-      const angle = (j / segments) * Math.PI * 2;
-      const wobble = Math.sin(angle * 3 + i) * 0.02;
-      points.push(
-        new THREE.Vector3(
-          Math.cos(angle) * (radius + wobble),
-          Math.sin(angle) * (radius + wobble) * 0.8,
-          0
-        )
-      );
-    }
-    const curve = new THREE.CatmullRomCurve3(points, true);
-    return new THREE.TubeGeometry(curve, 100, 0.008, 8, true);
-  });
-
+function FingerprintSVG() {
   return (
-    <group ref={groupRef} position={[0, 0, 0]}>
-      {rings.map((geom, i) => (
-        <mesh key={i} geometry={geom}>
-          <meshStandardMaterial
-            color={i < 4 ? "#818cf8" : "#6366f1"}
-            emissive="#4f46e5"
-            emissiveIntensity={0.3 + i * 0.08}
-            transparent
-            opacity={0.7 + i * 0.03}
-            roughness={0.3}
-            metalness={0.8}
+    <div className="relative w-full h-full flex items-center justify-center">
+      {/* Animated glow rings */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {[1, 2, 3, 4].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full border border-indigo-500/20"
+            style={{
+              width: `${60 + i * 50}px`,
+              height: `${60 + i * 50}px`,
+            }}
+            animate={{
+              scale: [1, 1.05, 1],
+              opacity: [0.15, 0.3, 0.15],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              delay: i * 0.4,
+              ease: "easeInOut",
+            }}
           />
-        </mesh>
-      ))}
-      {/* Center dot */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.06, 32, 32]} />
-        <meshStandardMaterial
-          color="#a5b4fc"
-          emissive="#818cf8"
-          emissiveIntensity={1.5}
-        />
-      </mesh>
-      <Sparkles count={40} scale={3} size={1.5} speed={0.4} color="#818cf8" />
-    </group>
-  );
-}
+        ))}
+      </div>
 
-function ParallaxParticles() {
-  const count = 60;
-  const pointsRef = useRef<THREE.Points>(null);
-  const positions = useRef<Float32Array>(
-    new Float32Array(
-      Array.from({ length: count * 3 }, (_, i) => (i % 3 === 2 ? 0 : (Math.random() - 0.5) * 12))
-    )
-  );
+      {/* Fingerprint SVG */}
+      <motion.svg
+        viewBox="0 0 200 200"
+        className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 relative z-10"
+        animate={{ rotate: [0, 360] }}
+        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+      >
+        <defs>
+          <linearGradient id="fp-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#818cf8" />
+            <stop offset="50%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#a78bfa" />
+          </linearGradient>
+          <filter id="fp-glow">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        {/* Fingerprint arcs */}
+        <g fill="none" stroke="url(#fp-gradient)" strokeWidth="1.5" filter="url(#fp-glow)" opacity="0.9">
+          <path d="M100 140 C60 140, 40 110, 40 80 C40 50, 60 30, 100 30" />
+          <path d="M100 130 C65 130, 50 105, 50 80 C50 55, 65 40, 100 40" />
+          <path d="M100 120 C70 120, 60 100, 60 80 C60 60, 70 50, 100 50" />
+          <path d="M100 110 C75 110, 70 95, 70 80 C70 65, 75 58, 100 58" />
+          <path d="M100 100 C80 100, 78 90, 78 80 C78 70, 80 65, 100 65" />
+          <path d="M100 155 C50 155, 30 120, 30 80 C30 40, 55 20, 100 20" />
+          <path d="M100 148 C55 148, 38 115, 38 80 C38 45, 55 28, 100 28" />
+          <path d="M100 165 C45 165, 22 125, 22 80 C22 35, 50 12, 100 12" />
+        </g>
+        {/* Center point */}
+        <circle cx="100" cy="80" r="3" fill="#818cf8" opacity="0.8">
+          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="r" values="2;4;2" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </motion.svg>
 
-  useFrame((state) => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
-      pointsRef.current.rotation.x = state.clock.elapsedTime * 0.01;
-    }
-  });
-
-  const geom = new THREE.BufferGeometry();
-  geom.setAttribute("position", new THREE.BufferAttribute(positions.current, 3));
-
-  return (
-    <points ref={pointsRef} geometry={geom}>
-      <pointsMaterial size={0.03} color="#6366f1" transparent opacity={0.4} sizeAttenuation />
-    </points>
-  );
-}
-
-function Scene3D() {
-  return (
-    <Canvas
-      camera={{ position: [0, 0, 3.5], fov: 45 }}
-      style={{ width: "100%", height: "100%" }}
-      gl={{ antialias: true, alpha: true }}
-    >
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} color="#c7d2fe" />
-      <pointLight position={[-3, -3, 2]} intensity={0.5} color="#818cf8" />
-      <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
-        <FingerprintModel />
-      </Float>
-      <ParallaxParticles />
-    </Canvas>
+      {/* Scanning line */}
+      <motion.div
+        className="absolute left-1/2 -translate-x-1/2 w-40 h-0.5 bg-gradient-to-r from-transparent via-indigo-400 to-transparent"
+        animate={{ y: [-80, 80, -80] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
   );
 }
 
@@ -143,7 +110,7 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Grid pattern overlay */}
+      {/* Grid pattern */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
@@ -243,26 +210,20 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* Right: 3D Fingerprint */}
+        {/* Right: Fingerprint visual */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.4 }}
           className="relative w-full aspect-square max-w-[500px] lg:max-w-none mx-auto"
         >
-          {/* Glow behind 3D */}
+          {/* Glow behind */}
           <div className="absolute inset-0 rounded-[3rem] bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-transparent blur-[60px]" />
 
-          {/* 3D Canvas container */}
+          {/* Main visual container */}
           <div className="relative w-full h-full rounded-[3rem] overflow-hidden glass glow-indigo">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent" />
-            <Suspense fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="h-12 w-12 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
-              </div>
-            }>
-              <Scene3D />
-            </Suspense>
+            <FingerprintSVG />
           </div>
 
           {/* Floating badges */}
@@ -298,6 +259,21 @@ export function HeroSection() {
               <p className="text-xs font-semibold text-white">Encrypted</p>
               <p className="text-[10px] text-slate-400">E2E Security</p>
             </div>
+          </motion.div>
+
+          {/* Device info badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+            className="absolute -bottom-4 left-1/2 -translate-x-1/2 glass rounded-2xl px-5 py-3 flex items-center gap-4"
+          >
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.5)]" />
+              <span className="text-xs font-semibold text-white">Fingerspot Revo</span>
+            </div>
+            <div className="h-4 w-px bg-white/10" />
+            <span className="text-[10px] text-slate-400">Connected via Cloud</span>
           </motion.div>
         </motion.div>
       </div>

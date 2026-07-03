@@ -14,6 +14,7 @@ const features = [
     description: "Data flows instantly from terminals to the cloud. Webhooks notify your systems the millisecond a punch occurs.",
     gradient: "from-blue-500 to-cyan-400",
     bgGlow: "bg-blue-500/10",
+    visual: "sync",
   },
   {
     icon: (
@@ -25,6 +26,7 @@ const features = [
     description: "End-to-end encryption, SOC2 compliance, and role-based access control. Your biometric data stays safe.",
     gradient: "from-emerald-500 to-teal-400",
     bgGlow: "bg-emerald-500/10",
+    visual: "security",
   },
   {
     icon: (
@@ -36,6 +38,7 @@ const features = [
     description: "Modern REST endpoints, comprehensive docs, SDKs for major languages. Built for developers, by developers.",
     gradient: "from-purple-500 to-pink-400",
     bgGlow: "bg-purple-500/10",
+    visual: "api",
   },
   {
     icon: (
@@ -47,6 +50,7 @@ const features = [
     description: "Automated daily reports with Excel export. Track attendance, overtime, and schedules in one dashboard.",
     gradient: "from-amber-500 to-orange-400",
     bgGlow: "bg-amber-500/10",
+    visual: "reports",
   },
   {
     icon: (
@@ -58,6 +62,7 @@ const features = [
     description: "Instant notifications via Telegram when employees clock in or out. Customizable message templates.",
     gradient: "from-sky-500 to-blue-400",
     bgGlow: "bg-sky-500/10",
+    visual: "telegram",
   },
   {
     icon: (
@@ -69,8 +74,136 @@ const features = [
     description: "Create weekly schedules, assign shifts per day, set overtime rules. Works for any work pattern.",
     gradient: "from-rose-500 to-red-400",
     bgGlow: "bg-rose-500/10",
+    visual: "schedule",
   },
 ];
+
+function FeatureVisual({ type, gradient }: { type: string; gradient: string }) {
+  const visuals: Record<string, React.ReactNode> = {
+    sync: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="sync-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#06b6d4" />
+          </linearGradient>
+        </defs>
+        {/* Cloud */}
+        <ellipse cx="60" cy="25" rx="25" ry="12" fill="url(#sync-g)" opacity="0.15" />
+        <ellipse cx="50" cy="22" rx="18" ry="10" fill="url(#sync-g)" opacity="0.1" />
+        <ellipse cx="70" cy="22" rx="16" ry="9" fill="url(#sync-g)" opacity="0.1" />
+        {/* Arrow up */}
+        <path d="M55 55 L55 35 L48 42 M55 35 L62 42" stroke="url(#sync-g)" strokeWidth="2" fill="none" strokeLinecap="round" />
+        {/* Terminal */}
+        <rect x="35" y="55" width="50" height="20" rx="4" fill="url(#sync-g)" opacity="0.1" stroke="url(#sync-g)" strokeWidth="0.5" />
+        <circle cx="45" cy="65" r="3" fill="url(#sync-g)" opacity="0.3" />
+        <circle cx="55" cy="65" r="3" fill="url(#sync-g)" opacity="0.3" />
+        <circle cx="65" cy="65" r="3" fill="url(#sync-g)" opacity="0.3" />
+      </svg>
+    ),
+    security: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="sec-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10b981" />
+            <stop offset="100%" stopColor="#14b8a6" />
+          </linearGradient>
+        </defs>
+        {/* Shield */}
+        <path d="M60 10 L90 25 L90 50 Q90 70 60 75 Q30 70 30 50 L30 25 Z" fill="url(#sec-g)" opacity="0.1" stroke="url(#sec-g)" strokeWidth="1" />
+        {/* Lock */}
+        <rect x="50" y="38" width="20" height="16" rx="3" fill="url(#sec-g)" opacity="0.2" />
+        <path d="M55 38 L55 32 Q55 26 60 26 Q65 26 65 32 L65 38" fill="none" stroke="url(#sec-g)" strokeWidth="1.5" />
+        <circle cx="60" cy="46" r="2" fill="url(#sec-g)" opacity="0.5" />
+      </svg>
+    ),
+    api: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="api-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#a855f7" />
+            <stop offset="100%" stopColor="#ec4899" />
+          </linearGradient>
+        </defs>
+        {/* Code bracket */}
+        <text x="20" y="50" fontFamily="monospace" fontSize="28" fill="url(#api-g)" opacity="0.3">{"{"}</text>
+        <text x="85" y="50" fontFamily="monospace" fontSize="28" fill="url(#api-g)" opacity="0.3">{"}"}</text>
+        {/* API text */}
+        <text x="60" y="48" fontFamily="monospace" fontSize="12" fill="url(#api-g)" opacity="0.4" textAnchor="middle" fontWeight="bold">API</text>
+        {/* Dots */}
+        <circle cx="40" cy="65" r="2" fill="url(#api-g)" opacity="0.2" />
+        <circle cx="50" cy="65" r="2" fill="url(#api-g)" opacity="0.3" />
+        <circle cx="60" cy="65" r="2" fill="url(#api-g)" opacity="0.4" />
+        <circle cx="70" cy="65" r="2" fill="url(#api-g)" opacity="0.3" />
+        <circle cx="80" cy="65" r="2" fill="url(#api-g)" opacity="0.2" />
+      </svg>
+    ),
+    reports: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="rpt-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f59e0b" />
+            <stop offset="100%" stopColor="#f97316" />
+          </linearGradient>
+        </defs>
+        {/* Bar chart */}
+        <rect x="15" y="45" width="12" height="25" rx="2" fill="url(#rpt-g)" opacity="0.15" />
+        <rect x="32" y="30" width="12" height="40" rx="2" fill="url(#rpt-g)" opacity="0.2" />
+        <rect x="49" y="20" width="12" height="50" rx="2" fill="url(#rpt-g)" opacity="0.25" />
+        <rect x="66" y="35" width="12" height="35" rx="2" fill="url(#rpt-g)" opacity="0.2" />
+        <rect x="83" y="15" width="12" height="55" rx="2" fill="url(#rpt-g)" opacity="0.3" />
+        {/* Line */}
+        <path d="M21 42 L38 28 L55 18 L72 32 L89 13" stroke="url(#rpt-g)" strokeWidth="1.5" fill="none" opacity="0.4" />
+      </svg>
+    ),
+    telegram: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="tg-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0ea5e9" />
+            <stop offset="100%" stopColor="#3b82f6" />
+          </linearGradient>
+        </defs>
+        {/* Phone */}
+        <rect x="40" y="8" width="40" height="64" rx="8" fill="url(#tg-g)" opacity="0.1" stroke="url(#tg-g)" strokeWidth="0.8" />
+        {/* Screen */}
+        <rect x="45" y="18" width="30" height="40" rx="2" fill="url(#tg-g)" opacity="0.08" />
+        {/* Message bubbles */}
+        <rect x="48" y="22" width="20" height="8" rx="4" fill="url(#tg-g)" opacity="0.2" />
+        <rect x="52" y="34" width="18" height="8" rx="4" fill="url(#tg-g)" opacity="0.15" />
+        <rect x="48" y="46" width="22" height="8" rx="4" fill="url(#tg-g)" opacity="0.2" />
+        {/* Notification dot */}
+        <circle cx="73" cy="16" r="5" fill="url(#tg-g)" opacity="0.4" />
+      </svg>
+    ),
+    schedule: (
+      <svg viewBox="0 0 120 80" className="w-full h-full">
+        <defs>
+          <linearGradient id="sch-g" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f43f5e" />
+            <stop offset="100%" stopColor="#ef4444" />
+          </linearGradient>
+        </defs>
+        {/* Calendar */}
+        <rect x="20" y="15" width="80" height="55" rx="6" fill="url(#sch-g)" opacity="0.08" stroke="url(#sch-g)" strokeWidth="0.8" />
+        <rect x="20" y="15" width="80" height="14" rx="6" fill="url(#sch-g)" opacity="0.12" />
+        {/* Grid */}
+        <line x1="20" y1="40" x2="100" y2="40" stroke="url(#sch-g)" strokeWidth="0.3" opacity="0.3" />
+        <line x1="20" y1="55" x2="100" y2="55" stroke="url(#sch-g)" strokeWidth="0.3" opacity="0.3" />
+        <line x1="47" y1="29" x2="47" y2="70" stroke="url(#sch-g)" strokeWidth="0.3" opacity="0.3" />
+        <line x1="73" y1="29" x2="73" y2="70" stroke="url(#sch-g)" strokeWidth="0.3" opacity="0.3" />
+        {/* Active day */}
+        <rect x="50" y="43" width="20" height="10" rx="3" fill="url(#sch-g)" opacity="0.25" />
+      </svg>
+    ),
+  };
+
+  return (
+    <div className="w-full h-24 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+      {visuals[type]}
+    </div>
+  );
+}
 
 function FeatureCard({ feature, index }: { feature: typeof features[0]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -84,15 +217,20 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
       transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
       className="group relative"
     >
-      <div className="relative rounded-[2rem] p-8 glass transition-all duration-300 hover:border-white/15 h-full">
+      <div className="relative rounded-[2rem] p-6 glass transition-all duration-300 hover:border-white/15 h-full">
         {/* Hover glow */}
         <div className={`absolute inset-0 rounded-[2rem] ${feature.bgGlow} opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl`} />
 
         <div className="relative z-10">
-          <div className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} text-white mb-5 shadow-lg`}>
+          {/* Visual area */}
+          <div className="mb-4 rounded-xl overflow-hidden bg-white/[0.02] border border-white/[0.04] p-2">
+            <FeatureVisual type={feature.visual} gradient={feature.gradient} />
+          </div>
+
+          <div className={`inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} text-white mb-4 shadow-lg`}>
             {feature.icon}
           </div>
-          <h3 className="text-lg font-semibold text-white mb-3 tracking-tight">
+          <h3 className="text-lg font-semibold text-white mb-2 tracking-tight">
             {feature.title}
           </h3>
           <p className="text-sm text-slate-400 leading-relaxed">
