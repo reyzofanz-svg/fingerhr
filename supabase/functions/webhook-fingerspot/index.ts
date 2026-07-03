@@ -92,7 +92,11 @@ async function handleAttlog(supabase: any, deviceId: string, data: Record<string
   const scan = data.scan;
   if (!pin || !scan) return;
 
-  const { data: employee } = await supabase.from("employees").select("id").eq("pin", pin).single();
+  const { data: employee } = await supabase
+    .from("employees")
+    .select("id, name, telegram_chat_id")
+    .eq("pin", pin)
+    .single();
   if (!employee) return;
 
   // Parse scan time - device sends local time in WIB (Asia/Jakarta, UTC+7)
@@ -128,6 +132,71 @@ async function handleAttlog(supabase: any, deviceId: string, data: Record<string
     type: "realtime",
     raw_payload: data,
   });
+
+  // Telegram notification (fire-and-forget)
+  sendTelegramNotification(supabase, employee, status, scanTime).catch((e: any) =>
+    console.error("[Telegram] send failed:", e)
+  );
+}
+
+async function sendTelegramNotification(
+  supabase: any,
+  employee: { id: string; name: string; telegram_chat_id: string | null },
+  status: string,
+  scanTime: Date
+) {
+  try {
+    if (!employee.telegram_chat_id) return;
+
+    // Check if telegram is enabled
+    const { data: enabledSetting } = await supabase
+      .from("system_settings")
+      .select("value")
+      .eq("key", "telegram_enabled")
+      .single();
+    if (enabledSetting?.value !== "true") return;
+
+    // Get bot token
+    const { data: tokenSetting } = await supabase
+      .from("system_settings")
+      .select("value")
+      .eq("key", "telegram_bot_token")
+      .single();
+    const botToken = tokenSetting?.value;
+    if (!botToken) return;
+
+    // Get template
+    const { data: templateSetting } = await supabase
+      .from("system_settings")
+      .select("value")
+      .eq("key", "telegram_message_template")
+      .single();
+    const template = templateSetting?.value || "Halo <b>{name}</b>,\nAbsensi tercatat: <b>{status}</b> pukul <b>{time}</b>";
+
+    const statusLabel = status === "IN" ? "MASUK" : "KELUAR";
+    const time = scanTime.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Jakarta" });
+    const date = scanTime.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
+
+    const message = template
+      .replace(/{name}/g, employee.name)
+      .replace(/{status}/g, statusLabel)
+      .replace(/{time}/g, time)
+      .replace(/{date}/g, date);
+
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: employee.telegram_chat_id,
+        text: message,
+        parse_mode: "HTML",
+      }),
+    });
+    const result = await res.json();
+    console.log("[Telegram] Sent to", employee.name, ":", result.ok ? "success" : result.description);
+  } catch (err) {
+    console.error("[Telegram] Error:", err);
+  }
 }
 
 async function handleUserinfo(supabase: any, data: Record<string, unknown>) {
