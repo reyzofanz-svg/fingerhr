@@ -4,22 +4,22 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 
-function FingerprintSVG() {
+function DeviceShowcase() {
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex items-center justify-center p-8">
       {/* Animated glow rings */}
       <div className="absolute inset-0 flex items-center justify-center">
         {[1, 2, 3, 4].map((i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full border border-indigo-500/20"
+            className="absolute rounded-full border border-indigo-500/15"
             style={{
-              width: `${60 + i * 50}px`,
-              height: `${60 + i * 50}px`,
+              width: `${80 + i * 60}px`,
+              height: `${80 + i * 60}px`,
             }}
             animate={{
               scale: [1, 1.05, 1],
-              opacity: [0.15, 0.3, 0.15],
+              opacity: [0.1, 0.25, 0.1],
             }}
             transition={{
               duration: 3,
@@ -31,46 +31,27 @@ function FingerprintSVG() {
         ))}
       </div>
 
-      {/* Fingerprint SVG */}
-      <motion.svg
-        viewBox="0 0 200 200"
-        className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 relative z-10"
-        animate={{ rotate: [0, 360] }}
-        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+      {/* Product image */}
+      <motion.div
+        className="relative z-10"
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <defs>
-          <linearGradient id="fp-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#818cf8" />
-            <stop offset="50%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#a78bfa" />
-          </linearGradient>
-          <filter id="fp-glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        {/* Fingerprint arcs */}
-        <g fill="none" stroke="url(#fp-gradient)" strokeWidth="1.5" filter="url(#fp-glow)" opacity="0.9">
-          <path d="M100 140 C60 140, 40 110, 40 80 C40 50, 60 30, 100 30" />
-          <path d="M100 130 C65 130, 50 105, 50 80 C50 55, 65 40, 100 40" />
-          <path d="M100 120 C70 120, 60 100, 60 80 C60 60, 70 50, 100 50" />
-          <path d="M100 110 C75 110, 70 95, 70 80 C70 65, 75 58, 100 58" />
-          <path d="M100 100 C80 100, 78 90, 78 80 C78 70, 80 65, 100 65" />
-          <path d="M100 155 C50 155, 30 120, 30 80 C30 40, 55 20, 100 20" />
-          <path d="M100 148 C55 148, 38 115, 38 80 C38 45, 55 28, 100 28" />
-          <path d="M100 165 C45 165, 22 125, 22 80 C22 35, 50 12, 100 12" />
-        </g>
-        {/* Center point */}
-        <circle cx="100" cy="80" r="3" fill="#818cf8" opacity="0.8">
-          <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="r" values="2;4;2" dur="2s" repeatCount="indefinite" />
-        </circle>
-      </motion.svg>
+        <div className="relative">
+          {/* Glow behind device */}
+          <div className="absolute inset-0 bg-indigo-500/20 blur-[40px] rounded-full scale-75" />
+          <img
+            src="https://fingerspot.com/upload/product_list/ori_oymXuUz7_20250123142759.png"
+            alt="Fingerspot Revo W-202BNC"
+            className="relative w-64 sm:w-72 lg:w-80 h-auto drop-shadow-[0_0_30px_rgba(99,102,241,0.3)]"
+          />
+        </div>
+      </motion.div>
 
       {/* Scanning line */}
       <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-40 h-0.5 bg-gradient-to-r from-transparent via-indigo-400 to-transparent"
-        animate={{ y: [-80, 80, -80] }}
+        className="absolute left-1/2 -translate-x-1/2 w-56 h-0.5 bg-gradient-to-r from-transparent via-indigo-400 to-transparent z-20"
+        animate={{ y: [-100, 100, -100] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
@@ -223,7 +204,7 @@ export function HeroSection() {
           {/* Main visual container */}
           <div className="relative w-full h-full rounded-[3rem] overflow-hidden glass glow-indigo">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent" />
-            <FingerprintSVG />
+            <DeviceShowcase />
           </div>
 
           {/* Floating badges */}
