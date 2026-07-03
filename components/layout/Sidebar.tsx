@@ -58,7 +58,7 @@ const navItems: NavItem[] = [
       </svg>
     ),
     children: [
-      { label: "Jadwal Kerja", href: "/dashboard/attendance/schedule" },
+      { label: "Shift & Jadwal", href: "/dashboard/attendance/schedule" },
       { label: "Izin", href: "/dashboard/attendance/permissions" },
     ],
   },
@@ -101,9 +101,11 @@ const navItems: NavItem[] = [
 
 export interface SidebarProps {
   className?: string;
+  open?: boolean;
+  onClose?: () => void;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, open = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [expandedItems, setExpandedItems] = useState<string[]>([
     "Absensi",
@@ -124,15 +126,27 @@ export function Sidebar({ className }: SidebarProps) {
   };
 
   return (
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col",
-        "bg-surface-container-low/80 backdrop-blur-xl",
-        "border-r border-white/[0.08]",
-        "lg:relative lg:translate-x-0",
-        className
-      )}
-    >
+    <>
+      {/* Mobile backdrop */}
+      <div
+        onClick={onClose}
+        aria-hidden="true"
+        className={cn(
+          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity lg:hidden",
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
+      />
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col",
+          "bg-surface-container-low/80 backdrop-blur-xl",
+          "border-r border-white/[0.08]",
+          "transition-transform duration-300 ease-in-out",
+          open ? "translate-x-0" : "-translate-x-full",
+          "lg:relative lg:translate-x-0",
+          className
+        )}
+      >
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-500">
@@ -277,6 +291,7 @@ export function Sidebar({ className }: SidebarProps) {
           </li>
         </ul>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }

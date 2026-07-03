@@ -46,6 +46,9 @@ model Employee {
   department String?
   position   String?
   isActive   Boolean  @default(true) @map("is_active")
+  // Telegram (untuk notifikasi absensi) — chatId didapat saat karyawan /start ke bot
+  telegramChatId   String? @unique @map("telegram_chat_id")
+  telegramUsername String? @map("telegram_username")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
@@ -115,13 +118,51 @@ model Schedule {
   overtimeStart String?  @map("overtime_start") // "17:00" - when overtime begins
   overtimeRate  Float    @default(1.5) @map("overtime_rate") // multiplier for OT pay
   graceMinutes  Int      @default(15) @map("grace_minutes") // toleransi terlambat (menit)
+  // Batas jendela scan (jam mulai/akhir absensi diterima)
+  scanInStart   String?  @map("scan_in_start") // mulai boleh scan masuk, mis "05:00"
+  scanInEnd     String?  @map("scan_in_end") // batas akhir scan masuk, mis "11:00"
+  scanOutStart  String?  @map("scan_out_start") // mulai boleh scan pulang, mis "14:00"
+  scanOutEnd    String?  @map("scan_out_end") // batas akhir scan pulang, mis "23:00"
   isActive      Boolean  @default(true) @map("is_active")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  employees EmployeeSchedule[]
+  workScheduleDays WorkScheduleDay[]
 
   @@map("schedules")
+}
+
+// ============================================
+// WORK SCHEDULE (Jadwal Mingguan)
+// Pola 7 hari: tiap hari libur atau memakai sebuah Shift
+// ============================================
+
+model WorkSchedule {
+  id        String   @id @default(cuid())
+  name      String // "Jadwal Kantor", "Jadwal Shift Rotasi"
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  days      WorkScheduleDay[]
+  employees EmployeeSchedule[]
+
+  @@map("work_schedules")
+}
+
+model WorkScheduleDay {
+  id             String  @id @default(cuid())
+  workScheduleId String  @map("work_schedule_id")
+  dayOfWeek      Int     @map("day_of_week") // 0=Minggu ... 6=Sabtu
+  isDayOff       Boolean @default(false) @map("is_day_off")
+  shiftId        String? @map("shift_id") // null jika libur
+
+  workSchedule WorkSchedule @relation(fields: [workScheduleId], references: [id], onDelete: Cascade)
+  shift        Schedule?    @relation(fields: [shiftId], references: [id], onDelete: SetNull)
+
+  @@unique([workScheduleId, dayOfWeek])
+  @@index([workScheduleId])
+  @@map("work_schedule_days")
 }
 
 // ============================================
@@ -129,15 +170,15 @@ model Schedule {
 // ============================================
 
 model EmployeeSchedule {
-  id            String    @id @default(cuid())
-  employeeId    String    @map("employee_id")
-  scheduleId    String    @map("schedule_id")
-  effectiveFrom DateTime  @map("effective_from")
-  effectiveTo   DateTime? @map("effective_to")
-  createdAt     DateTime  @default(now()) @map("created_at")
+  id             String    @id @default(cuid())
+  employeeId     String    @map("employee_id")
+  workScheduleId String    @map("work_schedule_id")
+  effectiveFrom  DateTime  @map("effective_from")
+  effectiveTo    DateTime? @map("effective_to")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  schedule Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  employee     Employee     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  workSchedule WorkSchedule @relation(fields: [workScheduleId], references: [id], onDelete: Cascade)
 
   @@unique([employeeId, effectiveFrom])
   @@index([employeeId])

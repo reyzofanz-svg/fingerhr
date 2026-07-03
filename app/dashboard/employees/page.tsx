@@ -13,6 +13,8 @@ interface Employee {
   department: string | null;
   position: string | null;
   isActive: boolean;
+  telegramChatId: string | null;
+  telegramUsername: string | null;
   lastAttendance: string | null;
   createdAt: string;
 }
@@ -526,15 +528,16 @@ export default function EmployeesPage() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">PIN</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Nama</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Dept</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Absensi Terakhir</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Telegram</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-on-surface-variant">Absensi Terakhir</th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-on-surface-variant">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center">
+                    <td colSpan={8} className="px-4 py-12 text-center">
                     <div className="flex items-center justify-center">
                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                     </div>
@@ -542,7 +545,7 @@ export default function EmployeesPage() {
                 </tr>
               ) : employees.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-on-surface-variant">
+                  <td colSpan={8} className="px-4 py-12 text-center text-sm text-on-surface-variant">
                     Belum ada karyawan
                   </td>
                 </tr>
@@ -574,6 +577,16 @@ export default function EmployeesPage() {
                       <Badge variant={emp.isActive ? "success" : "default"}>
                         {emp.isActive ? "Aktif" : "Nonaktif"}
                       </Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.telegramChatId ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                          Terhubung
+                        </span>
+                      ) : (
+                        <span className="text-xs text-on-surface-variant">Belum</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-sm text-on-surface-variant">
                       {emp.lastAttendance

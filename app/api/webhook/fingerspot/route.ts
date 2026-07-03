@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getUserInfo } from "@/lib/fingerspot";
 import { broadcastNotification } from "@/lib/notifications";
+import { sendMessage, isEnabled as telegramEnabled, getTemplate } from "@/lib/telegram";
 
 interface WebhookPayload {
   type: string;
@@ -219,6 +220,9 @@ async function handleAttlog(deviceId: string, data: Record<string, any>) {
     message: `${employee.name} ${status === "IN" ? "masuk" : "keluar"} pukul ${timeStr}`,
   });
 
+  // Telegram notification (fire-and-forget)
+  sendTelegramNotification(employee.id, employee.name, status, scanTime).catch(() => {});
+
   console.log("[Webhook] Attlog saved:", { employee: employee.name, status, scan });
 }
 
@@ -296,4 +300,41 @@ async function handleSetTime(deviceId: string, data: Record<string, any>) {
 async function handleRegOnline(deviceId: string, data: Record<string, any>) {
   const { pin, status } = data;
   console.log("[Webhook] Register online response:", { pin, status });
+}
+
+/**
+ * Send Telegram notification to the employee (if they have linked their account).
+ * Fire-and-forget — errors are logged but not thrown.
+ */
+async function sendTelegramNotification(
+  employeeId: string,
+  employeeName: string,
+  status: string,
+  scanTime: Date
+): Promise<void> {
+  try {
+    if (!(await telegramEnabled())) return;
+
+    // Reload employee to get fresh telegramChatId
+    const emp = await prisma.employee.findUnique({
+      where: { id: employeeId },
+      select: { telegramChatId: true },
+    });
+    if (!emp?.telegramChatId) return;
+
+    const statusLabel = status === "IN" ? "MASUK" : "KELUAR";
+    const time = scanTime.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false });
+    const date = scanTime.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+
+    const template = await getTemplate();
+    const message = template
+      .replace(/{name}/g, employeeName)
+      .replace(/{status}/g, statusLabel)
+      .replace(/{time}/g, time)
+      .replace(/{date}/g, date);
+
+    await sendMessage(emp.telegramChatId, message);
+  } catch (err) {
+    console.error("[Telegram] Failed to send notification:", err);
+  }
 }

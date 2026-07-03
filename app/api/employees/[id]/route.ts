@@ -27,7 +27,7 @@ export async function GET(
           include: { device: { select: { name: true } } },
         },
         schedules: {
-          include: { schedule: true },
+          include: { workSchedule: { include: { days: { include: { shift: true } } } } },
           orderBy: { createdAt: "desc" },
           take: 1,
         },

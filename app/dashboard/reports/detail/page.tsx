@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, Button, Input } from "@/components/ui";
+import { Card, CardContent, Button } from "@/components/ui";
 import { Breadcrumbs } from "@/components/layout";
 
 interface Employee {
@@ -12,467 +12,247 @@ interface Employee {
   position: string | null;
 }
 
-interface AttendanceLog {
-  scanTime: string;
-  status: string;
+interface DailyRow {
+  tanggal: string;
+  hari: string;
+  shiftName: string;
+  jadwalMasuk: string;
+  jadwalPulang: string;
+  absensiMasuk: string;
+  terlambat: string;
+  absensiPulang: string;
+  pulangCepat: string;
+  istirahatDurasi: string;
+  istirahatLebih: string;
+  lemburAwal: string;
+  lemburAkhir: string;
+  lemburShift: string;
+  durasiKerja: string;
+  masukKerja: number;
+  libur: number;
+  keterangan: string;
 }
 
-interface Schedule {
-  name: string;
-  startTime: string;
-  endTime: string;
-  breakStart: string | null;
-  breakEnd: string | null;
-  overtimeStart: string | null;
-  overtimeRate: number;
-  graceMinutes: number;
+interface Recap {
+  kehadiran: number;
+  durasiKerja: string;
+  pulangAwal: string;
+  tidakAbsenMasuk: number;
+  alpha: number;
+  presentase: string;
+  totalDurasi: string;
+  istirahatLebih: string;
+  tidakAbsenKeluar: number;
+  jumlahIzin: number;
+  datangTerlambat: string;
 }
 
-interface DailyReport {
-  date: string;
-  dayName: string;
-  schedule: Schedule | null;
-  clockIn: string | null;
-  clockOut: string | null;
-  status: string;
-  lateMinutes: number;
-  earlyLeaveMinutes: number;
-  overtimeMinutes: number;
-  workDuration: string;
-  notes: string;
+interface Report {
+  employee: Employee;
+  periode: { start: string; end: string };
+  rows: DailyRow[];
+  recap: Recap;
 }
 
-interface ReportSummary {
-  totalDays: number;
-  present: number;
-  late: number;
-  earlyLeave: number;
-  overtime: number;
-  totalOvertimeMinutes: number;
-  absent: number;
-  permission: number;
+function firstOfMonth() {
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().slice(0, 10);
+}
+function today() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 export default function DetailReportsPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
-  const [dailyReports, setDailyReports] = useState<DailyReport[]>([]);
-  const [summary, setSummary] = useState<ReportSummary | null>(null);
+  const [employeeId, setEmployeeId] = useState("");
+  const [startDate, setStartDate] = useState(firstOfMonth());
+  const [endDate, setEndDate] = useState(today());
+  const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchEmployees = async () => {
-    try {
-      const res = await fetch("/api/employees");
-      const data = await res.json();
-      setEmployees(data.employees || []);
-    } catch (error) {
-      console.error("Failed to fetch employees:", error);
-    }
-  };
+  useEffect(() => {
+    fetch("/api/employees")
+      .then((r) => r.json())
+      .then((d) => setEmployees(d.employees || []))
+      .catch(console.error);
+  }, []);
 
-  const generateReport = async () => {
-    if (!selectedEmployee) return;
+  const generate = async () => {
+    if (!employeeId) return;
     setLoading(true);
-
     try {
-      // Get attendance logs for the month
-      const startDate = `${month}-01`;
-      const endDate = `${month}-31`;
-
       const res = await fetch(
-        `/api/attendance/logs?startDate=${startDate}&endDate=${endDate}&employeeId=${selectedEmployee.id}`
+        `/api/reports/detail?employeeId=${employeeId}&startDate=${startDate}&endDate=${endDate}`
       );
-      const logs: AttendanceLog[] = await res.json();
-
-      // Get schedule (default SM1)
-      const scheduleRes = await fetch("/api/attendance/schedule");
-      const schedules = await scheduleRes.json();
-      const schedule = schedules[0] || {
-        name: "SM1",
-        startTime: "08:30",
-        endTime: "16:30",
-        breakStart: null,
-        breakEnd: null,
-        overtimeStart: null,
-        overtimeRate: 1.5,
-        graceMinutes: 15,
-      };
-
-      // Generate daily reports
-      const year = parseInt(month.split("-")[0]);
-      const monthNum = parseInt(month.split("-")[1]);
-      const daysInMonth = new Date(Date.UTC(year, monthNum, 0)).getUTCDate();
-      const reports: DailyReport[] = [];
-
-      let present = 0;
-      let late = 0;
-      let earlyLeave = 0;
-      let overtime = 0;
-      let totalOvertimeMinutes = 0;
-      let absent = 0;
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(Date.UTC(year, monthNum - 1, day));
-        const dateStr = date.toISOString().split("T")[0];
-        const dayName = date.toLocaleDateString("id-ID", { weekday: "long", timeZone: "Asia/Jakarta" });
-
-        // Skip weekends (use UTC day)
-        if (date.getUTCDay() === 0 || date.getUTCDay() === 6) {
-          continue;
-        }
-
-        // Find logs for this day
-        const dayLogs = logs.filter((log) => log.scanTime.startsWith(dateStr));
-        const clockInLog = dayLogs.find((log) => log.status === "IN");
-        const clockOutLog = dayLogs.find((log) => log.status === "OUT");
-
-        const clockIn = clockInLog
-          ? new Date(clockInLog.scanTime).toLocaleTimeString("id-ID", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : null;
-        const clockOut = clockOutLog
-          ? new Date(clockOutLog.scanTime).toLocaleTimeString("id-ID", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          : null;
-
-        // Calculate late
-        let lateMinutes = 0;
-        if (clockIn) {
-          const [startHour, startMin] = schedule.startTime.split(":").map(Number);
-          const [clockHour, clockMin] = clockIn.split(":").map(Number);
-          const startTotal = startHour * 60 + startMin;
-          const clockTotal = clockHour * 60 + clockMin;
-          if (clockTotal > startTotal + schedule.graceMinutes) {
-            lateMinutes = clockTotal - startTotal;
-          }
-        }
-
-        // Calculate early leave
-        let earlyLeaveMinutes = 0;
-        if (clockOut) {
-          const [endHour, endMin] = schedule.endTime.split(":").map(Number);
-          const [clockHour, clockMin] = clockOut.split(":").map(Number);
-          const endTotal = endHour * 60 + endMin;
-          const clockTotal = clockHour * 60 + clockMin;
-          if (clockTotal < endTotal) {
-            earlyLeaveMinutes = endTotal - clockTotal;
-          }
-        }
-
-        // Calculate overtime
-        let overtimeMinutes = 0;
-        if (clockOut && schedule.overtimeStart) {
-          const [otHour, otMin] = schedule.overtimeStart.split(":").map(Number);
-          const [clockHour, clockMin] = clockOut.split(":").map(Number);
-          const otTotal = otHour * 60 + otMin;
-          const clockTotal = clockHour * 60 + clockMin;
-          if (clockTotal > otTotal) {
-            overtimeMinutes = clockTotal - otTotal;
-          }
-        }
-
-        // Determine status
-        let status = "Alpha";
-        let notes = "Tidak hadir";
-
-        if (clockIn) {
-          present++;
-          if (lateMinutes > 0) {
-            status = "Terlambat";
-            notes = `Terlambat ${lateMinutes} menit`;
-            late++;
-          } else {
-            status = "Hadir";
-            notes = "Tepat waktu";
-          }
-
-          if (earlyLeaveMinutes > 0) {
-            notes += `, Pulang cepat ${earlyLeaveMinutes} menit`;
-            earlyLeave++;
-          }
-
-          if (overtimeMinutes > 0) {
-            notes += `, Lembur ${overtimeMinutes} menit`;
-            overtime++;
-            totalOvertimeMinutes += overtimeMinutes;
-          }
-        } else {
-          absent++;
-        }
-
-        // Calculate work duration
-        let workDuration = "-";
-        if (clockIn && clockOut) {
-          const [inH, inM] = clockIn.split(":").map(Number);
-          const [outH, outM] = clockOut.split(":").map(Number);
-          const diff = outH * 60 + outM - (inH * 60 + inM);
-          const hours = Math.floor(diff / 60);
-          const mins = diff % 60;
-          workDuration = `${hours}j ${mins}m`;
-        }
-
-        reports.push({
-          date: dateStr,
-          dayName,
-          schedule,
-          clockIn,
-          clockOut,
-          status,
-          lateMinutes,
-          earlyLeaveMinutes,
-          overtimeMinutes,
-          workDuration,
-          notes,
-        });
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || "Gagal membuat laporan");
+        return;
       }
-
-      setDailyReports(reports);
-      setSummary({
-        totalDays: reports.length,
-        present,
-        late,
-        earlyLeave,
-        overtime,
-        totalOvertimeMinutes,
-        absent,
-        permission: 0,
-      });
-    } catch (error) {
-      console.error("Failed to generate report:", error);
+      setReport(await res.json());
+    } catch {
+      alert("Gagal membuat laporan");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  const handleExportExcel = async () => {
-    if (!selectedEmployee || dailyReports.length === 0) return;
-
-    try {
-      const [year, monthNum] = month.split("-");
-      const startDate = `${month}-01`;
-      const endDate = `${year}-${monthNum}-${new Date(parseInt(year), parseInt(monthNum), 0).getDate()}`;
-
-      const params = new URLSearchParams({
-        employeeId: selectedEmployee.id,
-        startDate,
-        endDate,
-      });
-
-      const res = await fetch(`/api/export/excel?${params.toString()}`);
-
-      if (!res.ok) {
-        alert("Gagal export Excel");
-        return;
-      }
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `laporan-${selectedEmployee.name}-${month}.xlsx`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      alert("Gagal export Excel");
-    }
+  const exportExcel = (all: boolean) => {
+    const params = new URLSearchParams({ startDate, endDate });
+    if (!all && employeeId) params.set("employeeId", employeeId);
+    window.open(`/api/reports/detail-excel?${params.toString()}`, "_blank");
   };
 
+  const recapItems = report
+    ? [
+        ["Kehadiran", report.recap.kehadiran],
+        ["Durasi Kerja", report.recap.durasiKerja],
+        ["Pulang Awal", report.recap.pulangAwal],
+        ["Tidak Absen Masuk", report.recap.tidakAbsenMasuk],
+        ["Alpha", report.recap.alpha],
+        ["Presentase", report.recap.presentase],
+        ["Total Durasi", report.recap.totalDurasi],
+        ["Istirahat Lebih", report.recap.istirahatLebih],
+        ["Tidak Absen Keluar", report.recap.tidakAbsenKeluar],
+        ["Jumlah Izin", report.recap.jumlahIzin],
+        ["Datang Terlambat", report.recap.datangTerlambat],
+      ]
+    : [];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Laporan", href: "/dashboard/reports" },
+          { label: "Laporan", href: "/dashboard/reports/detail" },
           { label: "Detail Kehadiran" },
         ]}
       />
 
-      {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-on-surface">
-            Laporan Detail Kehadiran
-          </h1>
-          <p className="mt-1 text-sm text-on-surface-variant">
-            Laporan kehadiran berdasarkan jadwal kerja + export Excel
-          </p>
-        </div>
-        {dailyReports.length > 0 && (
-          <Button variant="primary" size="md" onClick={handleExportExcel}>
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>
-            Export Excel
-          </Button>
-        )}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-on-surface">Laporan Rincian Harian</h1>
+        <p className="mt-1 text-sm text-on-surface-variant">Rincian kehadiran per karyawan berdasarkan shift &amp; jadwal</p>
       </div>
 
-      {/* Filters */}
+      {/* Filter */}
       <Card variant="glass-high">
-        <CardContent className="py-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="w-full sm:w-64">
-              <label className="mb-2 block text-sm font-medium text-on-surface">Karyawan *</label>
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-on-surface">Karyawan</label>
               <select
-                value={selectedEmployee?.id || ""}
-                onChange={(e) => {
-                  const emp = employees.find((emp) => emp.id === e.target.value);
-                  setSelectedEmployee(emp || null);
-                }}
-                className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)}
+                className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none"
               >
                 <option value="">Pilih Karyawan</option>
                 {employees.map((emp) => (
-                  <option key={emp.id} value={emp.id}>
-                    {emp.name} ({emp.pin})
-                  </option>
+                  <option key={emp.id} value={emp.id}>{emp.name} ({emp.pin})</option>
                 ))}
               </select>
             </div>
-            <Input
-              label="Bulan"
-              type="month"
-              value={month}
-              onChange={(e) => setMonth(e.target.value)}
-            />
-            <Button
-              variant="primary"
-              onClick={generateReport}
-              disabled={!selectedEmployee || loading}
-            >
-              {loading ? (
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              ) : (
-                "Generate Laporan"
-              )}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-on-surface">Dari Tanggal</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-on-surface">Sampai Tanggal</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
+            </div>
+            <div className="flex items-end">
+              <Button variant="primary" className="w-full" onClick={generate} disabled={!employeeId || loading}>
+                {loading ? "Memproses..." : "Tampilkan"}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Button variant="secondary" size="sm" onClick={() => exportExcel(false)} disabled={!employeeId}>
+              Export Excel (karyawan ini)
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => exportExcel(true)}>
+              Export Excel (semua karyawan)
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Employee Info + Summary */}
-      {selectedEmployee && summary && (
+      {report && (
         <>
-          <Card variant="glass">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary-container to-tertiary-container text-xl font-bold text-white">
-                  {selectedEmployee.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .slice(0, 2)}
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-on-surface">{selectedEmployee.name}</h2>
-                  <p className="text-sm text-on-surface-variant">
-                    PIN: {selectedEmployee.pin} | {selectedEmployee.department || "-"} |{" "}
-                    {selectedEmployee.position || "-"}
-                  </p>
-                </div>
+          {/* Identity + recap */}
+          <Card variant="glass-high">
+            <CardContent className="p-4 sm:p-6">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-on-surface">{report.employee.name}</h2>
+                <p className="text-sm text-on-surface-variant">
+                  ID: {report.employee.pin} · {report.employee.department || "-"} · {report.employee.position || "-"}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {recapItems.map(([label, value]) => (
+                  <div key={label as string} className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                    <div className="text-xs text-on-surface-variant">{label}</div>
+                    <div className="text-sm font-semibold text-on-surface">{value}</div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-6">
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Total Hari Kerja</p>
-                <p className="mt-1 text-2xl font-semibold text-on-surface">{summary.totalDays}</p>
-              </CardContent>
-            </Card>
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Hadir</p>
-                <p className="mt-1 text-2xl font-semibold text-emerald-400">{summary.present}</p>
-              </CardContent>
-            </Card>
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Terlambat</p>
-                <p className="mt-1 text-2xl font-semibold text-amber-400">{summary.late}</p>
-              </CardContent>
-            </Card>
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Pulang Cepat</p>
-                <p className="mt-1 text-2xl font-semibold text-blue-400">{summary.earlyLeave}</p>
-              </CardContent>
-            </Card>
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Lembur</p>
-                <p className="mt-1 text-2xl font-semibold text-purple-400">{summary.overtime}</p>
-                <p className="text-xs text-on-surface-variant">{summary.totalOvertimeMinutes} menit</p>
-              </CardContent>
-            </Card>
-            <Card variant="glass">
-              <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-on-surface-variant">Alpha</p>
-                <p className="mt-1 text-2xl font-semibold text-error">{summary.absent}</p>
-              </CardContent>
-            </Card>
-          </div>
-        </>
-      )}
-
-      {/* Daily Report Table */}
-      {dailyReports.length > 0 && (
-        <Card variant="glass-high">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Tanggal</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Hari</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Shift</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Masuk</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Pulang</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Absensi</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Durasi</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-on-surface-variant">Keterangan</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.05]">
-                  {dailyReports.map((report) => (
-                    <tr key={report.date} className="transition-colors hover:bg-surface-container/50">
-                      <td className="px-6 py-4 text-sm text-on-surface">{report.date}</td>
-                      <td className="px-6 py-4 text-sm text-on-surface">{report.dayName}</td>
-                      <td className="px-6 py-4 text-sm text-on-surface">{report.schedule?.name || "-"}</td>
-                      <td className="px-6 py-4 font-mono text-sm text-on-surface">{report.clockIn || "-"}</td>
-                      <td className="px-6 py-4 font-mono text-sm text-on-surface">{report.clockOut || "-"}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                            report.status === "Hadir"
-                              ? "bg-emerald-500/10 text-emerald-400"
-                              : report.status === "Terlambat"
-                              ? "bg-amber-500/10 text-amber-400"
-                              : "bg-red-500/10 text-red-400"
-                          }`}
-                        >
-                          {report.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-on-surface">{report.workDuration}</td>
-                      <td className="px-6 py-4 text-sm text-on-surface-variant">{report.notes}</td>
+          {/* Detailed table */}
+          <Card variant="glass-high">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full whitespace-nowrap text-xs">
+                  <thead>
+                    <tr className="border-b border-white/[0.08] text-on-surface-variant">
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Tanggal</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Hari</th>
+                      <th colSpan={3} className="border-r border-white/[0.06] px-2 py-2 text-center">Ketentuan</th>
+                      <th colSpan={4} className="border-r border-white/[0.06] px-2 py-2 text-center">Kehadiran</th>
+                      <th colSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Lembur</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Durasi Kerja</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Masuk</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Libur</th>
+                      <th rowSpan={2} className="px-2 py-2 text-left">Keterangan</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                    <tr className="border-b border-white/[0.08] text-on-surface-variant">
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Shift</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Masuk</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Pulang</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Absen Masuk</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Telat</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Absen Pulang</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Plg Cepat</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Awal</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Akhir</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.05]">
+                    {report.rows.map((row, i) => (
+                      <tr key={i} className={`text-on-surface ${row.libur === 1 ? "bg-white/[0.02] text-on-surface-variant" : ""}`}>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5">{row.tanggal}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5">{row.hari}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.shiftName}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.jadwalMasuk}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.jadwalPulang}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.absensiMasuk}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.terlambat}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.absensiPulang}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.pulangCepat}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.lemburAwal}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.lemburAkhir}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.durasiKerja}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.masukKerja}</td>
+                        <td className="border-r border-white/[0.06] px-2 py-1.5 text-center">{row.libur}</td>
+                        <td className="px-2 py-1.5">{row.keterangan}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );

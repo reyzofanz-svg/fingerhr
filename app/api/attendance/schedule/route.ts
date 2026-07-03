@@ -2,15 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
+const HHMM = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+const optTime = z.string().regex(HHMM, "Format jam: HH:MM").optional().nullable();
+
 const scheduleSchema = z.object({
-  name: z.string().min(1, "Nama jadwal wajib diisi"),
-  startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format jam: HH:MM"),
-  endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format jam: HH:MM"),
-  breakStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format jam: HH:MM").optional().nullable(),
-  breakEnd: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format jam: HH:MM").optional().nullable(),
-  overtimeStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, "Format jam: HH:MM").optional().nullable(),
+  name: z.string().min(1, "Nama shift wajib diisi"),
+  startTime: z.string().regex(HHMM, "Format jam: HH:MM"),
+  endTime: z.string().regex(HHMM, "Format jam: HH:MM"),
+  breakStart: optTime,
+  breakEnd: optTime,
+  overtimeStart: optTime,
   overtimeRate: z.number().min(1).max(5).optional().default(1.5),
   graceMinutes: z.number().min(0).max(120).optional().default(15),
+  scanInStart: optTime,
+  scanInEnd: optTime,
+  scanOutStart: optTime,
+  scanOutEnd: optTime,
 });
 
 export async function GET() {
@@ -19,7 +26,7 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       include: {
         _count: {
-          select: { employees: true },
+          select: { workScheduleDays: true },
         },
       },
     });
@@ -49,6 +56,10 @@ export async function POST(request: NextRequest) {
         overtimeStart: validated.overtimeStart,
         overtimeRate: validated.overtimeRate ?? 1.5,
         graceMinutes: validated.graceMinutes ?? 15,
+        scanInStart: validated.scanInStart,
+        scanInEnd: validated.scanInEnd,
+        scanOutStart: validated.scanOutStart,
+        scanOutEnd: validated.scanOutEnd,
       },
     });
 

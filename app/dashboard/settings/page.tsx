@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, Button, Input } from "@/components/ui";
+import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
 import { Breadcrumbs } from "@/components/layout";
 
 interface Settings {
@@ -9,6 +9,9 @@ interface Settings {
   companyEmail: string;
   companyPhone: string;
   companyAddress: string;
+  telegram_bot_token: string;
+  telegram_enabled: string;
+  telegram_message_template: string;
 }
 
 interface OfficeLocation {
@@ -24,9 +27,13 @@ export default function SettingsPage() {
     companyEmail: "admin@fingerhr.com",
     companyPhone: "081234567890",
     companyAddress: "",
+    telegram_bot_token: "",
+    telegram_enabled: "false",
+    telegram_message_template: "Halo <b>{name}</b>,\nAbsensi tercatat: <b>{status}</b> pukul <b>{time}</b>",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [webhookSetting, setWebhookSetting] = useState(false);
 
   // Office Locations state
   const [officeLocations, setOfficeLocations] = useState<OfficeLocation[]>([]);
@@ -48,6 +55,9 @@ export default function SettingsPage() {
           companyEmail: data.companyEmail || "admin@fingerhr.com",
           companyPhone: data.companyPhone || "081234567890",
           companyAddress: data.companyAddress || "",
+          telegram_bot_token: data.telegram_bot_token || "",
+          telegram_enabled: data.telegram_enabled || "false",
+          telegram_message_template: data.telegram_message_template || "Halo <b>{name}</b>,\nAbsensi tercatat: <b>{status}</b> pukul <b>{time}</b>",
         });
         // Parse office locations from settings
         if (data.office_locations) {
@@ -88,6 +98,41 @@ export default function SettingsPage() {
       alert("Gagal menyimpan pengaturan");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSetTelegramWebhook = async () => {
+    if (!settings.telegram_bot_token) {
+      alert("Isi bot token terlebih dahulu");
+      return;
+    }
+    setWebhookSetting(true);
+    try {
+      // Save token first
+      await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegram_bot_token: settings.telegram_bot_token }),
+      });
+
+      const baseUrl = window.location.origin;
+      const webhookUrl = `${baseUrl}/api/telegram/webhook`;
+
+      const res = await fetch("/api/telegram/set-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: webhookUrl }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        alert("Webhook berhasil diatur!\nURL: " + webhookUrl);
+      } else {
+        alert("Gagal set webhook: " + (data.error || "Unknown error"));
+      }
+    } catch {
+      alert("Gagal mengatur webhook");
+    } finally {
+      setWebhookSetting(false);
     }
   };
 
@@ -226,19 +271,102 @@ export default function SettingsPage() {
         </Card>
       </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end">
-        <Button variant="primary" onClick={handleSave} disabled={saving || loading}>
-          {saving ? (
-            <>
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Menyimpan...
-            </>
-          ) : (
-            "Simpan Pengaturan"
-          )}
-        </Button>
-      </div>
+        {/* Save Button */}
+        <div className="flex justify-end">
+          <Button variant="primary" onClick={handleSave} disabled={saving || loading}>
+            {saving ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Menyimpan...
+              </>
+            ) : (
+              "Simpan Pengaturan"
+            )}
+          </Button>
+        </div>
+
+        {/* Telegram Config */}
+        <Card variant="glass-high" className="lg:col-span-2">
+          <div className="border-b border-white/[0.08] px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-on-surface">Notifikasi Telegram</h3>
+                <p className="mt-1 text-xs text-on-surface-variant">
+                  Kirim notifikasi otomatis ke karyawan saat scan masuk/keluar
+                </p>
+              </div>
+              <Badge variant={settings.telegram_enabled === "true" ? "success" : "default"} size="sm">
+                {settings.telegram_enabled === "true" ? "Aktif" : "Nonaktif"}
+              </Badge>
+            </div>
+          </div>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-on-surface">Aktifkan Notifikasi</p>
+                  <p className="text-xs text-on-surface-variant">Kirim notifikasi absensi via Telegram bot</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSettings({
+                    ...settings,
+                    telegram_enabled: settings.telegram_enabled === "true" ? "false" : "true",
+                  })}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings.telegram_enabled === "true" ? "bg-primary" : "bg-on-surface-variant/30"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings.telegram_enabled === "true" ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              <Input
+                label="Bot Token"
+                placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+                value={settings.telegram_bot_token}
+                onChange={(e) => setSettings({ ...settings, telegram_bot_token: e.target.value })}
+                type="password"
+              />
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-on-surface">
+                  Template Pesan
+                </label>
+                <textarea
+                  value={settings.telegram_message_template}
+                  onChange={(e) => setSettings({ ...settings, telegram_message_template: e.target.value })}
+                  rows={3}
+                  className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  placeholder="Halo {name}, Absensi tercatat: {status} pukul {time}"
+                />
+                <p className="mt-1 text-xs text-on-surface-variant">
+                  Variabel: {"{name}"}, {"{status}"}, {"{time}"}, {"{date}"}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-white/[0.03] p-4">
+                <p className="text-xs font-medium text-on-surface">Cara Mengatur:</p>
+                <ol className="mt-2 space-y-1 text-xs text-on-surface-variant">
+                  <li>1. Buat bot Telegram via @BotFather, copy token-nya</li>
+                  <li>2. Paste token di atas, lalu simpan</li>
+                  <li>3. Klik tombol "Set Webhook" di bawah</li>
+                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-primary">/start &lt;PIN&gt;</span></li>
+                </ol>
+              </div>
+
+              <div className="flex gap-3">
+                <Button variant="secondary" size="md" onClick={handleSetTelegramWebhook} disabled={webhookSetting || !settings.telegram_bot_token}>
+                  {webhookSetting ? "Mengatur..." : "Set Webhook"}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
       {/* Office Locations */}
       <Card variant="glass-high">

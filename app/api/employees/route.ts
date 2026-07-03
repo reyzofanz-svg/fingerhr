@@ -68,6 +68,8 @@ export async function GET(request: NextRequest) {
       department: emp.department,
       position: emp.position,
       isActive: emp.isActive,
+      telegramChatId: emp.telegramChatId || null,
+      telegramUsername: emp.telegramUsername || null,
       lastAttendance: emp.attendanceLogs[0]?.scanTime?.toISOString() || null,
       createdAt: emp.createdAt.toISOString(),
     }));

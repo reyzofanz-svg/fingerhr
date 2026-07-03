@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const assignSchema = z.object({
   employeeId: z.string().min(1, "Karyawan wajib dipilih"),
-  scheduleId: z.string().min(1, "Jadwal wajib dipilih"),
+  workScheduleId: z.string().min(1, "Jadwal wajib dipilih"),
   effectiveFrom: z.string().min(1, "Tanggal berlaku wajib diisi"),
   effectiveTo: z.string().optional().nullable(),
 });
@@ -23,7 +23,9 @@ export async function GET(request: NextRequest) {
       where,
       include: {
         employee: { select: { id: true, name: true, pin: true } },
-        schedule: true,
+        workSchedule: {
+          include: { days: { include: { shift: true }, orderBy: { dayOfWeek: "asc" } } },
+        },
       },
       orderBy: { effectiveFrom: "desc" },
     });
@@ -43,41 +45,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validated = assignSchema.parse(body);
 
-    // Check if employee exists
     const employee = await prisma.employee.findUnique({
       where: { id: validated.employeeId },
     });
-
     if (!employee) {
-      return NextResponse.json(
-        { error: "Karyawan tidak ditemukan" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Karyawan tidak ditemukan" }, { status: 404 });
     }
 
-    // Check if schedule exists
-    const schedule = await prisma.schedule.findUnique({
-      where: { id: validated.scheduleId },
+    const workSchedule = await prisma.workSchedule.findUnique({
+      where: { id: validated.workScheduleId },
     });
-
-    if (!schedule) {
-      return NextResponse.json(
-        { error: "Jadwal tidak ditemukan" },
-        { status: 404 }
-      );
+    if (!workSchedule) {
+      return NextResponse.json({ error: "Jadwal tidak ditemukan" }, { status: 404 });
     }
 
-    // Check for existing assignment on same date
     const existing = await prisma.employeeSchedule.findFirst({
       where: {
         employeeId: validated.employeeId,
         effectiveFrom: new Date(validated.effectiveFrom),
       },
     });
-
     if (existing) {
       return NextResponse.json(
-        { error: "Karyawan sudah memiliki jadwal pada tanggal tersebut" },
+        { error: "Karyawan sudah memiliki penugasan pada tanggal tersebut" },
         { status: 400 }
       );
     }
@@ -85,13 +75,13 @@ export async function POST(request: NextRequest) {
     const assignment = await prisma.employeeSchedule.create({
       data: {
         employeeId: validated.employeeId,
-        scheduleId: validated.scheduleId,
+        workScheduleId: validated.workScheduleId,
         effectiveFrom: new Date(validated.effectiveFrom),
         effectiveTo: validated.effectiveTo ? new Date(validated.effectiveTo) : null,
       },
       include: {
         employee: { select: { name: true } },
-        schedule: true,
+        workSchedule: true,
       },
     });
 
@@ -104,9 +94,21 @@ export async function POST(request: NextRequest) {
       );
     }
     console.error("[API] Assign schedule error:", error);
-    return NextResponse.json(
-      { error: "Gagal menugaskan jadwal" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Gagal menugaskan jadwal" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
+    }
+    await prisma.employeeSchedule.delete({ where: { id } });
+    return NextResponse.json({ message: "Penugasan dihapus" });
+  } catch (error) {
+    console.error("[API] Delete assignment error:", error);
+    return NextResponse.json({ error: "Gagal menghapus penugasan" }, { status: 500 });
   }
 }

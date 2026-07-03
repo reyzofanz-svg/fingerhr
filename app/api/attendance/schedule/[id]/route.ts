@@ -2,15 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
+const HHMM = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+const optTime = z.string().regex(HHMM).optional().nullable();
+
 const scheduleUpdateSchema = z.object({
   name: z.string().min(1).optional(),
-  startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-  breakStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional().nullable(),
-  breakEnd: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional().nullable(),
-  overtimeStart: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional().nullable(),
+  startTime: z.string().regex(HHMM).optional(),
+  endTime: z.string().regex(HHMM).optional(),
+  breakStart: optTime,
+  breakEnd: optTime,
+  overtimeStart: optTime,
   overtimeRate: z.number().min(1).max(5).optional(),
   graceMinutes: z.number().min(0).max(120).optional(),
+  scanInStart: optTime,
+  scanInEnd: optTime,
+  scanOutStart: optTime,
+  scanOutEnd: optTime,
   isActive: z.boolean().optional(),
 });
 
@@ -23,9 +30,9 @@ export async function GET(
     const schedule = await prisma.schedule.findUnique({
       where: { id },
       include: {
-        employees: {
+        workScheduleDays: {
           include: {
-            employee: { select: { id: true, name: true, pin: true } },
+            workSchedule: { select: { id: true, name: true } },
           },
         },
       },
@@ -95,19 +102,19 @@ export async function DELETE(
 
     const existing = await prisma.schedule.findUnique({
       where: { id },
-      include: { _count: { select: { employees: true } } },
+      include: { _count: { select: { workScheduleDays: true } } },
     });
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Jadwal tidak ditemukan" },
+        { error: "Shift tidak ditemukan" },
         { status: 404 }
       );
     }
 
-    if (existing._count.employees > 0) {
+    if (existing._count.workScheduleDays > 0) {
       return NextResponse.json(
-        { error: "Tidak bisa menghapus jadwal yang masih ditugaskan ke karyawan" },
+        { error: "Tidak bisa menghapus shift yang masih dipakai di jadwal" },
         { status: 400 }
       );
     }

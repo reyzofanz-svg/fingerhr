@@ -9,9 +9,10 @@ export interface HeaderProps {
   title?: string;
   description?: string;
   actions?: React.ReactNode;
+  onMenuClick?: () => void;
 }
 
-export function Header({ className, title, description, actions }: HeaderProps) {
+export function Header({ className, title, description, actions, onMenuClick }: HeaderProps) {
   void title;
   void description;
   return (
@@ -25,6 +26,7 @@ export function Header({ className, title, description, actions }: HeaderProps) 
         {/* Mobile menu button */}
         <button
           type="button"
+          onClick={onMenuClick}
           className="rounded-lg p-2 text-on-surface-variant hover:bg-white/[0.05] lg:hidden"
           aria-label="Open sidebar"
         >
