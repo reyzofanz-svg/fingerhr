@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
 function DeviceShowcase() {
@@ -57,9 +58,12 @@ function DeviceShowcase() {
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 rounded-2xl z-10 mix-blend-overlay" />
 
           {/* Device image */}
-          <img
+          <Image
             src="/fingerspot-device.png"
             alt="Fingerspot Revo W-202BNC"
+            width={320}
+            height={320}
+            priority
             className="relative w-64 sm:w-72 lg:w-80 h-auto drop-shadow-[0_20px_60px_rgba(99,102,241,0.4)]"
             style={{
               filter: "drop-shadow(0 0 40px rgba(99,102,241,0.25)) saturate(1.1) brightness(1.05)",
