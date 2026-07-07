@@ -4,72 +4,63 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { SplineScene } from "@/components/ui/splite";
 
-function AmbientOrbs() {
+function LiquidOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <motion.div
-        className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full"
+        className="absolute top-[15%] right-[20%] w-[500px] h-[500px] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(99,102,241,0.18) 0%, rgba(139,92,246,0.08) 40%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 40%, transparent 70%)",
+          filter: "blur(60px)",
         }}
-        animate={{ x: [0, 80, 0], y: [0, -50, 0], scale: [1, 1.2, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ x: [0, 60, 0], y: [0, -40, 0], scale: [1, 1.2, 1] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] rounded-full"
+        className="absolute bottom-[20%] right-[30%] w-[400px] h-[400px] rounded-full"
         style={{
-          background: "radial-gradient(circle, rgba(168,85,247,0.14) 0%, rgba(59,130,246,0.06) 40%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 60%)",
+          filter: "blur(50px)",
         }}
-        animate={{ x: [0, -60, 0], y: [0, 60, 0], scale: [1, 1.15, 1] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-1/2 right-1/2 w-[400px] h-[400px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 60%)",
-        }}
-        animate={{ x: [0, 40, 0], y: [0, -40, 0], scale: [1, 1.3, 1] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ x: [0, -50, 0], y: [0, 50, 0], scale: [1, 1.15, 1] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );
 }
 
-function FloatingParticles() {
-  const particles = [
-    { left: "15%", top: "20%", size: 4, dur: 20, delay: 0, color: "bg-indigo-400" },
-    { left: "75%", top: "15%", size: 3, dur: 25, delay: 2, color: "bg-purple-400" },
-    { left: "85%", top: "50%", size: 5, dur: 18, delay: 4, color: "bg-blue-400" },
-    { left: "60%", top: "75%", size: 3, dur: 22, delay: 1, color: "bg-indigo-300" },
-    { left: "30%", top: "65%", size: 4, dur: 28, delay: 3, color: "bg-violet-400" },
-    { left: "90%", top: "35%", size: 3, dur: 19, delay: 5, color: "bg-pink-400" },
-    { left: "45%", top: "85%", size: 2, dur: 24, delay: 6, color: "bg-indigo-500" },
-    { left: "70%", top: "90%", size: 3, dur: 21, delay: 2, color: "bg-purple-300" },
-    { left: "20%", top: "45%", size: 4, dur: 26, delay: 7, color: "bg-blue-300" },
-    { left: "55%", top: "10%", size: 3, dur: 17, delay: 4, color: "bg-indigo-400" },
+function FloatingDots() {
+  const dots = [
+    { left: "10%", top: "18%", size: 3, dur: 22, delay: 0 },
+    { left: "80%", top: "12%", size: 2, dur: 28, delay: 2 },
+    { left: "88%", top: "55%", size: 3, dur: 19, delay: 4 },
+    { left: "65%", top: "80%", size: 2, dur: 24, delay: 1 },
+    { left: "25%", top: "70%", size: 3, dur: 26, delay: 3 },
+    { left: "92%", top: "30%", size: 2, dur: 20, delay: 5 },
+    { left: "50%", top: "88%", size: 2, dur: 27, delay: 6 },
+    { left: "72%", top: "92%", size: 3, dur: 23, delay: 2 },
+    { left: "18%", top: "40%", size: 2, dur: 29, delay: 7 },
+    { left: "58%", top: "8%", size: 2, dur: 18, delay: 4 },
+    { left: "40%", top: "25%", size: 2, dur: 30, delay: 1 },
+    { left: "78%", top: "68%", size: 3, dur: 21, delay: 8 },
   ];
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((p, i) => (
+      {dots.map((d, i) => (
         <motion.div
           key={i}
-          className={`absolute ${p.color} rounded-full`}
-          style={{
-            left: p.left,
-            top: p.top,
-            width: p.size,
-            height: p.size,
-          }}
+          className="absolute bg-white rounded-full"
+          style={{ left: d.left, top: d.top, width: d.size, height: d.size }}
           animate={{
-            y: [0, -40, 0],
-            opacity: [0.2, 0.8, 0.2],
-            scale: [1, 1.5, 1],
+            y: [0, -30, 0],
+            opacity: [0.15, 0.5, 0.15],
+            scale: [1, 1.4, 1],
           }}
           transition={{
-            duration: p.dur,
+            duration: d.dur,
             repeat: Infinity,
-            delay: p.delay,
+            delay: d.delay,
             ease: "easeInOut",
           }}
         />
@@ -78,100 +69,120 @@ function FloatingParticles() {
   );
 }
 
-function GlowRing() {
+function GlowOrb() {
   return (
-    <div className="absolute right-[15%] top-1/2 -translate-y-1/2 pointer-events-none">
+    <div className="absolute right-[10%] top-1/2 -translate-y-1/2 pointer-events-none">
       <motion.div
-        className="w-[500px] h-[500px] rounded-full border border-indigo-500/10"
-        animate={{ rotate: 360, scale: [1, 1.05, 1] }}
-        transition={{ rotate: { duration: 40, repeat: Infinity, ease: "linear" }, scale: { duration: 6, repeat: Infinity, ease: "easeInOut" } }}
-      />
-      <motion.div
-        className="absolute inset-8 rounded-full border border-purple-500/10"
-        animate={{ rotate: -360, scale: [1, 1.08, 1] }}
-        transition={{ rotate: { duration: 35, repeat: Infinity, ease: "linear" }, scale: { duration: 7, repeat: Infinity, ease: "easeInOut" } }}
-      />
-      <motion.div
-        className="absolute inset-16 rounded-full border border-pink-500/8"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        className="w-[450px] h-[450px] rounded-full"
+        style={{
+          background: "radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, transparent 70%)",
+          filter: "blur(40px)",
+        }}
+        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );
 }
 
-function GridPattern() {
+function LiquidGrid() {
   return (
     <div
-      className="absolute inset-0 pointer-events-none opacity-[0.03]"
+      className="absolute inset-0 pointer-events-none opacity-[0.025]"
       style={{
         backgroundImage: `
-          linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
+          linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
         `,
-        backgroundSize: "80px 80px",
+        backgroundSize: "100px 100px",
       }}
+    />
+  );
+}
+
+function ScanLine() {
+  return (
+    <motion.div
+      className="absolute right-0 top-0 w-[1px] h-full pointer-events-none"
+      style={{
+        background: "linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)",
+      }}
+      animate={{ x: [-200, 0, 200, 0, -200] }}
+      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
     />
   );
 }
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-[#0a0818]">
-      <AmbientOrbs />
-      <FloatingParticles />
-      <GlowRing />
-      <GridPattern />
+    <section className="relative min-h-screen w-full overflow-hidden bg-[#08080a]">
+      <LiquidOrbs />
+      <FloatingDots />
+      <GlowOrb />
+      <LiquidGrid />
+      <ScanLine />
 
       <div className="relative z-10 mx-auto max-w-[1440px] w-full px-6 pt-28 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-screen">
-        {/* Left: Text content */}
+        {/* Left: Text */}
         <div className="flex flex-col gap-8 relative z-20">
+          {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="inline-flex items-center gap-3 w-fit px-5 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-sm"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="inline-flex items-center gap-3 w-fit px-5 py-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl"
           >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-indigo-500" />
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-40" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
             </span>
-            <span className="font-mono text-xs text-indigo-400 font-semibold tracking-wider">REAL-TIME SYNC</span>
+            <span className="font-mono text-xs text-white/60 font-medium tracking-wider uppercase">Live Sync</span>
           </motion.div>
 
+          {/* Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35 }}
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight leading-[1.02]"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-5xl sm:text-6xl lg:text-7xl xl:text-[5.5rem] font-bold text-white tracking-[-0.03em] leading-[1.05]"
           >
             Biometrics
             <br />
-            meets{" "}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              the Cloud.
+            meets the{" "}
+            <span className="relative inline-block">
+              <span className="bg-gradient-to-r from-white via-white/80 to-white/50 bg-clip-text text-transparent">
+                Cloud.
+              </span>
+              <motion.span
+                className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-white/60 to-transparent"
+                initial={{ width: 0 }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 1, delay: 0.8 }}
+              />
             </span>
           </motion.h1>
 
+          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45 }}
-            className="text-lg sm:text-xl text-slate-400 max-w-lg leading-relaxed"
+            transition={{ duration: 0.7, delay: 0.35 }}
+            className="text-lg text-white/40 max-w-lg leading-relaxed"
           >
             Bridge Fingerspot biometric hardware with modern cloud infrastructure.
             Real-time sync, API-first architecture, enterprise-grade security.
           </motion.p>
 
+          {/* CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
-            className="flex flex-wrap gap-5 mt-3"
+            transition={{ duration: 0.7, delay: 0.45 }}
+            className="flex flex-wrap gap-4 mt-2"
           >
             <Link
               href="/login"
-              className="group relative inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 px-9 py-4 text-sm font-bold text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] hover:-translate-y-1"
+              className="group relative inline-flex items-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-semibold text-black transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:scale-[1.02]"
             >
               <span>Get Started</span>
               <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -180,39 +191,41 @@ export default function HeroSection() {
             </Link>
             <a
               href="#features"
-              className="inline-flex items-center gap-3 rounded-2xl border border-white/10 px-9 py-4 text-sm font-bold text-slate-300 transition-all duration-300 hover:bg-white/5 hover:border-white/20 hover:-translate-y-1"
+              className="inline-flex items-center gap-3 rounded-full border border-white/[0.12] bg-white/[0.03] backdrop-blur-sm px-8 py-4 text-sm font-semibold text-white/70 transition-all duration-300 hover:bg-white/[0.06] hover:border-white/[0.2] hover:text-white hover:scale-[1.02]"
             >
               See How It Works
             </a>
           </motion.div>
 
+          {/* Trust badges */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.75 }}
-            className="flex items-center gap-8 mt-8 text-sm text-slate-500"
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex items-center gap-8 mt-6"
           >
             {["Free trial", "No credit card", "Setup in 5 min"].map((item) => (
               <div key={item} className="flex items-center gap-2.5">
-                <svg className="h-4.5 w-4.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-4 w-4 text-white/50" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                <span>{item}</span>
+                <span className="text-sm text-white/35">{item}</span>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* Right: 3D Robot with effects behind */}
+        {/* Right: 3D Robot */}
         <div className="relative h-[500px] lg:h-[700px] w-full z-10">
-          {/* Glow behind robot */}
+          {/* Soft glow behind robot */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <motion.div
-              className="w-[400px] h-[400px] rounded-full"
+              className="w-[350px] h-[350px] rounded-full"
               style={{
-                background: "radial-gradient(circle, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.12) 40%, transparent 70%)",
+                background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 60%)",
+                filter: "blur(50px)",
               }}
-              animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
+              animate={{ scale: [1, 1.12, 1], opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
