@@ -36,7 +36,7 @@ export async function GET(
 
     if (!employee) {
       return NextResponse.json(
-        { error: "Karyawan tidak ditemukan" },
+        { error: "Employee not found" },
         { status: 404 }
       );
     }
@@ -45,7 +45,7 @@ export async function GET(
   } catch (error) {
     console.error("[API] Get employee error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data karyawan" },
+      { error: "Failed to retrieve employee data" },
       { status: 500 }
     );
   }
@@ -67,7 +67,7 @@ export async function PUT(
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Karyawan tidak ditemukan" },
+        { error: "Employee not found" },
         { status: 404 }
       );
     }
@@ -79,7 +79,7 @@ export async function PUT(
       });
       if (pinExists) {
         return NextResponse.json(
-          { error: "PIN sudah digunakan oleh karyawan lain" },
+          { error: "PIN is already used by another employee" },
           { status: 400 }
         );
       }
@@ -92,7 +92,7 @@ export async function PUT(
       });
       if (emailExists) {
         return NextResponse.json(
-          { error: "Email sudah digunakan oleh karyawan lain" },
+          { error: "Email is already used by another employee" },
           { status: 400 }
         );
       }
@@ -107,13 +107,13 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Update employee error:", error);
     return NextResponse.json(
-      { error: "Gagal mengupdate karyawan" },
+      { error: "Failed to update employee" },
       { status: 500 }
     );
   }
@@ -132,7 +132,7 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Karyawan tidak ditemukan" },
+        { error: "Employee not found" },
         { status: 404 }
       );
     }
@@ -141,11 +141,11 @@ export async function DELETE(
       where: { id },
     });
 
-    return NextResponse.json({ message: "Karyawan berhasil dihapus" });
+    return NextResponse.json({ message: "Employee deleted successfully" });
   } catch (error) {
     console.error("[API] Delete employee error:", error);
     return NextResponse.json(
-      { error: "Gagal menghapus karyawan" },
+      { error: "Failed to delete employee" },
       { status: 500 }
     );
   }

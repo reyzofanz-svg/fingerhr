@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get attendance logs error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data log absensi" },
+      { error: "Failed to retrieve attendance log data" },
       { status: 500 }
     );
   }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     if (!employeeId || !deviceId || !scanTime) {
       return NextResponse.json(
-        { error: "employeeId, deviceId, dan scanTime wajib diisi" },
+        { error: "employeeId, deviceId, and scanTime are required" },
         { status: 400 }
       );
     }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "Data absensi untuk waktu ini sudah ada" },
+        { error: "Attendance data for this time already exists" },
         { status: 409 }
       );
     }
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[API] Create attendance log error:", error);
     return NextResponse.json(
-      { error: "Gagal membuat data absensi" },
+      { error: "Failed to create attendance data" },
       { status: 500 }
     );
   }

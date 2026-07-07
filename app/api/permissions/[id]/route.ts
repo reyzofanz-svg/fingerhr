@@ -13,7 +13,7 @@ export async function PUT(
 
     if (!["APPROVED", "REJECTED"].includes(status)) {
       return NextResponse.json(
-        { error: "Status tidak valid" },
+        { error: "Invalid status" },
         { status: 400 }
       );
     }
@@ -25,7 +25,7 @@ export async function PUT(
 
     if (!permission) {
       return NextResponse.json(
-        { error: "Izin tidak ditemukan" },
+        { error: "Permission not found" },
         { status: 404 }
       );
     }
@@ -40,22 +40,22 @@ export async function PUT(
 
     const typeLabel =
       permission.type === "SICK"
-        ? "Sakit"
+        ? "Sick"
         : permission.type === "CUTI"
-        ? "Cuti"
-        : "Izin";
+        ? "Leave"
+        : "Permission";
 
     if (status === "APPROVED") {
       broadcastNotification({
         type: "PERMISSION_APPROVED",
-        title: "Izin Disetujui",
-        message: `Izin ${typeLabel} untuk ${permission.employee.name} telah disetujui`,
+        title: "Permission Approved",
+        message: `Permission ${typeLabel} for ${permission.employee.name} has been approved`,
       });
     } else {
       broadcastNotification({
         type: "PERMISSION_REJECTED",
-        title: "Izin Ditolak",
-        message: `Izin ${typeLabel} untuk ${permission.employee.name} telah ditolak`,
+        title: "Permission Rejected",
+        message: `Permission ${typeLabel} for ${permission.employee.name} has been rejected`,
       });
     }
 
@@ -63,7 +63,7 @@ export async function PUT(
   } catch (error) {
     console.error("[API] Update permission error:", error);
     return NextResponse.json(
-      { error: "Gagal mengupdate izin" },
+      { error: "Failed to update permission" },
       { status: 500 }
     );
   }

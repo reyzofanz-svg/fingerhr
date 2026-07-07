@@ -116,13 +116,13 @@ export function EmployeesClient({
 
     // Check file size (max 100KB)
     if (file.size > 100 * 1024) {
-      alert("Ukuran foto wajah maksimal 100KB!");
+      alert("Face photo size must be maximum 100KB!");
       return;
     }
 
     // Check file type
     if (!file.type.startsWith("image/")) {
-      alert("File harus berupa gambar!");
+      alert("File must be an image!");
       return;
     }
 
@@ -148,7 +148,7 @@ export function EmployeesClient({
     setShowSyncModal(true);
     setSyncStatus("requesting");
     setSyncEmployeeCount(0);
-    setSyncLog(["Mengirim perintah GetAllPin ke mesin..."]);
+    setSyncLog(["Sending GetAllPin command to device..."]);
 
     try {
       const res = await fetch("/api/employees/sync", {
@@ -166,7 +166,7 @@ export function EmployeesClient({
       }
 
       setSyncStatus("waiting");
-      setSyncLog((prev) => [...prev, "Perintah terkirim! Menunggu response dari mesin via webhook..."]);
+      setSyncLog((prev) => [...prev, "Command sent! Waiting for response from device via webhook..."]);
 
       const startTime = Date.now();
       const timeout = 45000;
@@ -180,7 +180,7 @@ export function EmployeesClient({
         if (elapsed > timeout) {
           clearInterval(pollInterval);
           setSyncStatus("done");
-          setSyncLog((prev) => [...prev, "Timeout - sync selesai"]);
+          setSyncLog((prev) => [...prev, "Timeout - sync complete"]);
           fetchEmployees();
           return;
         }
@@ -195,7 +195,7 @@ export function EmployeesClient({
             setSyncEmployeeCount(currentCount);
             setSyncLog((prev) => [
               ...prev,
-              `✓ ${newCount} karyawan baru ditemukan (${currentCount} total)`,
+              `✓ ${newCount} new employee(s) found (${currentCount} total)`,
             ]);
             lastCount = currentCount;
             if (firstSeenAt === 0) firstSeenAt = Date.now();
@@ -207,7 +207,7 @@ export function EmployeesClient({
             setSyncStatus("done");
             setSyncLog((prev) => [
               ...prev,
-              `Sync selesai! ${currentCount} karyawan berhasil disinkronisasi.`,
+              `Sync complete! ${currentCount} employee(s) synced successfully.`,
             ]);
             fetchEmployees();
           }
@@ -219,21 +219,21 @@ export function EmployeesClient({
       fetchEmployees();
     } catch (error) {
       setSyncStatus("error");
-      setSyncLog((prev) => [...prev, "Gagal mengirim perintah ke mesin"]);
+      setSyncLog((prev) => [...prev, "Failed to send command to device"]);
     }
   };
 
   // Add employee with face photo
   const handleAddEmployee = async () => {
     if (!form.pin || !form.name) {
-      alert("PIN dan Nama wajib diisi");
+      alert("PIN and Name are required");
       return;
     }
 
     setFormLoading(true);
     setShowLoadingPopup(true);
     setLoadingStep("sending");
-    setLoadingMessage("Mengirim data ke mesin absensi...");
+    setLoadingMessage("Sending data to attendance device...");
     setLoadingError("");
 
     try {
@@ -257,14 +257,14 @@ export function EmployeesClient({
 
       if (!syncData.success) {
         setLoadingStep("error");
-        setLoadingError(`Gagal mengirim ke mesin: ${syncData.error}`);
+        setLoadingError(`Failed to send to device: ${syncData.error}`);
         return;
       }
 
       // Step 2: If face photo, register face
       if (facePhoto && devices.some((d) => supportsFace(d.model))) {
         setLoadingStep("registering");
-        setLoadingMessage("Mendaftarkan foto wajah ke mesin...");
+        setLoadingMessage("Registering face photo to device...");
 
         // The face is already sent in the add-to-device action
         // Just wait a moment for the device to process
@@ -293,18 +293,18 @@ export function EmployeesClient({
         if (!res.ok) {
           const err = await res.json();
           setLoadingStep("error");
-          setLoadingError(`Gagal menyimpan ke database: ${err.error}`);
+          setLoadingError(`Failed to save to database: ${err.error}`);
           return;
         }
       }
 
       // Success
       setLoadingStep("done");
-      setLoadingMessage(`Berhasil menambahkan ${form.name}`);
+      setLoadingMessage(`Successfully added ${form.name}`);
       fetchEmployees();
     } catch (error) {
       setLoadingStep("error");
-      setLoadingError("Gagal menambahkan karyawan");
+      setLoadingError("Failed to add employee");
     } finally {
       setFormLoading(false);
     }
@@ -332,7 +332,7 @@ export function EmployeesClient({
 
         const syncData = await syncRes.json();
         if (!syncData.success) {
-          alert(`Gagal hapus dari mesin: ${syncData.error}`);
+          alert(`Failed to delete from device: ${syncData.error}`);
           return;
         }
       }
@@ -343,15 +343,15 @@ export function EmployeesClient({
 
       if (!res.ok) {
         const err = await res.json();
-        alert(`Gagal hapus dari database: ${err.error}`);
+        alert(`Failed to delete from database: ${err.error}`);
         return;
       }
 
       setDeleteModal({ show: false, employee: null, mode: null });
       fetchEmployees();
-      alert(`Berhasil menghapus ${employee.name}`);
+      alert(`Successfully deleted ${employee.name}`);
     } catch (error) {
-      alert("Gagal menghapus karyawan");
+      alert("Failed to delete employee");
     }
   };
 
@@ -359,7 +359,7 @@ export function EmployeesClient({
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
 
-    const confirm = window.confirm(`Hapus ${selectedIds.length} karyawan dari website saja?`);
+    const confirm = window.confirm(`Delete ${selectedIds.length} employee(s) from website only?`);
     if (!confirm) return;
 
     try {
@@ -369,7 +369,7 @@ export function EmployeesClient({
       setSelectedIds([]);
       fetchEmployees();
     } catch (error) {
-      alert("Gagal bulk delete");
+      alert("Failed to bulk delete");
     }
   };
 
@@ -395,7 +395,7 @@ export function EmployeesClient({
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Karyawan" },
+          { label: "Employees" },
         ]}
       />
 
@@ -403,10 +403,10 @@ export function EmployeesClient({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Manajemen Karyawan
+            Employee Management
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Kelola data karyawan dan sinkronisasi dengan mesin absensi
+            Manage employee data and sync with attendance devices
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -423,13 +423,13 @@ export function EmployeesClient({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
               </svg>
             )}
-            Sync dari Mesin
+            Sync from Device
           </Button>
           <Button variant="primary" size="md" onClick={() => setShowAddModal(true)}>
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Tambah Karyawan
+            Add Employee
           </Button>
         </div>
       </div>
@@ -440,7 +440,7 @@ export function EmployeesClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Total Karyawan</p>
+                <p className="text-xs font-medium text-slate-400">Total Employees</p>
                 <p className="mt-1 text-2xl font-semibold text-white">{employees.length}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
@@ -456,7 +456,7 @@ export function EmployeesClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Aktif</p>
+                <p className="text-xs font-medium text-slate-400">Active</p>
                 <p className="mt-1 text-2xl font-semibold text-white/60">
                   {employees.filter((e) => e.isActive).length}
                 </p>
@@ -474,7 +474,7 @@ export function EmployeesClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Tidak Aktif</p>
+                <p className="text-xs font-medium text-slate-400">Inactive</p>
                 <p className="mt-1 text-2xl font-semibold text-slate-400">
                   {employees.filter((e) => !e.isActive).length}
                 </p>
@@ -493,7 +493,7 @@ export function EmployeesClient({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 max-w-md">
           <Input
-            placeholder="Cari nama, PIN, atau email..."
+            placeholder="Search name, PIN, or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             leftIcon={
@@ -506,10 +506,10 @@ export function EmployeesClient({
         {selectedIds.length > 0 && (
           <div className="flex items-center gap-3">
             <span className="text-sm text-slate-400">
-              {selectedIds.length} dipilih
+              {selectedIds.length} selected
             </span>
             <Button variant="danger" size="sm" onClick={handleBulkDelete}>
-              Hapus dari Website
+              Delete from Website
             </Button>
           </div>
         )}
@@ -530,12 +530,12 @@ export function EmployeesClient({
                   />
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">PIN</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Nama</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Dept</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Status</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Telegram</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Absensi Terakhir</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-slate-400">Aksi</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Last Attendance</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-slate-400">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -550,7 +550,7 @@ export function EmployeesClient({
               ) : employees.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-12 text-center text-sm text-slate-400">
-                    Belum ada karyawan
+                    No employees yet
                   </td>
                 </tr>
               ) : (
@@ -579,30 +579,30 @@ export function EmployeesClient({
                     <td className="px-4 py-3 text-sm text-slate-400">{emp.department || "-"}</td>
                     <td className="px-4 py-3">
                       <Badge variant={emp.isActive ? "success" : "default"}>
-                        {emp.isActive ? "Aktif" : "Nonaktif"}
+                        {emp.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
                       {emp.telegramChatId ? (
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/60">
                           <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
-                          Terhubung
+                          Connected
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-400">Belum</span>
+                        <span className="text-xs text-slate-400">Not yet</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-400">
                       {emp.lastAttendance
                         ? new Date(emp.lastAttendance).toLocaleDateString("id-ID")
-                        : "Belum ada"}
+                        : "No data yet"}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setDeleteModal({ show: true, employee: emp, mode: "website" })}
                           className="rounded-lg p-1.5 text-on-surface-variant hover:bg-white/[0.05] hover:text-white"
-                          title="Hapus dari website"
+                          title="Delete from website"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -611,7 +611,7 @@ export function EmployeesClient({
                         <button
                           onClick={() => setDeleteModal({ show: true, employee: emp, mode: "device" })}
                           className="rounded-lg p-1.5 text-on-surface-variant hover:bg-red-500/10 hover:text-red-400"
-                          title="Hapus dari website + mesin"
+                          title="Delete from website + device"
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
@@ -632,7 +632,7 @@ export function EmployeesClient({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowAddModal(false)}>
           <div className="glass max-w-lg w-full rounded-[2rem] p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">Tambah Karyawan</h3>
+              <h3 className="text-lg font-semibold text-white">Add Employee</h3>
               <button onClick={() => setShowAddModal(false)} className="text-on-surface-variant hover:text-white">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -643,38 +643,38 @@ export function EmployeesClient({
             <div className="space-y-4">
               <Input
                 label="PIN *"
-                placeholder="PIN dari mesin absensi"
+                placeholder="PIN from attendance device"
                 value={form.pin}
                 onChange={(e) => setForm({ ...form, pin: e.target.value })}
               />
               <Input
-                label="Nama *"
-                placeholder="Nama karyawan"
+                label="Name *"
+                placeholder="Employee name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
               <Input
                 label="Email"
-                placeholder="Email (opsional)"
+                placeholder="Email (optional)"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
               <Input
-                label="Telepon"
-                placeholder="Telepon (opsional)"
+                label="Phone"
+                placeholder="Phone (optional)"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
               />
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Departemen"
-                  placeholder="Departemen"
+                  label="Department"
+                  placeholder="Department"
                   value={form.department}
                   onChange={(e) => setForm({ ...form, department: e.target.value })}
                 />
                 <Input
-                  label="Posisi"
-                  placeholder="Posisi"
+                  label="Position"
+                  placeholder="Position"
                   value={form.position}
                   onChange={(e) => setForm({ ...form, position: e.target.value })}
                 />
@@ -688,10 +688,10 @@ export function EmployeesClient({
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                     </svg>
-                    <span className="text-sm font-medium text-white">Foto Wajah (VIVO/VIDA/DS/DT)</span>
+                    <span className="text-sm font-medium text-white">Face Photo (VIVO/VIDA/DS/DT)</span>
                   </div>
                   <p className="text-xs text-on-surface-variant mb-3">
-                    Maksimal 100KB, wajah harus terlihat jelas dan close-up
+                    Maximum 100KB, face must be clearly visible and close-up
                   </p>
 
                   {facePreview ? (
@@ -713,9 +713,9 @@ export function EmployeesClient({
                         </button>
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm text-white">Foto wajah siap</p>
+                        <p className="text-sm text-white">Face photo ready</p>
                         <p className="text-xs text-on-surface-variant mt-1">
-                          Foto akan didaftarkan ke mesin absensi
+                          Photo will be registered to the attendance device
                         </p>
                       </div>
                     </div>
@@ -728,7 +728,7 @@ export function EmployeesClient({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                       </svg>
-                      <p className="text-sm text-slate-400">Klik untuk upload foto wajah</p>
+                      <p className="text-sm text-slate-400">Click to upload face photo</p>
                       <p className="text-xs text-on-surface-variant mt-1">JPG, PNG, maks 100KB</p>
                     </div>
                   )}
@@ -746,10 +746,10 @@ export function EmployeesClient({
 
             <div className="mt-6 flex gap-3">
               <Button variant="secondary" size="md" onClick={() => setShowAddModal(false)} className="flex-1">
-                Batal
+                Cancel
               </Button>
               <Button variant="primary" size="md" onClick={handleAddEmployee} disabled={formLoading} className="flex-1">
-                {formLoading ? "Menambahkan..." : "Tambah & Sync ke Mesin"}
+                {formLoading ? "Adding..." : "Add & Sync to Device"}
               </Button>
             </div>
           </div>
@@ -805,10 +805,10 @@ export function EmployeesClient({
 
               {/* Message */}
               <h4 className="text-lg font-semibold text-on-surface mb-2">
-                {loadingStep === "sending" && "Mengirim ke Mesin"}
-                {loadingStep === "registering" && "Mendaftarkan Wajah"}
-                {loadingStep === "done" && "Berhasil!"}
-                {loadingStep === "error" && "Gagal"}
+                {loadingStep === "sending" && "Sending to Device"}
+                {loadingStep === "registering" && "Registering Face"}
+                {loadingStep === "done" && "Success!"}
+                {loadingStep === "error" && "Failed"}
               </h4>
 
               <p className="text-sm text-on-surface-variant mb-4">
@@ -834,7 +834,7 @@ export function EmployeesClient({
                         </svg>
                       )}
                     </div>
-                    <span className="text-xs text-slate-400">Mengirim data karyawan</span>
+                    <span className="text-xs text-slate-400">Sending employee data</span>
                   </div>
                   {hasFaceDevice && (
                     <div className="flex items-center gap-3">
@@ -845,7 +845,7 @@ export function EmployeesClient({
                           <div className="h-2 w-2 rounded-full bg-white/30" />
                         )}
                       </div>
-                      <span className="text-xs text-slate-400">Mendaftarkan foto wajah</span>
+                      <span className="text-xs text-slate-400">Registering face photo</span>
                     </div>
                   )}
                 </div>
@@ -854,13 +854,13 @@ export function EmployeesClient({
               {/* Close Button */}
               {(loadingStep === "done" || loadingStep === "error") && (
                 <Button variant="primary" size="md" onClick={handleCloseLoadingPopup} className="w-full mt-2">
-                  {loadingStep === "done" ? "Selesai" : "Tutup"}
+                  {loadingStep === "done" ? "Done" : "Close"}
                 </Button>
               )}
 
               {(loadingStep === "sending" || loadingStep === "registering") && (
                 <p className="text-xs text-on-surface-variant mt-4">
-                  Jangan tutup halaman ini...
+                  Do not close this page...
                 </p>
               )}
             </div>
@@ -872,9 +872,9 @@ export function EmployeesClient({
       {deleteModal.show && deleteModal.employee && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setDeleteModal({ show: false, employee: null, mode: null })}>
           <div className="glass max-w-md w-full rounded-[2rem] p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-on-surface mb-4">Hapus Karyawan</h3>
+            <h3 className="text-lg font-semibold text-on-surface mb-4">Delete Employee</h3>
             <p className="text-sm text-on-surface-variant mb-6">
-              Pilih cara menghapus <strong>{deleteModal.employee.name}</strong>:
+              Choose how to delete <strong>{deleteModal.employee.name}</strong>:
             </p>
 
             <div className="space-y-3">
@@ -882,9 +882,9 @@ export function EmployeesClient({
                 onClick={() => handleDelete(deleteModal.employee!, false)}
                 className="w-full rounded-xl border border-white/[0.08] bg-white/[0.02] p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5"
               >
-                <p className="text-sm font-medium text-white">Hapus dari Website saja</p>
+                <p className="text-sm font-medium text-white">Delete from Website only</p>
                 <p className="mt-1 text-xs text-slate-400">
-                  Data tetap ada di mesin absensi
+                  Data remains on the attendance device
                 </p>
               </button>
 
@@ -892,9 +892,9 @@ export function EmployeesClient({
                 onClick={() => handleDelete(deleteModal.employee!, true)}
                 className="w-full rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-left transition-all hover:border-red-500/40 hover:bg-red-500/10"
               >
-                <p className="text-sm font-medium text-red-400">Hapus dari Website + Mesin</p>
+                <p className="text-sm font-medium text-red-400">Delete from Website + Device</p>
                 <p className="mt-1 text-xs text-slate-400">
-                  Data dihapus dari website dan mesin absensi
+                  Data deleted from website and attendance device
                 </p>
               </button>
             </div>
@@ -903,7 +903,7 @@ export function EmployeesClient({
               onClick={() => setDeleteModal({ show: false, employee: null, mode: null })}
               className="mt-4 w-full rounded-xl bg-white/[0.05] px-4 py-2 text-sm font-medium text-on-surface hover:bg-white/[0.08]"
             >
-              Batal
+              Cancel
             </button>
           </div>
         </div>
@@ -914,7 +914,7 @@ export function EmployeesClient({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="glass max-w-md w-full rounded-[2rem] p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">Sinkronisasi dari Mesin</h3>
+              <h3 className="text-lg font-semibold text-white">Sync from Device</h3>
               {syncStatus === "done" && (
                 <button onClick={() => setShowSyncModal(false)} className="text-on-surface-variant hover:text-white">
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -930,8 +930,8 @@ export function EmployeesClient({
                 <>
                   <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
                   <div>
-                    <p className="text-sm font-medium text-white">Mengirim perintah...</p>
-                    <p className="text-xs text-slate-400">Menghubungi mesin absensi</p>
+                    <p className="text-sm font-medium text-white">Sending command...</p>
+                    <p className="text-xs text-slate-400">Contacting attendance device</p>
                   </div>
                 </>
               )}
@@ -945,8 +945,8 @@ export function EmployeesClient({
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white">Menunggu response dari mesin...</p>
-                    <p className="text-xs text-slate-400">Data akan muncul via webhook</p>
+                    <p className="text-sm font-medium text-white">Waiting for response from device...</p>
+                    <p className="text-xs text-slate-400">Data will appear via webhook</p>
                   </div>
                 </>
               )}
@@ -958,8 +958,8 @@ export function EmployeesClient({
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white/60">Sync selesai!</p>
-                    <p className="text-xs text-slate-400">{syncEmployeeCount} karyawan ditemukan</p>
+                    <p className="text-sm font-medium text-white/60">Sync complete!</p>
+                    <p className="text-xs text-slate-400">{syncEmployeeCount} employees found</p>
                   </div>
                 </>
               )}
@@ -971,8 +971,8 @@ export function EmployeesClient({
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-red-400">Gagal</p>
-                    <p className="text-xs text-slate-400">Terjadi kesalahan</p>
+                    <p className="text-sm font-medium text-red-400">Failed</p>
+                    <p className="text-xs text-slate-400">An error occurred</p>
                   </div>
                 </>
               )}
@@ -991,11 +991,11 @@ export function EmployeesClient({
             <div className="mt-6">
               {syncStatus === "done" || syncStatus === "error" ? (
                 <Button variant="primary" size="md" onClick={() => setShowSyncModal(false)} className="w-full">
-                  Tutup
+                  Close
                 </Button>
               ) : (
                 <p className="text-center text-xs text-slate-400">
-                  Jangan tutup halaman ini sampai sync selesai
+                  Do not close this page until sync is complete
                 </p>
               )}
             </div>

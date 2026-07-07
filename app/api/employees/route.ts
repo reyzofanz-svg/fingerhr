@@ -3,9 +3,9 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
 const employeeSchema = z.object({
-  pin: z.string().min(1, "PIN wajib diisi"),
-  name: z.string().min(1, "Nama wajib diisi"),
-  email: z.string().email("Email tidak valid").optional().nullable(),
+  pin: z.string().min(1, "PIN is required"),
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email").optional().nullable(),
   phone: z.string().optional().nullable(),
   department: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get employees error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data karyawan" },
+      { error: "Failed to retrieve employee data" },
       { status: 500 }
     );
   }
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "PIN sudah digunakan oleh karyawan lain" },
+        { error: "PIN is already used by another employee" },
         { status: 400 }
       );
     }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       });
       if (existingEmail) {
         return NextResponse.json(
-          { error: "Email sudah digunakan oleh karyawan lain" },
+          { error: "Email is already used by another employee" },
           { status: 400 }
         );
       }
@@ -133,13 +133,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Create employee error:", error);
     return NextResponse.json(
-      { error: "Gagal membuat karyawan" },
+      { error: "Failed to create employee" },
       { status: 500 }
     );
   }

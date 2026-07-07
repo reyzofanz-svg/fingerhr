@@ -10,7 +10,7 @@ export async function POST() {
 
     if (existing) {
       return NextResponse.json({
-        message: "Jadwal default SM1 sudah ada",
+        message: "Default SM1 schedule already exists",
         schedule: existing,
       });
     }
@@ -27,13 +27,13 @@ export async function POST() {
     });
 
     return NextResponse.json({
-      message: "Jadwal default SM1 berhasil dibuat",
+      message: "Default SM1 schedule created successfully",
       schedule,
     }, { status: 201 });
   } catch (error) {
     console.error("[API] Seed schedule error:", error);
     return NextResponse.json(
-      { error: "Gagal membuat jadwal default" },
+      { error: "Failed to create default schedule" },
       { status: 500 }
     );
   }

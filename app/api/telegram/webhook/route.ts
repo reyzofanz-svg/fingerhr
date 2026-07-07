@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
 
       if (!pin) {
         await reply(chatId,
-          "Gunakan: <b>/start &lt;PIN&gt;</b>\n\n" +
-          "Contoh: <b>/start 12345</b>\n\n" +
-          "PIN adalah nomor identifikasi kamu di mesin absensi."
+          "Use: <b>/start &lt;PIN&gt;</b>\n\n" +
+          "Example: <b>/start 12345</b>\n\n" +
+          "PIN is your identification number on the attendance device."
         );
         return NextResponse.json({ ok: true });
       }
@@ -59,15 +59,15 @@ export async function POST(request: NextRequest) {
       });
 
       if (!employee) {
-        await reply(chatId, `PIN <b>${pin}</b> tidak ditemukan. Hubungi admin.`);
+        await reply(chatId, `PIN <b>${pin}</b> not found. Contact admin.`);
         return NextResponse.json({ ok: true });
       }
 
       if (employee.telegramChatId && employee.telegramChatId !== chatId) {
         // Already linked to another account
         await reply(chatId,
-          `PIN <b>${pin}</b> sudah terhubung ke akun Telegram lain.\n\n` +
-          "Hubungi admin jika ingin mengganti."
+          `PIN <b>${pin}</b> is already linked to another Telegram account.\n\n` +
+          "Contact admin if you want to change it."
         );
         return NextResponse.json({ ok: true });
       }
@@ -82,10 +82,10 @@ export async function POST(request: NextRequest) {
       });
 
       await reply(chatId,
-        `Berhasil terhubung! \n\n` +
-        `<b>Nama:</b> ${employee.name}\n` +
+        `Connected successfully! \n\n` +
+        `<b>Name:</b> ${employee.name}\n` +
         `<b>PIN:</b> ${pin}\n\n` +
-        "Notifikasi absensi akan dikirim ke Telegram ini."
+        "Attendance notifications will be sent to this Telegram."
       );
 
       console.log("[Telegram] Enrollment:", { name: employee.name, pin, chatId });
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     // Unknown command
     await reply(chatId,
-      "Perintah tidak dikenali.\n\nGunakan <b>/start &lt;PIN&gt;</b> untuk mendaftarkan notifikasi."
+      "Command not recognized.\n\nUse <b>/start &lt;PIN&gt;</b> to register for notifications."
     );
     return NextResponse.json({ ok: true });
   } catch (error) {

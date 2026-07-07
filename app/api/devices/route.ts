@@ -30,7 +30,7 @@ export async function GET() {
   } catch (error) {
     console.error("[API] Get devices error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data perangkat" },
+      { error: "Failed to retrieve device data" },
       { status: 500 }
     );
   }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     if (!name || !cloudId) {
       return NextResponse.json(
-        { error: "Nama dan Cloud ID wajib diisi" },
+        { error: "Name and Cloud ID are required" },
         { status: 400 }
       );
     }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "Cloud ID sudah terdaftar" },
+        { error: "Cloud ID is already registered" },
         { status: 400 }
       );
     }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[API] Create device error:", error);
     return NextResponse.json(
-      { error: "Gagal menambahkan perangkat" },
+      { error: "Failed to add device" },
       { status: 500 }
     );
   }

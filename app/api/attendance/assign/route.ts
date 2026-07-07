@@ -3,9 +3,9 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
 const assignSchema = z.object({
-  employeeId: z.string().min(1, "Karyawan wajib dipilih"),
-  workScheduleId: z.string().min(1, "Jadwal wajib dipilih"),
-  effectiveFrom: z.string().min(1, "Tanggal berlaku wajib diisi"),
+  employeeId: z.string().min(1, "Employee is required"),
+  workScheduleId: z.string().min(1, "Schedule is required"),
+  effectiveFrom: z.string().min(1, "Effective date is required"),
   effectiveTo: z.string().optional().nullable(),
 });
 
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get assignments error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data penugasan" },
+      { error: "Failed to retrieve assignment data" },
       { status: 500 }
     );
   }
@@ -49,14 +49,14 @@ export async function POST(request: NextRequest) {
       where: { id: validated.employeeId },
     });
     if (!employee) {
-      return NextResponse.json({ error: "Karyawan tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Employee not found" }, { status: 404 });
     }
 
     const workSchedule = await prisma.workSchedule.findUnique({
       where: { id: validated.workScheduleId },
     });
     if (!workSchedule) {
-      return NextResponse.json({ error: "Jadwal tidak ditemukan" }, { status: 404 });
+      return NextResponse.json({ error: "Schedule not found" }, { status: 404 });
     }
 
     const existing = await prisma.employeeSchedule.findFirst({
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     });
     if (existing) {
       return NextResponse.json(
-        { error: "Karyawan sudah memiliki penugasan pada tanggal tersebut" },
+        { error: "Employee already has an assignment on that date" },
         { status: 400 }
       );
     }
@@ -89,12 +89,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Assign schedule error:", error);
-    return NextResponse.json({ error: "Gagal menugaskan jadwal" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to assign schedule" }, { status: 500 });
   }
 }
 
@@ -103,12 +103,12 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) {
-      return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
     await prisma.employeeSchedule.delete({ where: { id } });
-    return NextResponse.json({ message: "Penugasan dihapus" });
+    return NextResponse.json({ message: "Assignment deleted" });
   } catch (error) {
     console.error("[API] Delete assignment error:", error);
-    return NextResponse.json({ error: "Gagal menghapus penugasan" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to delete assignment" }, { status: 500 });
   }
 }

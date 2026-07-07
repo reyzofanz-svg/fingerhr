@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (!employeeId || latitude == null || longitude == null) {
       return NextResponse.json(
-        { error: "employeeId, latitude, dan longitude wajib diisi" },
+        { error: "employeeId, latitude, and longitude are required" },
         { status: 400 }
       );
     }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (!setting) {
       return NextResponse.json(
-        { valid: true, distance: 0, nearestOffice: "Tidak ada lokasi kantor dikonfigurasi" },
+        { valid: true, distance: 0, nearestOffice: "No office location configured" },
         { status: 200 }
       );
     }
@@ -54,14 +54,14 @@ export async function POST(request: NextRequest) {
       offices = JSON.parse(setting.value);
     } catch {
       return NextResponse.json(
-        { valid: true, distance: 0, nearestOffice: "Konfigurasi lokasi kantor tidak valid" },
+        { valid: true, distance: 0, nearestOffice: "Office location configuration is not valid" },
         { status: 200 }
       );
     }
 
     if (!Array.isArray(offices) || offices.length === 0) {
       return NextResponse.json(
-        { valid: true, distance: 0, nearestOffice: "Tidak ada lokasi kantor dikonfigurasi" },
+        { valid: true, distance: 0, nearestOffice: "No office location configured" },
         { status: 200 }
       );
     }
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[API] Validate location error:", error);
     return NextResponse.json(
-      { error: "Gagal memvalidasi lokasi" },
+      { error: "Failed to validate location" },
       { status: 500 }
     );
   }

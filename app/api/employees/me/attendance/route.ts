@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     if (!employee) {
       return NextResponse.json(
-        { error: "Data karyawan tidak ditemukan" },
+        { error: "Employee data not found" },
         { status: 404 }
       );
     }
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get my attendance error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data absensi" },
+      { error: "Failed to retrieve attendance data" },
       { status: 500 }
     );
   }

@@ -24,45 +24,45 @@ function renderSheet(ws: ExcelJS.Worksheet, report: EmployeeReport) {
   // Title
   ws.mergeCells(r, 1, r, LAST_COL);
   const title = ws.getCell(r, 1);
-  title.value = "LAPORAN RINCIAN HARIAN";
+  title.value = "DAILY DETAIL REPORT";
   title.font = { bold: true, size: 14 };
   title.alignment = { horizontal: "center" };
   r++;
 
   ws.mergeCells(r, 1, r, LAST_COL);
   const per = ws.getCell(r, 1);
-  per.value = `Periode: ${ddmmyyyy(periode.start)} s/d ${ddmmyyyy(periode.end)}`;
+  per.value = `Period: ${ddmmyyyy(periode.start)} to ${ddmmyyyy(periode.end)}`;
   per.font = { italic: true };
   per.alignment = { horizontal: "center" };
   r += 2;
 
   // Identity
-  ws.getCell(r, 1).value = `Nama: ${employee.name}`;
+  ws.getCell(r, 1).value = `Name: ${employee.name}`;
   ws.getCell(r, 1).font = { bold: true };
   r++;
-  ws.getCell(r, 1).value = `ID: ${employee.pin} | Departemen: ${employee.department || "-"} | Posisi: ${employee.position || "-"}`;
+  ws.getCell(r, 1).value = `ID: ${employee.pin} | Department: ${employee.department || "-"} | Position: ${employee.position || "-"}`;
   r += 2;
 
   // Recap box
-  ws.getCell(r, 1).value = "Rekap Absensi Pegawai";
+  ws.getCell(r, 1).value = "Employee Attendance Recap";
   ws.getCell(r, 1).font = { bold: true };
   r++;
   const recapRows: [string, string | number][][] = [
     [
-      ["Kehadiran", recap.kehadiran],
-      ["Durasi Kerja", recap.durasiKerja],
-      ["Pulang Awal", recap.pulangAwal],
-      ["Tidak Absen Masuk", recap.tidakAbsenMasuk],
-      ["Alpha", recap.alpha],
+      ["Attendance", recap.kehadiran],
+      ["Work Duration", recap.durasiKerja],
+      ["Early Departure", recap.pulangAwal],
+      ["No Clock In", recap.tidakAbsenMasuk],
+      ["Absent", recap.alpha],
     ],
     [
-      ["Presentase Kehadiran", recap.presentase],
-      ["Total Durasi", recap.totalDurasi],
-      ["Istirahat Lebih", recap.istirahatLebih],
-      ["Tidak Absen Keluar", recap.tidakAbsenKeluar],
-      ["Jumlah Izin", recap.jumlahIzin],
+      ["Attendance Percentage", recap.presentase],
+      ["Total Duration", recap.totalDurasi],
+      ["Extended Break", recap.istirahatLebih],
+      ["No Clock Out", recap.tidakAbsenKeluar],
+      ["Number of Leaves", recap.jumlahIzin],
     ],
-    [["Datang Terlambat", recap.datangTerlambat]],
+    [["Late Arrival", recap.datangTerlambat]],
   ];
   for (const line of recapRows) {
     let col = 1;
@@ -92,16 +92,16 @@ function renderSheet(ws: ExcelJS.Worksheet, report: EmployeeReport) {
     ws.getCell(h1, c1).value = label;
   };
 
-  vmerge(1, "Tanggal");
-  vmerge(2, "Hari");
-  gmerge(3, 5, "Ketentuan");
-  gmerge(6, 9, "Kehadiran");
-  gmerge(10, 11, "Istirahat");
-  gmerge(12, 14, "Lembur");
-  vmerge(15, "Durasi Kerja");
-  vmerge(16, "Masuk Kerja");
-  vmerge(17, "Libur");
-  vmerge(18, "Keterangan");
+  vmerge(1, "Date");
+  vmerge(2, "Day");
+  gmerge(3, 5, "Schedule");
+  gmerge(6, 9, "Attendance");
+  gmerge(10, 11, "Break");
+  gmerge(12, 14, "Overtime");
+  vmerge(15, "Work Duration");
+  vmerge(16, "Clock In");
+  vmerge(17, "Holiday");
+  vmerge(18, "Notes");
 
   const sub = ["Shift", "Masuk", "Pulang", "Absensi Masuk", "Terlambat", "Absensi Pulang", "Pulang Cepat", "Durasi", "Lebih", "Awal", "Akhir", "Shift"];
   sub.forEach((label, i) => {
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
     const employeeId = searchParams.get("employeeId");
 
     if (!startDate || !endDate) {
-      return NextResponse.json({ error: "startDate dan endDate wajib diisi" }, { status: 400 });
+      return NextResponse.json({ error: "startDate and endDate are required" }, { status: 400 });
     }
 
     // Resolve employee list
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (employeeIds.length === 0) {
-      return NextResponse.json({ error: "Tidak ada karyawan" }, { status: 404 });
+      return NextResponse.json({ error: "No employees found" }, { status: 404 });
     }
 
     const workbook = new ExcelJS.Workbook();
@@ -198,9 +198,9 @@ export async function GET(request: NextRequest) {
     }
 
     const buffer = await workbook.xlsx.writeBuffer();
-    const fname = employeeId
-      ? `laporan-rincian-${startDate}.xlsx`
-      : `laporan-rincian-semua-${startDate}.xlsx`;
+      const fname = employeeId
+      ? `detail-report-${startDate}.xlsx`
+      : `detail-report-all-${startDate}.xlsx`;
 
     return new NextResponse(buffer, {
       headers: {
@@ -210,6 +210,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[API] Detail excel error:", error);
-    return NextResponse.json({ error: "Gagal export laporan" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to export report" }, { status: 500 });
   }
 }

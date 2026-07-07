@@ -102,7 +102,7 @@ export default function DevicesPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.error || "Gagal menjalankan command");
+        alert(data.error || "Failed to execute command");
         return;
       }
 
@@ -125,12 +125,12 @@ export default function DevicesPage() {
       fetchDevices();
 
       if (data.success) {
-        alert(`Command ${command} berhasil!`);
+        alert(`Command ${command} succeeded!`);
       } else {
-        alert(`Command ${command} gagal: ${data.error}`);
+        alert(`Command ${command} failed: ${data.error}`);
       }
     } catch (error) {
-      alert("Gagal menjalankan command");
+      alert("Failed to execute command");
     } finally {
       setCommandLoading(false);
     }
@@ -144,7 +144,7 @@ export default function DevicesPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Perangkat" },
+          { label: "Devices" },
         ]}
       />
 
@@ -152,10 +152,10 @@ export default function DevicesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Manajemen Perangkat
+            Device Management
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Monitor status mesin absensi dan jalankan perintah
+            Monitor attendance device status and run commands
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function DevicesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Total Perangkat</p>
+                <p className="text-xs font-medium text-slate-400">Total Devices</p>
                 <p className="mt-1 text-2xl font-semibold text-white">{devices.length}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
@@ -208,7 +208,7 @@ export default function DevicesPage() {
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Total Scan Hari Ini</p>
+                <p className="text-xs font-medium text-slate-400">Total Scans Today</p>
                 <p className="mt-1 text-2xl font-semibold text-white">
                   {devices.reduce((sum, d) => sum + d.totalScans, 0)}
                 </p>
@@ -229,8 +229,8 @@ export default function DevicesPage() {
           {/* Device Cards */}
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-white">Mesin Absensi</h2>
-              <span className="text-sm text-slate-400">{devices.length} perangkat</span>
+              <h2 className="text-lg font-semibold text-white">Attendance Devices</h2>
+              <span className="text-sm text-slate-400">{devices.length} devices</span>
             </div>
             {loading ? (
               <div className="flex items-center justify-center py-12">
@@ -239,7 +239,7 @@ export default function DevicesPage() {
             ) : devices.length === 0 ? (
               <Card variant="glass">
                 <CardContent className="py-12 text-center">
-                  <p className="text-sm text-slate-400">Belum ada perangkat yang terdaftar</p>
+                  <p className="text-sm text-slate-400">No devices registered yet</p>
                 </CardContent>
               </Card>
             ) : (

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const device = await prisma.device.findFirst();
     if (!device) {
       return NextResponse.json(
-        { error: "Tidak ada perangkat yang terdaftar" },
+        { error: "No devices registered" },
         { status: 400 }
       );
     }
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
             await prisma.employee.create({
               data: {
                 pin: String(pin),
-                name: `Karyawan PIN ${pin}`,
+                name: `Employee PIN ${pin}`,
                 isActive: true,
               },
             });
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: `${pins.length} karyawan berhasil disinkronisasi`,
+          message: `${pins.length} employees synchronized successfully`,
           pins,
         });
       }
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         
         if (!pin || !name) {
           return NextResponse.json(
-            { error: "PIN dan Nama wajib diisi" },
+            { error: "PIN and Name are required" },
             { status: 400 }
           );
         }
@@ -99,21 +99,21 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: `Karyawan ${name} berhasil disinkronisasi`,
+          message: `Employee ${name} synchronized successfully`,
           employee,
         });
       }
 
       default:
         return NextResponse.json(
-          { error: "Type tidak dikenal. Gunakan 'get_all_pin' atau 'userinfo'" },
+          { error: "Unknown type. Use 'get_all_pin' or 'userinfo'" },
           { status: 400 }
         );
     }
   } catch (error) {
     console.error("[Test Webhook] Error:", error);
     return NextResponse.json(
-      { error: "Gagal memproses webhook" },
+      { error: "Failed to process webhook" },
       { status: 500 }
     );
   }

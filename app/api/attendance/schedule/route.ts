@@ -6,7 +6,7 @@ const HHMM = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
 const optTime = z.string().regex(HHMM, "Format jam: HH:MM").optional().nullable();
 
 const scheduleSchema = z.object({
-  name: z.string().min(1, "Nama shift wajib diisi"),
+  name: z.string().min(1, "Shift name is required"),
   startTime: z.string().regex(HHMM, "Format jam: HH:MM"),
   endTime: z.string().regex(HHMM, "Format jam: HH:MM"),
   breakStart: optTime,
@@ -35,7 +35,7 @@ export async function GET() {
   } catch (error) {
     console.error("[API] Get schedules error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data jadwal" },
+      { error: "Failed to retrieve schedule data" },
       { status: 500 }
     );
   }
@@ -67,13 +67,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Create schedule error:", error);
     return NextResponse.json(
-      { error: "Gagal membuat jadwal" },
+      { error: "Failed to create schedule" },
       { status: 500 }
     );
   }

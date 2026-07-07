@@ -213,7 +213,7 @@ async function handleAttlog(deviceId: string, data: Record<string, any>) {
 
   // Broadcast real-time notification
   const notificationType = status === "IN" ? "ATTENDANCE_IN" : "ATTENDANCE_OUT";
-  const timeStr = scanTime.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false });
+  const timeStr = scanTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
   broadcastNotification({
     type: notificationType,
     title: status === "IN" ? "Kehadiran Tercatat" : "Keluar Tercatat",
@@ -322,9 +322,9 @@ async function sendTelegramNotification(
     });
     if (!emp?.telegramChatId) return;
 
-    const statusLabel = status === "IN" ? "MASUK" : "KELUAR";
-    const time = scanTime.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false });
-    const date = scanTime.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" });
+  const statusLabel = status === "IN" ? "CLOCK IN" : "CLOCK OUT";
+  const time = scanTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+  const date = scanTime.toLocaleDateString("en-US", { day: "2-digit", month: "long", year: "numeric" });
 
     const template = await getTemplate();
     const message = template

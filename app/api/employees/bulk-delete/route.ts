@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json(
-        { error: "IDs wajib diisi" },
+        { error: "IDs are required" },
         { status: 400 }
       );
     }
@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `${result.count} karyawan berhasil dihapus`,
+      message: `${result.count} employees deleted successfully`,
       count: result.count,
     });
   } catch (error) {
     console.error("[API] Bulk delete employees error:", error);
     return NextResponse.json(
-      { error: "Gagal menghapus karyawan" },
+      { error: "Failed to delete employees" },
       { status: 500 }
     );
   }

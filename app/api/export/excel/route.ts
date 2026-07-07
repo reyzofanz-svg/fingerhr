@@ -35,18 +35,18 @@ export async function GET(request: NextRequest) {
     workbook.creator = "FingerHR";
     workbook.created = new Date();
 
-    const sheet = workbook.addWorksheet("Laporan Absensi");
+    const sheet = workbook.addWorksheet("Attendance Report");
 
     // Header styling
     sheet.columns = [
-      { header: "Tanggal", key: "date", width: 12 },
-      { header: "Jam", key: "time", width: 10 },
+      { header: "Date", key: "date", width: 12 },
+      { header: "Time", key: "time", width: 10 },
       { header: "PIN", key: "pin", width: 10 },
-      { header: "Nama", key: "name", width: 25 },
-      { header: "Departemen", key: "department", width: 20 },
+      { header: "Name", key: "name", width: 25 },
+      { header: "Department", key: "department", width: 20 },
       { header: "Status", key: "status", width: 10 },
-      { header: "Metode", key: "method", width: 15 },
-      { header: "Sumber", key: "source", width: 12 },
+      { header: "Method", key: "method", width: 15 },
+      { header: "Source", key: "source", width: 12 },
     ];
 
     // Style header row
@@ -71,8 +71,8 @@ export async function GET(request: NextRequest) {
           : "-";
 
       sheet.addRow({
-        date: new Date(log.scanTime).toLocaleDateString("id-ID"),
-        time: new Date(log.scanTime).toLocaleTimeString("id-ID", {
+        date: new Date(log.scanTime).toLocaleDateString("en-US"),
+        time: new Date(log.scanTime).toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
         pin: log.employee.pin,
         name: log.employee.name,
         department: log.employee.department || "-",
-        status: log.status === "IN" ? "Masuk" : "Keluar",
+        status: log.status === "IN" ? "Clock In" : "Clock Out",
         method: verifyMethod,
         source: log.type === "realtime" ? "Realtime" : "Manual",
       });
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       headers: {
         "Content-Type":
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename=laporan-absensi-${
+        "Content-Disposition": `attachment; filename=attendance-report-${
           startDate || "all"
         }.xlsx`,
       },
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Export Excel error:", error);
     return NextResponse.json(
-      { error: "Gagal export data" },
+      { error: "Failed to export data" },
       { status: 500 }
     );
   }

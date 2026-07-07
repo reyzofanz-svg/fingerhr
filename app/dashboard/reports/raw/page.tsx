@@ -115,7 +115,7 @@ export default function RawReportsPage() {
 
   const handleManualAttendance = async () => {
     if (!manualForm.employeeId || !manualForm.deviceId || !manualForm.scanDate || !manualForm.scanTime) {
-      setSubmitStatus("Semua field wajib diisi");
+      setSubmitStatus("All fields are required");
       setTimeout(() => setSubmitStatus(""), 3000);
       return;
     }
@@ -137,12 +137,12 @@ export default function RawReportsPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitStatus(data.error || "Gagal menambah absensi");
+        setSubmitStatus(data.error || "Failed to add attendance");
         setTimeout(() => setSubmitStatus(""), 3000);
         return;
       }
 
-      setSubmitStatus("Absensi berhasil ditambahkan!");
+      setSubmitStatus("Attendance added successfully!");
       setTimeout(() => {
         setSubmitStatus("");
         setShowManualForm(false);
@@ -156,7 +156,7 @@ export default function RawReportsPage() {
         fetchLogs();
       }, 1500);
     } catch (error) {
-      setSubmitStatus("Gagal menambah absensi");
+      setSubmitStatus("Failed to add attendance");
       setTimeout(() => setSubmitStatus(""), 3000);
     } finally {
       setSubmitting(false);
@@ -165,12 +165,12 @@ export default function RawReportsPage() {
 
   const handleDownloadFromDevice = async () => {
     if (!selectedDevice) {
-      alert("Pilih perangkat terlebih dahulu");
+      alert("Select a device first");
       return;
     }
 
     setDownloading(true);
-    setDownloadStatus("Mengirim perintah ke mesin...");
+    setDownloadStatus("Sending command to device...");
 
     try {
       const device = devices.find((d) => d.id === selectedDevice);
@@ -189,22 +189,22 @@ export default function RawReportsPage() {
       const result = await cmdRes.json();
 
       if (!cmdRes.ok) {
-        setDownloadStatus("Gagal: " + (result.error || "Unknown error"));
+        setDownloadStatus("Failed: " + (result.error || "Unknown error"));
         setTimeout(() => setDownloadStatus(""), 3000);
         return;
       }
 
       if (result.success) {
-        setDownloadStatus("Berhasil! Data tersimpan di database.");
+        setDownloadStatus("Success! Data saved to database.");
         fetchLogs();
         fetchDevices();
         setTimeout(() => setDownloadStatus(""), 3000);
       } else {
-        setDownloadStatus("Gagal: " + (result.error || "Unknown error"));
+        setDownloadStatus("Failed: " + (result.error || "Unknown error"));
         setTimeout(() => setDownloadStatus(""), 3000);
       }
     } catch (error) {
-      setDownloadStatus("Gagal mengambil data dari mesin");
+      setDownloadStatus("Failed to retrieve data from device");
       setTimeout(() => setDownloadStatus(""), 3000);
     } finally {
       setDownloading(false);
@@ -226,13 +226,13 @@ export default function RawReportsPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `laporan-absensi-${startDate}-${endDate}.xlsx`;
+      a.download = `attendance-report-${startDate}-${endDate}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      alert("Gagal export data");
+      alert("Failed to export data");
     } finally {
       setExporting(false);
     }
@@ -279,8 +279,8 @@ export default function RawReportsPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Laporan", href: "/dashboard/reports" },
-          { label: "Absensi Perangkat" },
+          { label: "Reports", href: "/dashboard/reports" },
+          { label: "Device Attendance" },
         ]}
       />
 
@@ -288,17 +288,17 @@ export default function RawReportsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Laporan Absensi Perangkat
+            Device Attendance Report
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Tarik data absensi langsung dari mesin fingerprint
+            Pull attendance data directly from the fingerprint device
           </p>
         </div>
         <Button variant="primary" size="md" onClick={() => setShowManualForm(true)}>
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Tambah Absensi Manual
+          Add Manual Attendance
         </Button>
       </div>
 
@@ -308,14 +308,14 @@ export default function RawReportsPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
               <label className="mb-2 block text-sm font-medium text-white">
-                Pilih Perangkat
+                Select Device
               </label>
               <select
                 value={selectedDevice}
                 onChange={(e) => setSelectedDevice(e.target.value)}
                 className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">-- Pilih Mesin --</option>
+                <option value="">-- Select Device --</option>
                 {devices.map((device) => (
                   <option key={device.id} value={device.id}>
                     {device.name} ({device.cloudId})
@@ -325,13 +325,13 @@ export default function RawReportsPage() {
             </div>
             <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-3">
               <Input
-                label="Tanggal Mulai"
+                label="Start Date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
               />
               <Input
-                label="Tanggal Akhir"
+                label="End Date"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -361,15 +361,15 @@ export default function RawReportsPage() {
                   />
                 </svg>
               )}
-              {downloading ? "Mengambil Data..." : "Tarik Data dari Mesin"}
+              {downloading ? "Fetching Data..." : "Pull Data from Device"}
             </Button>
           </div>
           {downloadStatus && (
             <div
               className={`mt-3 rounded-lg px-4 py-2 text-sm ${
-                downloadStatus.includes("Berhasil")
+                downloadStatus.includes("Success")
                   ? "bg-white/[0.06] text-white/60"
-                  : downloadStatus.includes("Gagal")
+                  :                 downloadStatus.includes("Failed")
                   ? "bg-error/10 text-red-400"
                   : "bg-blue-500/10 text-blue-400"
               }`}
@@ -378,7 +378,7 @@ export default function RawReportsPage() {
             </div>
           )}
           <p className="mt-2 text-xs text-slate-400">
-            Perangkat aktif: <span className="font-medium text-white">{selectedDeviceName}</span> | Data webhook realtime + manual download
+            Active device: <span className="font-medium text-white">{selectedDeviceName}</span> | Real-time webhook data + manual download
           </p>
         </CardContent>
       </Card>
@@ -393,19 +393,19 @@ export default function RawReportsPage() {
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-slate-400">Scan Masuk</p>
+            <p className="text-xs font-medium text-slate-400">Scan In</p>
             <p className="mt-1 text-xl font-semibold text-white/60 sm:text-2xl">{totalIn}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-slate-400">Scan Keluar</p>
+            <p className="text-xs font-medium text-slate-400">Scan Out</p>
             <p className="mt-1 text-xl font-semibold text-white/60 sm:text-2xl">{totalOut}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
-            <p className="text-xs font-medium text-slate-400">Karyawan Unik</p>
+            <p className="text-xs font-medium text-slate-400">Unique Employees</p>
             <p className="mt-1 text-xl font-semibold text-on-surface sm:text-2xl">{uniqueEmployees}</p>
           </CardContent>
         </Card>
@@ -418,14 +418,14 @@ export default function RawReportsPage() {
           <div className="flex flex-col gap-3 border-b border-white/[0.08] px-4 py-4 sm:flex-row sm:items-end sm:px-6">
             <div className="w-full sm:w-48">
               <label className="mb-2 block text-sm font-medium text-white">
-                Filter Karyawan
+                Filter Employee
               </label>
               <select
                 value={filterEmployee}
                 onChange={(e) => setFilterEmployee(e.target.value)}
                 className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Semua Karyawan</option>
+                <option value="">All Employees</option>
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>
                     {emp.name} ({emp.pin})
@@ -435,14 +435,14 @@ export default function RawReportsPage() {
             </div>
             <div className="w-full sm:w-48">
               <label className="mb-2 block text-sm font-medium text-white">
-                Filter Perangkat
+                Filter Device
               </label>
               <select
                 value={filterDevice}
                 onChange={(e) => setFilterDevice(e.target.value)}
                 className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Semua Perangkat</option>
+                <option value="">All Devices</option>
                 {devices.map((device) => (
                   <option key={device.id} value={device.id}>
                     {device.name}
@@ -518,10 +518,10 @@ export default function RawReportsPage() {
                 </svg>
               </div>
               <p className="text-sm font-medium text-white">
-                Belum ada data absensi
+                No attendance data yet
               </p>
               <p className="mt-1 text-xs text-slate-400">
-                Klik &quot;Tarik Data dari Mesin&quot; untuk mengambil data dari perangkat
+                Click &quot;Pull Data from Device&quot; to retrieve data from the device
               </p>
             </div>
           ) : (
@@ -534,28 +534,28 @@ export default function RawReportsPage() {
                       No
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Tanggal & Jam
+                      Date & Time
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       PIN
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Nama Karyawan
+                      Employee Name
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Departemen
+                      Department
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Metode
+                      Method
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Perangkat
+                      Device
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-400">
-                      Sumber
+                      Source
                     </th>
                   </tr>
                 </thead>
@@ -588,7 +588,7 @@ export default function RawReportsPage() {
                           variant={log.status === "IN" ? "success" : "info"}
                           size="sm"
                         >
-                          {log.status === "IN" ? "Masuk" : "Keluar"}
+                          {log.status === "IN" ? "Clock In" : "Clock Out"}
                         </Badge>
                       </td>
                       <td className="px-6 py-3 text-sm text-slate-400">
@@ -623,7 +623,7 @@ export default function RawReportsPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant={log.status === "IN" ? "success" : "info"} size="sm">
-                          {log.status === "IN" ? "Masuk" : "Keluar"}
+                          {log.status === "IN" ? "Clock In" : "Clock Out"}
                         </Badge>
                         <Badge variant={log.type === "realtime" ? "success" : "default"} size="sm">
                           {log.type === "realtime" ? "RT" : "Manual"}
@@ -651,7 +651,7 @@ export default function RawReportsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setShowManualForm(false)}>
           <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-surface-container-high shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
-              <h2 className="text-lg font-semibold text-white">Tambah Absensi Manual</h2>
+              <h2 className="text-lg font-semibold text-white">Add Manual Attendance</h2>
               <button onClick={() => setShowManualForm(false)} className="rounded-lg p-1 text-on-surface-variant hover:bg-white/[0.03]">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -660,13 +660,13 @@ export default function RawReportsPage() {
             </div>
             <div className="space-y-4 px-6 py-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Karyawan *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Employee *</label>
                 <select
                   value={manualForm.employeeId}
                   onChange={(e) => setManualForm({ ...manualForm, employeeId: e.target.value })}
                   className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  <option value="">Pilih Karyawan</option>
+                  <option value="">Select Employee</option>
                   {employees.map((emp) => (
                     <option key={emp.id} value={emp.id}>
                       {emp.name} ({emp.pin})
@@ -675,13 +675,13 @@ export default function RawReportsPage() {
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Perangkat *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Device *</label>
                 <select
                   value={manualForm.deviceId}
                   onChange={(e) => setManualForm({ ...manualForm, deviceId: e.target.value })}
                   className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  <option value="">Pilih Perangkat</option>
+                  <option value="">Select Device</option>
                   {devices.map((device) => (
                     <option key={device.id} value={device.id}>
                       {device.name}
@@ -691,7 +691,7 @@ export default function RawReportsPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-white">Tanggal *</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Date *</label>
                   <Input
                     type="date"
                     value={manualForm.scanDate}
@@ -699,7 +699,7 @@ export default function RawReportsPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-white">Jam *</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Time *</label>
                   <Input
                     type="time"
                     value={manualForm.scanTime}
@@ -708,7 +708,7 @@ export default function RawReportsPage() {
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Metode Verifikasi</label>
+                <label className="mb-2 block text-sm font-medium text-white">Verification Method</label>
                 <select
                   value={manualForm.verifyMethod}
                   onChange={(e) => setManualForm({ ...manualForm, verifyMethod: e.target.value })}
@@ -716,11 +716,11 @@ export default function RawReportsPage() {
                 >
                   <option value="1">Password</option>
                   <option value="2">Fingerprint</option>
-                  <option value="3">Kartu</option>
+                  <option value="3">Card</option>
                 </select>
               </div>
               <p className="text-xs text-slate-400">
-                Status (Masuk/Keluar) akan ditentukan otomatis berdasarkan urutan absensi hari ini.
+                Status (Clock In/Out) will be determined automatically based on the attendance sequence for today.
               </p>
             </div>
             {submitStatus && (
@@ -730,13 +730,13 @@ export default function RawReportsPage() {
             )}
             <div className="flex items-center justify-end gap-3 border-t border-white/[0.08] px-6 py-4">
               <Button variant="secondary" onClick={() => setShowManualForm(false)}>
-                Batal
+                Cancel
               </Button>
               <Button variant="primary" onClick={handleManualAttendance} disabled={submitting}>
                 {submitting ? (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 ) : (
-                  "Simpan"
+                  "Save"
                 )}
               </Button>
             </div>

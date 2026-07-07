@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get API logs error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data API logs" },
+      { error: "Failed to retrieve API logs data" },
       { status: 500 }
     );
   }

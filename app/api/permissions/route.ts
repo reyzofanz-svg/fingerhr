@@ -3,10 +3,10 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 
 const permissionSchema = z.object({
-  employeeId: z.string().min(1, "Karyawan wajib dipilih"),
-  type: z.enum(["SICK", "CUTI", "IZIN"], { message: "Tipe izin tidak valid" }),
-  startDate: z.string().min(1, "Tanggal mulai wajib diisi"),
-  endDate: z.string().min(1, "Tanggal selesai wajib diisi"),
+  employeeId: z.string().min(1, "Employee is required"),
+  type: z.enum(["SICK", "CUTI", "IZIN"], { message: "Invalid permission type" }),
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
   reason: z.string().optional(),
 });
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Get permissions error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data izin" },
+      { error: "Failed to retrieve permission data" },
       { status: 500 }
     );
   }
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     if (!employee) {
       return NextResponse.json(
-        { error: "Karyawan tidak ditemukan" },
+        { error: "Employee not found" },
         { status: 404 }
       );
     }
@@ -84,13 +84,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Create permission error:", error);
     return NextResponse.json(
-      { error: "Gagal mengajukan izin" },
+      { error: "Failed to submit permission" },
       { status: 500 }
     );
   }

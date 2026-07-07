@@ -29,7 +29,7 @@ export default function SettingsPage() {
     companyAddress: "",
     telegram_bot_token: "",
     telegram_enabled: "false",
-    telegram_message_template: "═════════════════\n  FINGERHR - NOTIFIKASI\n═════════════════\n\nHalo, <b>{name}</b>\n\nAbsensi kamu sudah tercatat:\n├ Status : <b>{status}</b>\n├ Waktu : <b>{time}</b>\n└ Tanggal : <b>{date}</b>\n\nJangan lupa absen pulang ya!",
+    telegram_message_template: "═════════════════\n  FINGERHR - NOTIFICATION\n═════════════════\n\nHello, <b>{name}</b>\n\nYour attendance has been recorded:\n├ Status : <b>{status}</b>\n├ Time : <b>{time}</b>\n└ Date : <b>{date}</b>\n\nDon't forget to clock out!",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -57,7 +57,7 @@ export default function SettingsPage() {
           companyAddress: data.companyAddress || "",
           telegram_bot_token: data.telegram_bot_token || "",
           telegram_enabled: data.telegram_enabled || "false",
-          telegram_message_template: data.telegram_message_template || "═════════════════\n  FINGERHR - NOTIFIKASI\n═════════════════\n\nHalo, <b>{name}</b>\n\nAbsensi kamu sudah tercatat:\n├ Status : <b>{status}</b>\n├ Waktu : <b>{time}</b>\n└ Tanggal : <b>{date}</b>\n\nJangan lupa absen pulang ya!",
+          telegram_message_template: data.telegram_message_template || "═════════════════\n  FINGERHR - NOTIFICATION\n═════════════════\n\nHello, <b>{name}</b>\n\nYour attendance has been recorded:\n├ Status : <b>{status}</b>\n├ Time : <b>{time}</b>\n└ Date : <b>{date}</b>\n\nDon't forget to clock out!",
         });
         // Parse office locations from settings
         if (data.office_locations) {
@@ -89,13 +89,13 @@ export default function SettingsPage() {
       });
 
       if (!res.ok) {
-        alert("Gagal menyimpan pengaturan");
+        alert("Failed to save settings");
         return;
       }
 
-      alert("Pengaturan berhasil disimpan!");
+      alert("Settings saved successfully!");
     } catch (error) {
-      alert("Gagal menyimpan pengaturan");
+      alert("Failed to save settings");
     } finally {
       setSaving(false);
     }
@@ -103,7 +103,7 @@ export default function SettingsPage() {
 
   const handleSetTelegramWebhook = async () => {
     if (!settings.telegram_bot_token) {
-      alert("Isi bot token terlebih dahulu");
+      alert("Enter the bot token first");
       return;
     }
     setWebhookSetting(true);
@@ -125,12 +125,12 @@ export default function SettingsPage() {
       });
       const data = await res.json();
       if (data.ok) {
-        alert("Webhook berhasil diatur!\nURL: " + webhookUrl);
+        alert("Webhook configured successfully!\nURL: " + webhookUrl);
       } else {
-        alert("Gagal set webhook: " + (data.error || "Unknown error"));
+        alert("Failed to set webhook: " + (data.error || "Unknown error"));
       }
     } catch {
-      alert("Gagal mengatur webhook");
+      alert("Failed to configure webhook");
     } finally {
       setWebhookSetting(false);
     }
@@ -148,13 +148,13 @@ export default function SettingsPage() {
       });
 
       if (!res.ok) {
-        alert("Gagal menyimpan lokasi kantor");
+        alert("Failed to save office location");
         return;
       }
 
-      alert("Lokasi kantor berhasil disimpan!");
+      alert("Office location saved successfully!");
     } catch (error) {
-      alert("Gagal menyimpan lokasi kantor");
+      alert("Failed to save office location");
     } finally {
       setSavingLocation(false);
     }
@@ -162,7 +162,7 @@ export default function SettingsPage() {
 
   const handleAddLocation = () => {
     if (!newLocation.name) {
-      alert("Nama lokasi wajib diisi");
+      alert("Location name is required");
       return;
     }
     setOfficeLocations([...officeLocations, { ...newLocation }]);
@@ -178,17 +178,17 @@ export default function SettingsPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Pengaturan" },
+          { label: "Settings" },
         ]}
       />
 
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Pengaturan
+          Settings
         </h1>
         <p className="mt-1 text-sm text-slate-400">
-          Kelola pengaturan aplikasi dan integrasi
+          Manage application settings and integrations
         </p>
       </div>
 
@@ -196,7 +196,7 @@ export default function SettingsPage() {
         {/* Company Profile */}
         <Card variant="glass-high">
           <div className="border-b border-white/[0.08] px-6 py-4">
-            <h3 className="text-sm font-semibold text-white">Profil Perusahaan</h3>
+            <h3 className="text-sm font-semibold text-white">Company Profile</h3>
           </div>
           <CardContent className="p-6">
             {loading ? (
@@ -206,7 +206,7 @@ export default function SettingsPage() {
             ) : (
               <div className="space-y-4">
                 <Input
-                  label="Nama Perusahaan"
+                  label="Company Name"
                   value={settings.companyName}
                   onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
                 />
@@ -217,18 +217,18 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, companyEmail: e.target.value })}
                 />
                 <Input
-                  label="Telepon"
+                  label="Phone"
                   value={settings.companyPhone}
                   onChange={(e) => setSettings({ ...settings, companyPhone: e.target.value })}
                 />
                 <div>
-                  <label className="mb-2 block text-sm font-medium text-white">Alamat</label>
+                  <label className="mb-2 block text-sm font-medium text-white">Address</label>
                   <textarea
                     value={settings.companyAddress}
                     onChange={(e) => setSettings({ ...settings, companyAddress: e.target.value })}
                     rows={3}
                     className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder="Alamat perusahaan..."
+                    placeholder="Company address..."
                   />
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function SettingsPage() {
         {/* Fingerspot API Config */}
         <Card variant="glass-high">
           <div className="border-b border-white/[0.08] px-6 py-4">
-            <h3 className="text-sm font-semibold text-white">Konfigurasi Fingerspot API</h3>
+            <h3 className="text-sm font-semibold text-white">Fingerspot API Configuration</h3>
           </div>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -260,7 +260,7 @@ export default function SettingsPage() {
               />
               <div className="rounded-xl bg-white/[0.03] p-4">
                 <p className="text-xs text-slate-400">
-                  Webhook URL: Setelah deploy ke Railway, masukkan URL webhook ke dashboard Fingerspot.
+                  Webhook URL: After deploying to Railway, enter the webhook URL in the Fingerspot dashboard.
                 </p>
                 <p className="mt-2 font-mono text-xs text-white/60">
                   https://[app-name].up.railway.app/api/webhook/fingerspot
@@ -277,10 +277,10 @@ export default function SettingsPage() {
             {saving ? (
               <>
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                Menyimpan...
+                Saving...
               </>
             ) : (
-              "Simpan Pengaturan"
+              "Save Settings"
             )}
           </Button>
         </div>
@@ -290,13 +290,13 @@ export default function SettingsPage() {
           <div className="border-b border-white/[0.08] px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-white">Notifikasi Telegram</h3>
+                <h3 className="text-sm font-semibold text-white">Telegram Notifications</h3>
                 <p className="mt-1 text-xs text-slate-400">
-                  Kirim notifikasi otomatis ke karyawan saat scan masuk/keluar
+                  Send automatic notifications to employees when clocking in/out
                 </p>
               </div>
               <Badge variant={settings.telegram_enabled === "true" ? "success" : "default"} size="sm">
-                {settings.telegram_enabled === "true" ? "Aktif" : "Nonaktif"}
+                {settings.telegram_enabled === "true" ? "Active" : "Inactive"}
               </Badge>
             </div>
           </div>
@@ -304,8 +304,8 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white">Aktifkan Notifikasi</p>
-                  <p className="text-xs text-slate-400">Kirim notifikasi absensi via Telegram bot</p>
+                  <p className="text-sm font-medium text-white">Enable Notifications</p>
+                  <p className="text-xs text-slate-400">Send attendance notifications via Telegram bot</p>
                 </div>
                 <button
                   type="button"
@@ -335,33 +335,33 @@ export default function SettingsPage() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-white">
-                  Template Pesan
+                  Message Template
                 </label>
                 <textarea
                   value={settings.telegram_message_template}
                   onChange={(e) => setSettings({ ...settings, telegram_message_template: e.target.value })}
                   rows={3}
                   className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  placeholder="Halo {name}, Absensi tercatat: {status} pukul {time}"
+                  placeholder="Hello {name}, Attendance recorded: {status} at {time}"
                 />
                 <p className="mt-1 text-xs text-slate-400">
-                  Variabel: {"{name}"}, {"{status}"}, {"{time}"}, {"{date}"}
+                  Variables: {"{name}"}, {"{status}"}, {"{time}"}, {"{date}"}
                 </p>
               </div>
 
               <div className="rounded-xl bg-white/[0.03] p-4">
-                <p className="text-xs font-medium text-white">Cara Mengatur:</p>
+                <p className="text-xs font-medium text-white">How to Set Up:</p>
                 <ol className="mt-2 space-y-1 text-xs text-slate-400">
-                  <li>1. Buat bot Telegram via @BotFather, copy token-nya</li>
-                  <li>2. Paste token di atas, lalu simpan</li>
-                  <li>3. Klik tombol "Set Webhook" di bawah</li>
-                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-white/60">/start &lt;PIN&gt;</span></li>
+                  <li>1. Create a Telegram bot via @BotFather, copy the token</li>
+                  <li>2. Paste the token above, then save</li>
+                  <li>3. Click the "Set Webhook" button below</li>
+                  <li>4. Employees send to bot: <span className="font-mono text-white/60">/start &lt;PIN&gt;</span></li>
                 </ol>
               </div>
 
               <div className="flex gap-3">
                 <Button variant="secondary" size="md" onClick={handleSetTelegramWebhook} disabled={webhookSetting || !settings.telegram_bot_token}>
-                  {webhookSetting ? "Mengatur..." : "Set Webhook"}
+                  {webhookSetting ? "Setting..." : "Set Webhook"}
                 </Button>
               </div>
             </div>
@@ -371,9 +371,9 @@ export default function SettingsPage() {
       {/* Office Locations */}
       <Card variant="glass-high">
         <div className="border-b border-white/[0.08] px-6 py-4">
-          <h3 className="text-sm font-semibold text-white">Lokasi Kantor</h3>
+          <h3 className="text-sm font-semibold text-white">Office Location</h3>
           <p className="mt-1 text-xs text-slate-400">
-            Konfigurasi lokasi kantor untuk validasi GPS absensi
+            Configure office location for GPS attendance validation
           </p>
         </div>
         <CardContent className="p-6">
@@ -407,10 +407,10 @@ export default function SettingsPage() {
           {/* Add new location form */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <Input
-              label="Nama Lokasi"
+              label="Location Name"
               value={newLocation.name}
               onChange={(e) => setNewLocation({ ...newLocation, name: e.target.value })}
-              placeholder="Kantor Pusat"
+              placeholder="Head Office"
             />
             <Input
               label="Latitude"
@@ -429,7 +429,7 @@ export default function SettingsPage() {
               placeholder="106.8456"
             />
             <Input
-              label="Radius (meter)"
+              label="Radius (meters)"
               type="number"
               value={newLocation.radius}
               onChange={(e) => setNewLocation({ ...newLocation, radius: parseInt(e.target.value) || 100 })}
@@ -437,14 +437,14 @@ export default function SettingsPage() {
             />
             <div className="flex items-end gap-2">
               <Button variant="secondary" onClick={handleAddLocation}>
-                Tambah
+                Add
               </Button>
               <Button
                 variant="primary"
                 onClick={handleSaveLocations}
                 disabled={savingLocation}
               >
-                {savingLocation ? "Menyimpan..." : "Simpan Lokasi"}
+                {savingLocation ? "Saving..." : "Save Location"}
               </Button>
             </div>
           </div>

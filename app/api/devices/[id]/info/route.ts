@@ -20,7 +20,7 @@ export async function GET(
 
     if (!device) {
       return NextResponse.json(
-        { error: "Perangkat tidak ditemukan" },
+        { error: "Device not found" },
         { status: 404 }
       );
     }
@@ -47,7 +47,7 @@ export async function GET(
 
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error || "Gagal mengambil info device" },
+        { error: result.error || "Failed to retrieve device info" },
         { status: 500 }
       );
     }
@@ -60,7 +60,7 @@ export async function GET(
   } catch (error) {
     console.error("[API] Get device info error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil info device" },
+      { error: "Failed to retrieve device info" },
       { status: 500 }
     );
   }

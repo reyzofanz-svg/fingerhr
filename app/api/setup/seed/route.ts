@@ -15,7 +15,7 @@ export async function POST() {
     if (existing) {
       return NextResponse.json({
         success: true,
-        message: "Device sudah ada",
+        message: "Device already exists",
         device: existing,
       });
     }
@@ -32,13 +32,13 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      message: "Device berhasil dibuat",
+      message: "Device created successfully",
       device,
     });
   } catch (error) {
     console.error("[Setup] Seed error:", error);
     return NextResponse.json(
-      { error: "Gagal seed data" },
+      { error: "Failed to seed data" },
       { status: 500 }
     );
   }

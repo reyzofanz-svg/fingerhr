@@ -9,7 +9,7 @@ const daySchema = z.object({
 });
 
 const workScheduleSchema = z.object({
-  name: z.string().min(1, "Nama jadwal wajib diisi"),
+  name: z.string().min(1, "Schedule name is required"),
   isActive: z.boolean().optional().default(true),
   days: z.array(daySchema).length(7, "Harus 7 hari (Minggu-Sabtu)"),
 });
@@ -30,7 +30,7 @@ export async function GET() {
     return NextResponse.json(workSchedules);
   } catch (error) {
     console.error("[API] Get work schedules error:", error);
-    return NextResponse.json({ error: "Gagal mengambil data jadwal" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to retrieve schedule data" }, { status: 500 });
   }
 }
 
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     for (const d of validated.days) {
       if (!d.isDayOff && !d.shiftId) {
         return NextResponse.json(
-          { error: `Hari kerja harus memilih shift (day ${d.dayOfWeek})` },
+          { error: `Working days must have a shift selected (day ${d.dayOfWeek})` },
           { status: 400 }
         );
       }
@@ -67,9 +67,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(workSchedule, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Validasi gagal", details: error.issues }, { status: 400 });
+      return NextResponse.json({ error: "Validation failed", details: error.issues }, { status: 400 });
     }
     console.error("[API] Create work schedule error:", error);
-    return NextResponse.json({ error: "Gagal membuat jadwal" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create schedule" }, { status: 500 });
   }
 }

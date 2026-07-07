@@ -44,14 +44,14 @@ export default function AutoReportsPage() {
       });
 
       if (!res.ok) {
-        alert("Gagal generate laporan");
+        alert("Failed to generate report");
         return;
       }
 
       const data = await res.json();
       setReportData(data);
     } catch (error) {
-      alert("Gagal generate laporan");
+      alert("Failed to generate report");
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,7 @@ export default function AutoReportsPage() {
     const res = await fetch(`/api/export/excel?${params.toString()}`);
 
     if (!res.ok) {
-      alert("Gagal export Excel");
+      alert("Failed to export Excel");
       return;
     }
 
@@ -75,30 +75,30 @@ export default function AutoReportsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `laporan-${reportType}-${date}.xlsx`;
+    a.download = `report-${reportType}-${date}.xlsx`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const typeLabels = { daily: "Harian", weekly: "Mingguan", monthly: "Bulanan" };
+  const typeLabels = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" };
 
   return (
     <div className="space-y-8">
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Laporan", href: "/dashboard/reports" },
-          { label: "Laporan Otomatis" },
+          { label: "Reports", href: "/dashboard/reports" },
+          { label: "Auto Reports" },
         ]}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Laporan Otomatis
+            Auto Reports
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Generate laporan kehadiran otomatis berdasarkan periode
+            Generate automatic attendance reports based on period
           </p>
         </div>
         {reportData && (
@@ -116,19 +116,19 @@ export default function AutoReportsPage() {
         <CardContent className="py-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <div className="w-full sm:w-48">
-              <label className="mb-2 block text-sm font-medium text-white">Jenis Laporan</label>
+              <label className="mb-2 block text-sm font-medium text-white">Report Type</label>
               <select
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value as typeof reportType)}
                 className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="daily">Harian</option>
-                <option value="weekly">Mingguan</option>
-                <option value="monthly">Bulanan</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
               </select>
             </div>
             <Input
-              label="Tanggal"
+              label="Date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -137,7 +137,7 @@ export default function AutoReportsPage() {
               {loading ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               ) : (
-                "Generate Laporan"
+                "Generate Report"
               )}
             </Button>
           </div>
@@ -149,7 +149,7 @@ export default function AutoReportsPage() {
         <>
           <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-6 py-3">
             <p className="text-sm text-slate-400">
-              Periode: <span className="font-medium text-white">{typeLabels[reportData.type as keyof typeof typeLabels]}</span>
+              Period: <span className="font-medium text-white">{typeLabels[reportData.type as keyof typeof typeLabels]}</span>
               {" "} | {new Date(reportData.dateRange.start).toLocaleDateString("id-ID")} - {new Date(reportData.dateRange.end).toLocaleDateString("id-ID")}
             </p>
           </div>
@@ -157,31 +157,31 @@ export default function AutoReportsPage() {
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
             <Card variant="glass">
               <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-slate-400">Total Karyawan</p>
+                <p className="text-xs font-medium text-slate-400">Total Employees</p>
                 <p className="mt-1 text-2xl font-semibold text-white">{reportData.summary.totalEmployees}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-slate-400">Total Hadir</p>
+                <p className="text-xs font-medium text-slate-400">Total Present</p>
                 <p className="mt-1 text-2xl font-semibold text-white/60">{reportData.summary.totalPresent}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-slate-400">Total Terlambat</p>
+                <p className="text-xs font-medium text-slate-400">Total Late</p>
                 <p className="mt-1 text-2xl font-semibold text-white/50">{reportData.summary.totalLate}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-slate-400">Total Lembur</p>
+                <p className="text-xs font-medium text-slate-400">Total Overtime</p>
                 <p className="mt-1 text-2xl font-semibold text-white/60">{reportData.summary.totalOvertime}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
-                <p className="text-xs font-medium text-slate-400">Total Alpha</p>
+                <p className="text-xs font-medium text-slate-400">Total Absent</p>
                 <p className="mt-1 text-2xl font-semibold text-white/50">{reportData.summary.totalAbsent}</p>
               </CardContent>
             </Card>
@@ -197,14 +197,14 @@ export default function AutoReportsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Nama</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Name</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">PIN</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Departemen</th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Hadir</th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Terlambat</th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Lembur</th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Alpha</th>
-                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Jam Kerja</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Department</th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Present</th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Late</th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Overtime</th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Absent</th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-slate-400">Work Hours</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -217,7 +217,7 @@ export default function AutoReportsPage() {
                       <td className="px-6 py-4 text-center text-sm text-white/50">{row.totalLate}</td>
                       <td className="px-6 py-4 text-center text-sm text-white/60">{row.totalOvertime}</td>
                       <td className="px-6 py-4 text-center text-sm text-white/50">{row.totalAbsent}</td>
-                      <td className="px-6 py-4 text-center text-sm text-white">{row.totalWorkHours.toFixed(1)}j</td>
+                      <td className="px-6 py-4 text-center text-sm text-white">{row.totalWorkHours.toFixed(1)}h</td>
                     </tr>
                   ))}
                 </tbody>

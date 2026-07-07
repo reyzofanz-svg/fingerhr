@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   try {
     const { url } = await request.json();
     if (!url) {
-      return NextResponse.json({ error: "URL wajib diisi" }, { status: 400 });
+      return NextResponse.json({ error: "URL is required" }, { status: 400 });
     }
 
     // Get bot token
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const token = tokenSetting?.value || process.env.TELEGRAM_BOT_TOKEN;
 
     if (!token) {
-      return NextResponse.json({ error: "Bot token belum diatur" }, { status: 400 });
+      return NextResponse.json({ error: "Bot token not configured" }, { status: 400 });
     }
 
     const res = await fetch(`${TELEGRAM_API}/bot${token}/setWebhook`, {
@@ -43,6 +43,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error("[Telegram] setWebhook error:", error);
-    return NextResponse.json({ error: "Gagal mengatur webhook" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to configure webhook" }, { status: 500 });
   }
 }

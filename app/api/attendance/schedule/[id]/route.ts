@@ -40,7 +40,7 @@ export async function GET(
 
     if (!schedule) {
       return NextResponse.json(
-        { error: "Jadwal tidak ditemukan" },
+        { error: "Schedule not found" },
         { status: 404 }
       );
     }
@@ -49,7 +49,7 @@ export async function GET(
   } catch (error) {
     console.error("[API] Get schedule error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil data jadwal" },
+      { error: "Failed to retrieve schedule data" },
       { status: 500 }
     );
   }
@@ -67,7 +67,7 @@ export async function PUT(
     const existing = await prisma.schedule.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json(
-        { error: "Jadwal tidak ditemukan" },
+        { error: "Schedule not found" },
         { status: 404 }
       );
     }
@@ -81,13 +81,13 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validasi gagal", details: error.issues },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
     console.error("[API] Update schedule error:", error);
     return NextResponse.json(
-      { error: "Gagal mengupdate jadwal" },
+      { error: "Failed to update schedule" },
       { status: 500 }
     );
   }
@@ -107,25 +107,25 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Shift tidak ditemukan" },
+        { error: "Shift not found" },
         { status: 404 }
       );
     }
 
     if (existing._count.workScheduleDays > 0) {
       return NextResponse.json(
-        { error: "Tidak bisa menghapus shift yang masih dipakai di jadwal" },
+        { error: "Cannot delete shift that is still in use by a schedule" },
         { status: 400 }
       );
     }
 
     await prisma.schedule.delete({ where: { id } });
 
-    return NextResponse.json({ message: "Jadwal berhasil dihapus" });
+    return NextResponse.json({ message: "Schedule deleted successfully" });
   } catch (error) {
     console.error("[API] Delete schedule error:", error);
     return NextResponse.json(
-      { error: "Gagal menghapus jadwal" },
+      { error: "Failed to delete schedule" },
       { status: 500 }
     );
   }

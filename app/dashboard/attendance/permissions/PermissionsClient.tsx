@@ -101,7 +101,7 @@ export function PermissionsClient({
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal mengajukan izin");
+        alert(err.error || "Failed to submit leave request");
         return;
       }
 
@@ -115,7 +115,7 @@ export function PermissionsClient({
       });
       fetchPermissions();
     } catch (error) {
-      alert("Gagal mengajukan izin");
+      alert("Failed to submit leave request");
     } finally {
       setSubmitting(false);
     }
@@ -130,13 +130,13 @@ export function PermissionsClient({
       });
 
       if (!res.ok) {
-        alert("Gagal menyetujui izin");
+        alert("Failed to approve leave");
         return;
       }
 
       fetchPermissions();
     } catch (error) {
-      alert("Gagal menyetujui izin");
+      alert("Failed to approve leave");
     }
   };
 
@@ -149,13 +149,13 @@ export function PermissionsClient({
       });
 
       if (!res.ok) {
-        alert("Gagal menolak izin");
+        alert("Failed to reject leave");
         return;
       }
 
       fetchPermissions();
     } catch (error) {
-      alert("Gagal menolak izin");
+      alert("Failed to reject leave");
     }
   };
 
@@ -177,22 +177,22 @@ export function PermissionsClient({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "APPROVED":
-        return <Badge variant="success" size="sm">Disetujui</Badge>;
+        return <Badge variant="success" size="sm">Approved</Badge>;
       case "REJECTED":
-        return <Badge variant="error" size="sm">Ditolak</Badge>;
+        return <Badge variant="error" size="sm">Rejected</Badge>;
       default:
-        return <Badge variant="warning" size="sm">Menunggu</Badge>;
+        return <Badge variant="warning" size="sm">Pending</Badge>;
     }
   };
 
   const getTypeBadge = (type: string) => {
     switch (type) {
       case "SICK":
-        return <Badge variant="error" size="sm">Sakit</Badge>;
+        return <Badge variant="error" size="sm">Sick</Badge>;
       case "CUTI":
-        return <Badge variant="info" size="sm">CUTI</Badge>;
+        return <Badge variant="info" size="sm">Leave</Badge>;
       default:
-        return <Badge variant="default" size="sm">Izin</Badge>;
+        return <Badge variant="default" size="sm">Permission</Badge>;
     }
   };
 
@@ -214,8 +214,8 @@ export function PermissionsClient({
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Absensi", href: "/dashboard/attendance" },
-          { label: "Izin" },
+          { label: "Attendance", href: "/dashboard/attendance" },
+          { label: "Leave" },
         ]}
       />
 
@@ -223,17 +223,17 @@ export function PermissionsClient({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Kelola Izin
+            Manage Leave
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Ajukan dan kelola izin karyawan (Sakit, CUTI, Izin)
+            Submit and manage employee leave (Sick, Leave, Permission)
           </p>
         </div>
         <Button variant="primary" size="md" onClick={() => setShowAddModal(true)}>
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Ajukan Izin
+          Submit Leave
         </Button>
       </div>
 
@@ -243,7 +243,7 @@ export function PermissionsClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Menunggu</p>
+                <p className="text-xs font-medium text-slate-400">Pending</p>
                 <p className="mt-1 text-2xl font-semibold text-white/50">{pendingCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
@@ -259,7 +259,7 @@ export function PermissionsClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Disetujui</p>
+                <p className="text-xs font-medium text-slate-400">Approved</p>
                 <p className="mt-1 text-2xl font-semibold text-white/60">{approvedCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
@@ -275,7 +275,7 @@ export function PermissionsClient({
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-400">Ditolak</p>
+                <p className="text-xs font-medium text-slate-400">Rejected</p>
                 <p className="mt-1 text-2xl font-semibold text-white/50">{rejectedCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
@@ -298,20 +298,20 @@ export function PermissionsClient({
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Semua Status</option>
-                <option value="PENDING">Menunggu</option>
-                <option value="APPROVED">Disetujui</option>
-                <option value="REJECTED">Ditolak</option>
+                <option value="">All Statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="APPROVED">Approved</option>
+                <option value="REJECTED">Rejected</option>
               </select>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
                 className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
-                <option value="">Semua Tipe</option>
-                <option value="SICK">Sakit</option>
-                <option value="CUTI">CUTI</option>
-                <option value="IZIN">Izin</option>
+                <option value="">All Types</option>
+                <option value="SICK">Sick</option>
+                <option value="CUTI">Leave</option>
+                <option value="IZIN">Permission</option>
               </select>
             </div>
           </div>
@@ -330,13 +330,13 @@ export function PermissionsClient({
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Karyawan</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tipe</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tanggal</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Alasan</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Catatan</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Employee</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Type</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Date</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Reason</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Notes</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
-                    <th className="px-6 py-4 text-right text-xs font-medium text-slate-400">Aksi</th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-slate-400">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -375,7 +375,7 @@ export function PermissionsClient({
                               type="button"
                               onClick={() => openConfirmDialog(perm.id, perm.employee.name, "APPROVED")}
                               className="rounded-lg p-2 text-white/60 transition-colors hover:bg-white/[0.06]"
-                              title="Setujui"
+                              title="Approve"
                             >
                               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -385,7 +385,7 @@ export function PermissionsClient({
                               type="button"
                               onClick={() => openConfirmDialog(perm.id, perm.employee.name, "REJECTED")}
                               className="rounded-lg p-2 text-error transition-colors hover:bg-red-500/10"
-                              title="Tolak"
+                              title="Reject"
                             >
                               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.36m12.728 12.728L5.636 5.636" />
@@ -400,7 +400,7 @@ export function PermissionsClient({
               </table>
               {permissions.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-slate-400">Belum ada data izin</p>
+                  <p className="text-sm text-slate-400">No leave data yet</p>
                 </div>
               )}
             </div>
@@ -412,17 +412,17 @@ export function PermissionsClient({
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="glass mx-4 w-full max-w-md rounded-3xl border border-white/[0.08] p-6">
-            <h3 className="text-lg font-semibold text-white">Ajukan Izin Baru</h3>
-            <p className="mt-1 text-sm text-slate-400">Isi form untuk mengajukan izin</p>
+            <h3 className="text-lg font-semibold text-white">Submit New Leave</h3>
+            <p className="mt-1 text-sm text-slate-400">Fill in the form to submit a leave request</p>
             <div className="mt-6 space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Karyawan *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Employee *</label>
                 <select
                   value={formData.employeeId}
                   onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                   className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  <option value="">Pilih Karyawan</option>
+                  <option value="">Select Employee</option>
                   {employees.map((emp) => (
                     <option key={emp.id} value={emp.id}>
                       {emp.name} ({emp.pin})
@@ -431,52 +431,52 @@ export function PermissionsClient({
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Tipe Izin *</label>
+                <label className="mb-2 block text-sm font-medium text-white">Leave Type *</label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
-                  <option value="IZIN">Izin</option>
-                  <option value="SICK">Sakit</option>
-                  <option value="CUTI">CUTI</option>
+                  <option value="IZIN">Permission</option>
+                  <option value="SICK">Sick</option>
+                  <option value="CUTI">Leave</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Tanggal Mulai *"
+                  label="Start Date *"
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                 />
                 <Input
-                  label="Tanggal Selesai *"
+                  label="End Date *"
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium text-white">Alasan</label>
+                <label className="mb-2 block text-sm font-medium text-white">Reason</label>
                 <textarea
                   value={formData.reason}
                   onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                   rows={3}
                   className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  placeholder="Jelaskan alasan izin..."
+                  placeholder="Explain the reason for leave..."
                 />
               </div>
             </div>
             <div className="mt-6 flex justify-end gap-3">
               <Button variant="secondary" onClick={() => setShowAddModal(false)}>
-                Batal
+                Cancel
               </Button>
               <Button
                 variant="primary"
                 onClick={handleAdd}
                 disabled={submitting || !formData.employeeId}
               >
-                {submitting ? "Mengirim..." : "Ajukan"}
+                {submitting ? "Submitting..." : "Submit"}
               </Button>
             </div>
           </div>
@@ -487,21 +487,21 @@ export function PermissionsClient({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="glass mx-4 w-full max-w-md rounded-3xl border border-white/[0.08] p-6">
             <h3 className="text-lg font-semibold text-white">
-              {confirmDialog.action === "APPROVED" ? "Setujui Izin" : "Tolak Izin"}
+              {confirmDialog.action === "APPROVED" ? "Approve Leave" : "Reject Leave"}
             </h3>
             <p className="mt-1 text-sm text-slate-400">
               {confirmDialog.action === "APPROVED"
-                ? `Menyetujui izin untuk ${confirmDialog.permissionName}?`
-                : `Menolak izin untuk ${confirmDialog.permissionName}?`}
+                ? `Approve leave for ${confirmDialog.permissionName}?`
+                : `Reject leave for ${confirmDialog.permissionName}?`}
             </p>
             <div className="mt-4">
-              <label className="mb-2 block text-sm font-medium text-white">Catatan Admin (opsional)</label>
+              <label className="mb-2 block text-sm font-medium text-white">Admin Notes (optional)</label>
               <textarea
                 value={actionNotes}
                 onChange={(e) => setActionNotes(e.target.value)}
                 rows={3}
                 className="w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 py-3 text-sm text-on-surface transition-all placeholder:text-on-surface-variant/50 focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
-                placeholder="Tambahkan catatan untuk keputusan ini..."
+                placeholder="Add notes for this decision..."
               />
             </div>
             <div className="mt-6 flex justify-end gap-3">
@@ -509,13 +509,13 @@ export function PermissionsClient({
                 variant="secondary"
                 onClick={() => setConfirmDialog({ open: false, permissionId: "", permissionName: "", action: "APPROVED" })}
               >
-                Batal
+                Cancel
               </Button>
               <Button
                 variant={confirmDialog.action === "APPROVED" ? "primary" : "secondary"}
                 onClick={handleConfirmAction}
               >
-                {confirmDialog.action === "APPROVED" ? "Setujui" : "Tolak"}
+                {confirmDialog.action === "APPROVED" ? "Approve" : "Reject"}
               </Button>
             </div>
           </div>

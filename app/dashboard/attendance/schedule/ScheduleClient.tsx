@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
 import { Breadcrumbs } from "@/components/layout";
 
-const DAY_NAMES = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 interface Shift {
   id: string;
@@ -206,14 +206,14 @@ export function ScheduleClient({
       });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal menyimpan shift");
+        alert(err.error || "Failed to save shift");
         return;
       }
       setShiftModal(null);
       setSelectedShift(null);
       fetchShifts();
     } catch {
-      alert("Gagal menyimpan shift");
+      alert("Failed to save shift");
     } finally {
       setSubmitting(false);
     }
@@ -226,7 +226,7 @@ export function ScheduleClient({
       const res = await fetch(`/api/attendance/schedule/${selectedShift.id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal menghapus shift");
+        alert(err.error || "Failed to delete shift");
         return;
       }
       setShiftModal(null);
@@ -264,7 +264,7 @@ export function ScheduleClient({
     // validate working days have shift
     for (const d of jadwalForm.days) {
       if (!d.isDayOff && !d.shiftId) {
-        alert(`Hari ${DAY_NAMES[d.dayOfWeek]} adalah hari kerja tapi belum pilih shift.`);
+        alert(`${DAY_NAMES[d.dayOfWeek]} is a working day but no shift selected.`);
         return;
       }
     }
@@ -280,7 +280,7 @@ export function ScheduleClient({
       });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal menyimpan jadwal");
+        alert(err.error || "Failed to save schedule");
         return;
       }
       setJadwalModal(null);
@@ -298,7 +298,7 @@ export function ScheduleClient({
       const res = await fetch(`/api/attendance/work-schedule/${selectedJadwal.id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal menghapus jadwal");
+        alert(err.error || "Failed to delete schedule");
         return;
       }
       setJadwalModal(null);
@@ -320,7 +320,7 @@ export function ScheduleClient({
       });
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal menugaskan jadwal");
+        alert(err.error || "Failed to assign schedule");
         return;
       }
       setShowAssignModal(false);
@@ -332,7 +332,7 @@ export function ScheduleClient({
   };
 
   const deleteAssignment = async (id: string) => {
-    if (!confirm("Hapus penugasan ini?")) return;
+    if (!confirm("Delete this assignment?")) return;
     const res = await fetch(`/api/attendance/assign?id=${id}`, { method: "DELETE" });
     if (res.ok) fetchAssignments();
   };
@@ -344,15 +344,15 @@ export function ScheduleClient({
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Absensi", href: "/dashboard/attendance" },
-          { label: "Shift & Jadwal" },
+          { label: "Attendance", href: "/dashboard/attendance" },
+          { label: "Shift & Schedule" },
         ]}
       />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-white">Shift &amp; Jadwal Kerja</h1>
-          <p className="mt-1 text-sm text-slate-400">Buat shift, susun jadwal mingguan, lalu tugaskan ke karyawan</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-white">Shift &amp; Work Schedule</h1>
+          <p className="mt-1 text-sm text-slate-400">Create shifts, arrange weekly schedules, then assign to employees</p>
         </div>
       </div>
 
@@ -360,8 +360,8 @@ export function ScheduleClient({
       <div className="flex gap-1 rounded-full border border-white/[0.08] bg-surface-container/50 p-1 text-sm sm:w-fit">
         {([
           ["shift", "Shift"],
-          ["jadwal", "Jadwal"],
-          ["assign", "Penugasan"],
+          ["jadwal", "Schedule"],
+          ["assign", "Assignment"],
         ] as const).map(([key, label]) => (
           <button
             key={key}
@@ -379,7 +379,7 @@ export function ScheduleClient({
       {tab === "shift" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button variant="primary" size="md" onClick={openAddShift}>+ Tambah Shift</Button>
+            <Button variant="primary" size="md" onClick={openAddShift}>+ Add Shift</Button>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {loading ? (
@@ -388,7 +388,7 @@ export function ScheduleClient({
               </div>
             ) : shifts.length === 0 ? (
               <Card variant="glass" className="col-span-full">
-                <CardContent className="py-12 text-center text-sm text-slate-400">Belum ada shift</CardContent>
+                <CardContent className="py-12 text-center text-sm text-slate-400">No shifts yet</CardContent>
               </Card>
             ) : (
               shifts.map((s) => (
@@ -399,19 +399,19 @@ export function ScheduleClient({
                         <h3 className="text-lg font-semibold text-white">{s.name}</h3>
                         <p className="mt-1 text-sm text-slate-400">{s.startTime} - {s.endTime}</p>
                       </div>
-                      <Badge variant={s.isActive ? "success" : "default"} size="sm">{s.isActive ? "Aktif" : "Nonaktif"}</Badge>
+                      <Badge variant={s.isActive ? "success" : "default"} size="sm">{s.isActive ? "Active" : "Inactive"}</Badge>
                     </div>
                     <div className="mt-4 space-y-2 text-sm">
-                      <Row label="Toleransi Terlambat" value={`${s.graceMinutes} menit`} />
-                      {s.breakStart && s.breakEnd && <Row label="Istirahat" value={`${s.breakStart} - ${s.breakEnd}`} />}
-                      {s.overtimeStart && <Row label="Lembur Mulai" value={`${s.overtimeStart} (${s.overtimeRate}x)`} />}
-                      {(s.scanInStart || s.scanInEnd) && <Row label="Scan Masuk" value={`${s.scanInStart || "?"} - ${s.scanInEnd || "?"}`} />}
-                      {(s.scanOutStart || s.scanOutEnd) && <Row label="Scan Pulang" value={`${s.scanOutStart || "?"} - ${s.scanOutEnd || "?"}`} />}
-                      <Row label="Dipakai di Jadwal" value={`${s._count.workScheduleDays} hari`} />
+                      <Row label="Late Tolerance" value={`${s.graceMinutes} minutes`} />
+                      {s.breakStart && s.breakEnd && <Row label="Break" value={`${s.breakStart} - ${s.breakEnd}`} />}
+                      {s.overtimeStart && <Row label="Overtime Start" value={`${s.overtimeStart} (${s.overtimeRate}x)`} />}
+                      {(s.scanInStart || s.scanInEnd) && <Row label="Scan In" value={`${s.scanInStart || "?"} - ${s.scanInEnd || "?"}`} />}
+                      {(s.scanOutStart || s.scanOutEnd) && <Row label="Scan Out" value={`${s.scanOutStart || "?"} - ${s.scanOutEnd || "?"}`} />}
+                      <Row label="Used in Schedule" value={`${s._count.workScheduleDays} days`} />
                     </div>
                     <div className="mt-4 flex gap-2">
                       <button onClick={() => openEditShift(s)} className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-medium text-on-surface transition-colors hover:bg-white/[0.08]">Edit</button>
-                      <button onClick={() => { setSelectedShift(s); setShiftModal("delete"); }} className="rounded-xl border border-error/20 bg-error/5 px-3 py-2 text-xs font-medium text-error transition-colors hover:bg-red-500/10">Hapus</button>
+                      <button onClick={() => { setSelectedShift(s); setShiftModal("delete"); }} className="rounded-xl border border-error/20 bg-error/5 px-3 py-2 text-xs font-medium text-error transition-colors hover:bg-red-500/10">Delete</button>
                     </div>
                   </CardContent>
                 </Card>
@@ -425,15 +425,15 @@ export function ScheduleClient({
       {tab === "jadwal" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button variant="primary" size="md" onClick={openAddJadwal} disabled={shifts.length === 0}>+ Tambah Jadwal</Button>
+            <Button variant="primary" size="md" onClick={openAddJadwal} disabled={shifts.length === 0}>+ Add Schedule</Button>
           </div>
           {shifts.length === 0 && (
-            <Card variant="glass"><CardContent className="py-4 text-center text-sm text-slate-400">Buat shift dulu sebelum menyusun jadwal.</CardContent></Card>
+            <Card variant="glass"><CardContent className="py-4 text-center text-sm text-slate-400">Create a shift first before arranging a schedule.</CardContent></Card>
           )}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {workSchedules.length === 0 ? (
               <Card variant="glass" className="col-span-full">
-                <CardContent className="py-12 text-center text-sm text-slate-400">Belum ada jadwal</CardContent>
+                <CardContent className="py-12 text-center text-sm text-slate-400">No schedules yet</CardContent>
               </Card>
             ) : (
               workSchedules.map((ws) => (
@@ -441,21 +441,21 @@ export function ScheduleClient({
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <h3 className="text-lg font-semibold text-white">{ws.name}</h3>
-                      <Badge variant="info" size="sm">{ws._count.employees} karyawan</Badge>
+                      <Badge variant="info" size="sm">{ws._count.employees} employees</Badge>
                     </div>
                     <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs">
                       {ws.days.slice().sort((a, b) => a.dayOfWeek - b.dayOfWeek).map((d) => (
                         <div key={d.dayOfWeek} className="rounded-lg border border-white/[0.06] p-2">
                           <div className="font-medium text-slate-400">{DAY_NAMES[d.dayOfWeek].slice(0, 3)}</div>
                           <div className={`mt-1 ${d.isDayOff ? "text-red-400" : "text-white/60"}`}>
-                            {d.isDayOff ? "Libur" : d.shift?.name || "-"}
+                            {d.isDayOff ? "Day Off" : d.shift?.name || "-"}
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="mt-4 flex gap-2">
                       <button onClick={() => openEditJadwal(ws)} className="flex-1 rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-medium text-on-surface transition-colors hover:bg-white/[0.08]">Edit</button>
-                      <button onClick={() => { setSelectedJadwal(ws); setJadwalModal("delete"); }} className="rounded-xl border border-error/20 bg-error/5 px-3 py-2 text-xs font-medium text-error transition-colors hover:bg-red-500/10">Hapus</button>
+                      <button onClick={() => { setSelectedJadwal(ws); setJadwalModal("delete"); }} className="rounded-xl border border-error/20 bg-error/5 px-3 py-2 text-xs font-medium text-error transition-colors hover:bg-red-500/10">Delete</button>
                     </div>
                   </CardContent>
                 </Card>
@@ -469,7 +469,7 @@ export function ScheduleClient({
       {tab === "assign" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <Button variant="primary" size="md" onClick={() => setShowAssignModal(true)} disabled={workSchedules.length === 0}>+ Tugaskan Jadwal</Button>
+            <Button variant="primary" size="md" onClick={() => setShowAssignModal(true)} disabled={workSchedules.length === 0}>+ Assign Schedule</Button>
           </div>
           <Card variant="glass-high">
             <CardContent className="p-0">
@@ -477,17 +477,17 @@ export function ScheduleClient({
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-white/[0.08]">
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Karyawan</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Employee</th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">PIN</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Jadwal</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Berlaku Dari</th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Sampai</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Schedule</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Effective From</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Until</th>
                       <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.05]">
                     {assignments.length === 0 ? (
-                      <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">Belum ada penugasan</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-slate-400">No assignments yet</td></tr>
                     ) : assignments.map((a) => (
                       <tr key={a.id} className="transition-colors hover:bg-surface-container/50">
                         <td className="px-4 py-3 text-sm text-white">{a.employee.name}</td>
@@ -496,7 +496,7 @@ export function ScheduleClient({
                         <td className="px-4 py-3 text-sm text-white">{new Date(a.effectiveFrom).toLocaleDateString("id-ID")}</td>
                         <td className="px-4 py-3 text-sm text-white">{a.effectiveTo ? new Date(a.effectiveTo).toLocaleDateString("id-ID") : "-"}</td>
                         <td className="px-4 py-3 text-right">
-                          <button onClick={() => deleteAssignment(a.id)} className="text-xs font-medium text-error hover:underline">Hapus</button>
+                          <button onClick={() => deleteAssignment(a.id)} className="text-xs font-medium text-error hover:underline">Delete</button>
                         </td>
                       </tr>
                     ))}
@@ -510,63 +510,63 @@ export function ScheduleClient({
 
       {/* ============ SHIFT MODAL ============ */}
       {(shiftModal === "add" || shiftModal === "edit") && (
-        <Modal title={shiftModal === "add" ? "Tambah Shift" : "Edit Shift"} onClose={() => setShiftModal(null)} wide>
+        <Modal title={shiftModal === "add" ? "Add Shift" : "Edit Shift"} onClose={() => setShiftModal(null)} wide>
           <div className="space-y-4">
-            <Input label="Nama Shift *" placeholder="Contoh: SM1" value={shiftForm.name} onChange={(e) => setShiftForm({ ...shiftForm, name: e.target.value })} />
+            <Input label="Shift Name *" placeholder="Example: SM1" value={shiftForm.name} onChange={(e) => setShiftForm({ ...shiftForm, name: e.target.value })} />
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Jam Masuk *" type="time" value={shiftForm.startTime} onChange={(e) => setShiftForm({ ...shiftForm, startTime: e.target.value })} />
-              <Input label="Jam Pulang *" type="time" value={shiftForm.endTime} onChange={(e) => setShiftForm({ ...shiftForm, endTime: e.target.value })} />
+              <Input label="Clock In Time *" type="time" value={shiftForm.startTime} onChange={(e) => setShiftForm({ ...shiftForm, startTime: e.target.value })} />
+              <Input label="Clock Out Time *" type="time" value={shiftForm.endTime} onChange={(e) => setShiftForm({ ...shiftForm, endTime: e.target.value })} />
             </div>
-            <p className="text-xs font-medium text-slate-400">Batas jendela scan (opsional)</p>
+            <p className="text-xs font-medium text-slate-400">Scan window limit (optional)</p>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Scan Masuk Dari" type="time" value={shiftForm.scanInStart} onChange={(e) => setShiftForm({ ...shiftForm, scanInStart: e.target.value })} />
-              <Input label="Scan Masuk Sampai" type="time" value={shiftForm.scanInEnd} onChange={(e) => setShiftForm({ ...shiftForm, scanInEnd: e.target.value })} />
+              <Input label="Scan In From" type="time" value={shiftForm.scanInStart} onChange={(e) => setShiftForm({ ...shiftForm, scanInStart: e.target.value })} />
+              <Input label="Scan In Until" type="time" value={shiftForm.scanInEnd} onChange={(e) => setShiftForm({ ...shiftForm, scanInEnd: e.target.value })} />
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Scan Pulang Dari" type="time" value={shiftForm.scanOutStart} onChange={(e) => setShiftForm({ ...shiftForm, scanOutStart: e.target.value })} />
-              <Input label="Scan Pulang Sampai" type="time" value={shiftForm.scanOutEnd} onChange={(e) => setShiftForm({ ...shiftForm, scanOutEnd: e.target.value })} />
+              <Input label="Scan Out From" type="time" value={shiftForm.scanOutStart} onChange={(e) => setShiftForm({ ...shiftForm, scanOutStart: e.target.value })} />
+              <Input label="Scan Out Until" type="time" value={shiftForm.scanOutEnd} onChange={(e) => setShiftForm({ ...shiftForm, scanOutEnd: e.target.value })} />
             </div>
-            <p className="text-xs font-medium text-slate-400">Istirahat &amp; Lembur (opsional)</p>
+            <p className="text-xs font-medium text-slate-400">Break &amp; Overtime (optional)</p>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Istirahat Mulai" type="time" value={shiftForm.breakStart} onChange={(e) => setShiftForm({ ...shiftForm, breakStart: e.target.value })} />
-              <Input label="Istirahat Selesai" type="time" value={shiftForm.breakEnd} onChange={(e) => setShiftForm({ ...shiftForm, breakEnd: e.target.value })} />
+              <Input label="Break Start" type="time" value={shiftForm.breakStart} onChange={(e) => setShiftForm({ ...shiftForm, breakStart: e.target.value })} />
+              <Input label="Break End" type="time" value={shiftForm.breakEnd} onChange={(e) => setShiftForm({ ...shiftForm, breakEnd: e.target.value })} />
             </div>
             <div className="grid grid-cols-3 gap-4">
-              <Input label="Lembur Mulai" type="time" value={shiftForm.overtimeStart} onChange={(e) => setShiftForm({ ...shiftForm, overtimeStart: e.target.value })} />
-              <Input label="Rate Lembur" type="number" step="0.1" min="1" max="5" value={shiftForm.overtimeRate} onChange={(e) => setShiftForm({ ...shiftForm, overtimeRate: parseFloat(e.target.value) || 1.5 })} />
-              <Input label="Toleransi (mnt)" type="number" value={shiftForm.graceMinutes} onChange={(e) => setShiftForm({ ...shiftForm, graceMinutes: parseInt(e.target.value) || 0 })} />
+              <Input label="Overtime Start" type="time" value={shiftForm.overtimeStart} onChange={(e) => setShiftForm({ ...shiftForm, overtimeStart: e.target.value })} />
+              <Input label="Overtime Rate" type="number" step="0.1" min="1" max="5" value={shiftForm.overtimeRate} onChange={(e) => setShiftForm({ ...shiftForm, overtimeRate: parseFloat(e.target.value) || 1.5 })} />
+              <Input label="Tolerance (min)" type="number" value={shiftForm.graceMinutes} onChange={(e) => setShiftForm({ ...shiftForm, graceMinutes: parseInt(e.target.value) || 0 })} />
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setShiftModal(null)}>Batal</Button>
-            <Button variant="primary" onClick={saveShift} disabled={submitting || !shiftForm.name}>{submitting ? "Menyimpan..." : "Simpan"}</Button>
+            <Button variant="secondary" onClick={() => setShiftModal(null)}>Cancel</Button>
+            <Button variant="primary" onClick={saveShift} disabled={submitting || !shiftForm.name}>{submitting ? "Saving..." : "Save"}</Button>
           </div>
         </Modal>
       )}
 
       {shiftModal === "delete" && selectedShift && (
-        <Modal title="Hapus Shift" onClose={() => setShiftModal(null)}>
-          <p className="text-sm text-slate-400">Yakin ingin menghapus shift <strong>{selectedShift.name}</strong>?</p>
+        <Modal title="Delete Shift" onClose={() => setShiftModal(null)}>
+          <p className="text-sm text-slate-400">Are you sure you want to delete shift <strong>{selectedShift.name}</strong>?</p>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setShiftModal(null)}>Batal</Button>
-            <Button variant="danger" onClick={deleteShift} disabled={submitting}>{submitting ? "Menghapus..." : "Hapus"}</Button>
+            <Button variant="secondary" onClick={() => setShiftModal(null)}>Cancel</Button>
+            <Button variant="danger" onClick={deleteShift} disabled={submitting}>{submitting ? "Deleting..." : "Delete"}</Button>
           </div>
         </Modal>
       )}
 
       {/* ============ JADWAL MODAL ============ */}
       {(jadwalModal === "add" || jadwalModal === "edit") && (
-        <Modal title={jadwalModal === "add" ? "Tambah Jadwal" : "Edit Jadwal"} onClose={() => setJadwalModal(null)} wide>
+        <Modal title={jadwalModal === "add" ? "Add Schedule" : "Edit Schedule"} onClose={() => setJadwalModal(null)} wide>
           <div className="space-y-4">
-            <Input label="Nama Jadwal *" placeholder="Contoh: Jadwal Kantor" value={jadwalForm.name} onChange={(e) => setJadwalForm({ ...jadwalForm, name: e.target.value })} />
+            <Input label="Schedule Name *" placeholder="Example: Office Schedule" value={jadwalForm.name} onChange={(e) => setJadwalForm({ ...jadwalForm, name: e.target.value })} />
             <div className="space-y-2">
-              <p className="text-xs font-medium text-slate-400">Atur tiap hari — centang Libur atau pilih shift</p>
+              <p className="text-xs font-medium text-slate-400">Set each day — check Day Off or select a shift</p>
               {jadwalForm.days.map((d) => (
                 <div key={d.dayOfWeek} className="flex items-center gap-3 rounded-xl border border-white/[0.06] p-2">
                   <span className="w-16 text-sm text-white">{DAY_NAMES[d.dayOfWeek]}</span>
                   <label className="flex items-center gap-1.5 text-xs text-slate-400">
                     <input type="checkbox" checked={d.isDayOff} onChange={(e) => setDay(d.dayOfWeek, { isDayOff: e.target.checked, shiftId: e.target.checked ? null : d.shiftId })} className="h-4 w-4 rounded border-white/20 accent-primary" />
-                    Libur
+                    Day Off
                   </label>
                   <select
                     value={d.shiftId || ""}
@@ -574,7 +574,7 @@ export function ScheduleClient({
                     onChange={(e) => setDay(d.dayOfWeek, { shiftId: e.target.value || null })}
                     className="h-10 flex-1 rounded-xl border border-white/[0.08] bg-surface-container px-3 text-sm text-on-surface disabled:opacity-40 focus:border-primary/50 focus:outline-none"
                   >
-                    <option value="">{d.isDayOff ? "— Libur —" : "Pilih shift"}</option>
+                    <option value="">{d.isDayOff ? "— Day Off —" : "Select shift"}</option>
                     {shifts.map((s) => (<option key={s.id} value={s.id}>{s.name} ({s.startTime}-{s.endTime})</option>))}
                   </select>
                 </div>
@@ -582,48 +582,48 @@ export function ScheduleClient({
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setJadwalModal(null)}>Batal</Button>
-            <Button variant="primary" onClick={saveJadwal} disabled={submitting || !jadwalForm.name}>{submitting ? "Menyimpan..." : "Simpan"}</Button>
+            <Button variant="secondary" onClick={() => setJadwalModal(null)}>Cancel</Button>
+            <Button variant="primary" onClick={saveJadwal} disabled={submitting || !jadwalForm.name}>{submitting ? "Saving..." : "Save"}</Button>
           </div>
         </Modal>
       )}
 
       {jadwalModal === "delete" && selectedJadwal && (
-        <Modal title="Hapus Jadwal" onClose={() => setJadwalModal(null)}>
-          <p className="text-sm text-slate-400">Yakin ingin menghapus jadwal <strong>{selectedJadwal.name}</strong>?</p>
+        <Modal title="Delete Schedule" onClose={() => setJadwalModal(null)}>
+          <p className="text-sm text-slate-400">Are you sure you want to delete schedule <strong>{selectedJadwal.name}</strong>?</p>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setJadwalModal(null)}>Batal</Button>
-            <Button variant="danger" onClick={deleteJadwal} disabled={submitting}>{submitting ? "Menghapus..." : "Hapus"}</Button>
+            <Button variant="secondary" onClick={() => setJadwalModal(null)}>Cancel</Button>
+            <Button variant="danger" onClick={deleteJadwal} disabled={submitting}>{submitting ? "Deleting..." : "Delete"}</Button>
           </div>
         </Modal>
       )}
 
       {/* ============ ASSIGN MODAL ============ */}
       {showAssignModal && (
-        <Modal title="Tugaskan Jadwal ke Karyawan" onClose={() => setShowAssignModal(false)}>
+        <Modal title="Assign Schedule to Employee" onClose={() => setShowAssignModal(false)}>
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-white">Karyawan *</label>
+              <label className="mb-2 block text-sm font-medium text-white">Employee *</label>
               <select value={assignData.employeeId} onChange={(e) => setAssignData({ ...assignData, employeeId: e.target.value })} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none">
-                <option value="">Pilih Karyawan</option>
+                <option value="">Select Employee</option>
                 {employees.map((emp) => (<option key={emp.id} value={emp.id}>{emp.name} ({emp.pin})</option>))}
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-white">Jadwal *</label>
+              <label className="mb-2 block text-sm font-medium text-white">Schedule *</label>
               <select value={assignData.workScheduleId} onChange={(e) => setAssignData({ ...assignData, workScheduleId: e.target.value })} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none">
-                <option value="">Pilih Jadwal</option>
+                <option value="">Select Schedule</option>
                 {workSchedules.map((ws) => (<option key={ws.id} value={ws.id}>{ws.name}</option>))}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Berlaku Dari *" type="date" value={assignData.effectiveFrom} onChange={(e) => setAssignData({ ...assignData, effectiveFrom: e.target.value })} />
-              <Input label="Sampai (opsional)" type="date" value={assignData.effectiveTo} onChange={(e) => setAssignData({ ...assignData, effectiveTo: e.target.value })} />
+              <Input label="Effective From *" type="date" value={assignData.effectiveFrom} onChange={(e) => setAssignData({ ...assignData, effectiveFrom: e.target.value })} />
+              <Input label="Until (optional)" type="date" value={assignData.effectiveTo} onChange={(e) => setAssignData({ ...assignData, effectiveTo: e.target.value })} />
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <Button variant="secondary" onClick={() => setShowAssignModal(false)}>Batal</Button>
-            <Button variant="primary" onClick={handleAssign} disabled={submitting || !assignData.employeeId || !assignData.workScheduleId}>{submitting ? "Menyimpan..." : "Simpan"}</Button>
+            <Button variant="secondary" onClick={() => setShowAssignModal(false)}>Cancel</Button>
+            <Button variant="primary" onClick={handleAssign} disabled={submitting || !assignData.employeeId || !assignData.workScheduleId}>{submitting ? "Saving..." : "Save"}</Button>
           </div>
         </Modal>
       )}

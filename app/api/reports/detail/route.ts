@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
     if (!startDate || !endDate || !employeeId) {
       return NextResponse.json(
-        { error: "startDate, endDate, dan employeeId wajib diisi" },
+        { error: "startDate, endDate, and employeeId are required" },
         { status: 400 }
       );
     }
@@ -19,6 +19,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(report);
   } catch (error) {
     console.error("[API] Detail report error:", error);
-    return NextResponse.json({ error: "Gagal membuat laporan" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 });
   }
 }

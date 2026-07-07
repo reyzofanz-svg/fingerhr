@@ -44,7 +44,7 @@ export default function ApiLogsPage() {
     fetchLogs();
   }, [filterCommand, filterStatus]);
 
-  // Auto-refresh setiap 10 detik
+  // Auto-refresh every 10 seconds
   useEffect(() => {
     const interval = setInterval(fetchLogs, 10000);
     return () => clearInterval(interval);
@@ -57,7 +57,7 @@ export default function ApiLogsPage() {
   };
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString("id-ID", {
+    return new Date(dateStr).toLocaleString("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -72,7 +72,7 @@ export default function ApiLogsPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Riwayat", href: "/dashboard/logs" },
+          { label: "History", href: "/dashboard/logs" },
           { label: "API Logs" },
         ]}
       />
@@ -83,7 +83,7 @@ export default function ApiLogsPage() {
           API Logs
         </h1>
         <p className="mt-1 text-sm text-slate-400">
-          Riwayat panggilan API ke Fingerspot
+          API call history to Fingerspot
         </p>
       </div>
 
@@ -96,7 +96,7 @@ export default function ApiLogsPage() {
               onChange={(e) => setFilterCommand(e.target.value)}
               className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="">Semua Command</option>
+              <option value="">All Commands</option>
               <option value="GET_ATTLOG">GET_ATTLOG</option>
               <option value="GET_USERINFO">GET_USERINFO</option>
               <option value="SET_USERINFO">SET_USERINFO</option>
@@ -110,10 +110,10 @@ export default function ApiLogsPage() {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="">Semua Status</option>
-              <option value="SUCCESS">Berhasil</option>
-              <option value="FAILED">Gagal</option>
-              <option value="PENDING">Menunggu</option>
+              <option value="">All Status</option>
+              <option value="SUCCESS">Success</option>
+              <option value="FAILED">Failed</option>
+              <option value="PENDING">Pending</option>
             </select>
           </div>
         </CardContent>
@@ -131,11 +131,11 @@ export default function ApiLogsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Waktu</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Time</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Command</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Device</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Durasi</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Duration</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
@@ -164,10 +164,10 @@ export default function ApiLogsPage() {
                           size="sm"
                         >
                           {log.status === "SUCCESS"
-                            ? "Berhasil"
+                            ? "Success"
                             : log.status === "FAILED"
-                            ? "Gagal"
-                            : "Menunggu"}
+                            ? "Failed"
+                            : "Pending"}
                         </Badge>
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-400">
@@ -179,7 +179,7 @@ export default function ApiLogsPage() {
               </table>
               {logs.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-slate-400">Belum ada API logs</p>
+                  <p className="text-sm text-slate-400">No API logs yet</p>
                 </div>
               )}
             </div>
@@ -208,7 +208,7 @@ export default function ApiLogsPage() {
             </div>
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-slate-400">Waktu</span>
+                <span className="text-sm text-slate-400">Time</span>
                 <span className="text-sm text-white">{formatTime(selectedLog.createdAt)}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
@@ -227,7 +227,7 @@ export default function ApiLogsPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-slate-400">Durasi</span>
+                <span className="text-sm text-slate-400">Duration</span>
                 <span className="text-sm text-white">{formatDuration(selectedLog.duration)}</span>
               </div>
               {selectedLog.errorMessage && (
@@ -255,7 +255,7 @@ export default function ApiLogsPage() {
                 onClick={() => setSelectedLog(null)}
                 className="rounded-xl bg-white/[0.05] px-4 py-2 text-sm font-medium text-on-surface transition-colors hover:bg-white/[0.1]"
               >
-                Tutup
+                Close
               </button>
             </div>
           </div>

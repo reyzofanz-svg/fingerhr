@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (!type || !date) {
       return NextResponse.json(
-        { error: "type dan date wajib diisi" },
+        { error: "type and date are required" },
         { status: 400 }
       );
     }
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("[API] Generate report error:", error);
     return NextResponse.json(
-      { error: "Gagal generate laporan" },
+      { error: "Failed to generate report" },
       { status: 500 }
     );
   }

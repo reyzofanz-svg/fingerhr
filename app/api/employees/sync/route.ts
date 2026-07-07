@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const device = await prisma.device.findFirst();
     if (!device) {
       return NextResponse.json(
-        { error: "Tidak ada perangkat yang terdaftar" },
+        { error: "No devices registered" },
         { status: 400 }
       );
     }
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         
         if (!result.success) {
           return NextResponse.json(
-            { error: "Gagal mengambil data PIN dari mesin", details: result.error },
+            { error: "Failed to retrieve PIN data from device", details: result.error },
             { status: 500 }
           );
         }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: "Sync dari mesin sedang diproses. Data akan muncul secara otomatis.",
+          message: "Sync from device is being processed. Data will appear automatically.",
           data: result.data,
         });
       }
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         // Get user info untuk PIN tertentu
         if (!pin) {
           return NextResponse.json(
-            { error: "PIN wajib diisi" },
+            { error: "PIN is required" },
             { status: 400 }
           );
         }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         // Set user info ke device
         if (!pin || !name) {
           return NextResponse.json(
-            { error: "PIN dan Nama wajib diisi" },
+            { error: "PIN and Name are required" },
             { status: 400 }
           );
         }
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
         // Register online untuk PIN tertentu
         if (!pin) {
           return NextResponse.json(
-            { error: "PIN wajib diisi" },
+            { error: "PIN is required" },
             { status: 400 }
           );
         }
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
         // Hapus user dari mesin
         if (!pin) {
           return NextResponse.json(
-            { error: "PIN wajib diisi" },
+            { error: "PIN is required" },
             { status: 400 }
           );
         }
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
         // Tambah karyawan baru ke device + database
         if (!pin || !name) {
           return NextResponse.json(
-            { error: "PIN dan Nama wajib diisi" },
+            { error: "PIN and Name are required" },
             { status: 400 }
           );
         }
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
 
         if (existing) {
           return NextResponse.json(
-            { error: "PIN sudah digunakan oleh karyawan lain" },
+            { error: "PIN is already used by another employee" },
             { status: 400 }
           );
         }
@@ -215,7 +215,7 @@ export async function POST(request: NextRequest) {
 
         if (!setResult.success) {
           return NextResponse.json(
-            { error: "Gagal mengirim data ke mesin", details: setResult.error },
+            { error: "Failed to send data to device", details: setResult.error },
             { status: 500 }
           );
         }
@@ -249,7 +249,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          message: `Berhasil menambahkan ${name} ke mesin dan database`,
+          message: `Successfully added ${name} to device and database`,
           employee,
           deviceResult: setResult.data,
           registerResult: regResult.data,
@@ -258,14 +258,14 @@ export async function POST(request: NextRequest) {
 
       default:
         return NextResponse.json(
-          { error: "Action tidak dikenal" },
+          { error: "Unknown action" },
           { status: 400 }
         );
     }
   } catch (error) {
     console.error("[API] Sync employee error:", error);
     return NextResponse.json(
-      { error: "Gagal sinkronisasi karyawan" },
+      { error: "Failed to sync employees" },
       { status: 500 }
     );
   }

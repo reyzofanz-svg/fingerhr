@@ -86,12 +86,12 @@ export default function DetailReportsPage() {
       );
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Gagal membuat laporan");
+        alert(err.error || "Failed to generate report");
         return;
       }
       setReport(await res.json());
     } catch {
-      alert("Gagal membuat laporan");
+      alert("Failed to generate report");
     } finally {
       setLoading(false);
     }
@@ -105,17 +105,17 @@ export default function DetailReportsPage() {
 
   const recapItems = report
     ? [
-        ["Kehadiran", report.recap.kehadiran],
-        ["Durasi Kerja", report.recap.durasiKerja],
-        ["Pulang Awal", report.recap.pulangAwal],
-        ["Tidak Absen Masuk", report.recap.tidakAbsenMasuk],
-        ["Alpha", report.recap.alpha],
-        ["Presentase", report.recap.presentase],
-        ["Total Durasi", report.recap.totalDurasi],
-        ["Istirahat Lebih", report.recap.istirahatLebih],
-        ["Tidak Absen Keluar", report.recap.tidakAbsenKeluar],
-        ["Jumlah Izin", report.recap.jumlahIzin],
-        ["Datang Terlambat", report.recap.datangTerlambat],
+        ["Attendance", report.recap.kehadiran],
+        ["Work Duration", report.recap.durasiKerja],
+        ["Early Leave", report.recap.pulangAwal],
+        ["No Clock In", report.recap.tidakAbsenMasuk],
+        ["Absent", report.recap.alpha],
+        ["Percentage", report.recap.presentase],
+        ["Total Duration", report.recap.totalDurasi],
+        ["Break Over", report.recap.istirahatLebih],
+        ["No Clock Out", report.recap.tidakAbsenKeluar],
+        ["Leave Count", report.recap.jumlahIzin],
+        ["Late Arrivals", report.recap.datangTerlambat],
       ]
     : [];
 
@@ -124,14 +124,14 @@ export default function DetailReportsPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Laporan", href: "/dashboard/reports/detail" },
-          { label: "Detail Kehadiran" },
+          { label: "Reports", href: "/dashboard/reports/detail" },
+          { label: "Attendance Detail" },
         ]}
       />
 
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Laporan Rincian Harian</h1>
-        <p className="mt-1 text-sm text-slate-400">Rincian kehadiran per karyawan berdasarkan shift &amp; jadwal</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Daily Detail Report</h1>
+        <p className="mt-1 text-sm text-slate-400">Attendance detail per employee based on shift &amp; schedule</p>
       </div>
 
       {/* Filter */}
@@ -139,38 +139,38 @@ export default function DetailReportsPage() {
         <CardContent className="p-4 sm:p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <label className="mb-2 block text-sm font-medium text-white">Karyawan</label>
+              <label className="mb-2 block text-sm font-medium text-white">Employee</label>
               <select
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none"
               >
-                <option value="">Pilih Karyawan</option>
+                <option value="">Select Employee</option>
                 {employees.map((emp) => (
                   <option key={emp.id} value={emp.id}>{emp.name} ({emp.pin})</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-white">Dari Tanggal</label>
+              <label className="mb-2 block text-sm font-medium text-white">From Date</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
             </div>
             <div>
-              <label className="mb-2 block text-sm font-medium text-white">Sampai Tanggal</label>
+              <label className="mb-2 block text-sm font-medium text-white">To Date</label>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-11 w-full rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface focus:border-primary/50 focus:outline-none" />
             </div>
             <div className="flex items-end">
               <Button variant="primary" className="w-full" onClick={generate} disabled={!employeeId || loading}>
-                {loading ? "Memproses..." : "Tampilkan"}
+                {loading ? "Processing..." : "Show"}
               </Button>
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3">
             <Button variant="secondary" size="sm" onClick={() => exportExcel(false)} disabled={!employeeId}>
-              Export Excel (karyawan ini)
+              Export Excel (this employee)
             </Button>
             <Button variant="secondary" size="sm" onClick={() => exportExcel(true)}>
-              Export Excel (semua karyawan)
+              Export Excel (all employees)
             </Button>
           </div>
         </CardContent>
@@ -205,26 +205,26 @@ export default function DetailReportsPage() {
                 <table className="w-full whitespace-nowrap text-xs">
                   <thead>
                     <tr className="border-b border-white/[0.08] text-slate-400">
-                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Tanggal</th>
-                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Hari</th>
-                      <th colSpan={3} className="border-r border-white/[0.06] px-2 py-2 text-center">Ketentuan</th>
-                      <th colSpan={4} className="border-r border-white/[0.06] px-2 py-2 text-center">Kehadiran</th>
-                      <th colSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Lembur</th>
-                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Durasi Kerja</th>
-                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Masuk</th>
-                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Libur</th>
-                      <th rowSpan={2} className="px-2 py-2 text-left">Keterangan</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Date</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-left">Day</th>
+                      <th colSpan={3} className="border-r border-white/[0.06] px-2 py-2 text-center">Provision</th>
+                      <th colSpan={4} className="border-r border-white/[0.06] px-2 py-2 text-center">Attendance</th>
+                      <th colSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Overtime</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Work Duration</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Clock In</th>
+                      <th rowSpan={2} className="border-r border-white/[0.06] px-2 py-2 text-center">Day Off</th>
+                      <th rowSpan={2} className="px-2 py-2 text-left">Notes</th>
                     </tr>
                     <tr className="border-b border-white/[0.08] text-slate-400">
                       <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Shift</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Masuk</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Pulang</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Absen Masuk</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Telat</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Absen Pulang</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Plg Cepat</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Awal</th>
-                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Akhir</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Clock In</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Clock Out</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Attendance In</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Late</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Attendance Out</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Early Out</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Early</th>
+                      <th className="border-r border-white/[0.06] px-2 py-1.5 text-center font-normal">Late</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/[0.05]">

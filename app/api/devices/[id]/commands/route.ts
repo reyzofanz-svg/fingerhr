@@ -28,7 +28,7 @@ export async function POST(
 
     if (!device) {
       return NextResponse.json(
-        { error: "Perangkat tidak ditemukan" },
+        { error: "Device not found" },
         { status: 404 }
       );
     }
@@ -153,7 +153,7 @@ export async function POST(
 
         default:
           return NextResponse.json(
-            { error: `Command tidak dikenal: ${command}` },
+            { error: `Unknown command: ${command}` },
             { status: 400 }
           );
       }
@@ -187,7 +187,7 @@ export async function POST(
   } catch (error) {
     console.error("[API] Device command error:", error);
     return NextResponse.json(
-      { error: "Gagal menjalankan command" },
+      { error: "Failed to execute command" },
       { status: 500 }
     );
   }

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     if (!validated.success) {
       return NextResponse.json(
-        { error: "Data tidak valid", details: validated.error.flatten() },
+        { error: "Invalid data", details: validated.error.flatten() },
         { status: 400 }
       );
     }
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email sudah terdaftar" },
+        { error: "Email is already registered" },
         { status: 400 }
       );
     }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       { 
-        message: "Registrasi berhasil", 
+        message: "Registration successful", 
         user 
       },
       { status: 201 }
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Terjadi kesalahan saat registrasi" },
+      { error: "An error occurred during registration" },
       { status: 500 }
     );
   }

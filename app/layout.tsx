@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FingerHR — Manajemen Absensi Cloud",
-  description: "Hubungkan perangkat biometrik Fingerspot dengan infrastruktur cloud modern. Sinkronisasi kehadiran real-time, pantau metrik karyawan, dan kelola akses dengan keamanan tingkat enterprise.",
+  title: "FingerHR — Cloud Attendance Management",
+  description: "Connect Fingerspot biometric devices with modern cloud infrastructure. Real-time attendance sync, monitor employee metrics, and manage access with enterprise-level security.",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="id"
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <body>{children}</body>

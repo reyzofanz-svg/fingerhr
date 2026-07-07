@@ -47,7 +47,7 @@ export default function WebhookLogsPage() {
   }, []);
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString("id-ID", {
+    return new Date(dateStr).toLocaleString("en-US", {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -62,7 +62,7 @@ export default function WebhookLogsPage() {
       <Breadcrumbs
         items={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Riwayat", href: "/dashboard/logs" },
+          { label: "History", href: "/dashboard/logs" },
           { label: "Webhook Logs" },
         ]}
       />
@@ -73,7 +73,7 @@ export default function WebhookLogsPage() {
           Webhook Logs
         </h1>
         <p className="mt-1 text-sm text-slate-400">
-          Riwayat webhook yang diterima dari Fingerspot (auto-refresh 10 detik)
+          Webhook history received from Fingerspot (auto-refresh 10 seconds)
         </p>
       </div>
 
@@ -86,7 +86,7 @@ export default function WebhookLogsPage() {
               onChange={(e) => setFilterType(e.target.value)}
               className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="">Semua Tipe</option>
+              <option value="">All Types</option>
               <option value="attlog">Attlog</option>
               <option value="userinfo">Userinfo</option>
               <option value="set_userinfo">Set Userinfo</option>
@@ -100,9 +100,9 @@ export default function WebhookLogsPage() {
               onChange={(e) => setFilterStatus(e.target.value)}
               className="h-11 rounded-xl border border-white/[0.08] bg-surface-container px-4 text-sm text-on-surface transition-all focus:border-primary/50 focus:bg-surface-container-high focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
-              <option value="">Semua Status</option>
-              <option value="SUCCESS">Berhasil</option>
-              <option value="FAILED">Gagal</option>
+              <option value="">All Status</option>
+              <option value="SUCCESS">Success</option>
+              <option value="FAILED">Failed</option>
             </select>
           </div>
         </CardContent>
@@ -120,8 +120,8 @@ export default function WebhookLogsPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.08]">
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Waktu</th>
-                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Tipe</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Time</th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Type</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Device</th>
                     <th className="px-6 py-4 text-left text-xs font-medium text-slate-400">Status</th>
                   </tr>
@@ -145,7 +145,7 @@ export default function WebhookLogsPage() {
                           variant={log.status === "SUCCESS" ? "success" : "error"}
                           size="sm"
                         >
-                          {log.status === "SUCCESS" ? "Berhasil" : "Gagal"}
+                          {log.status === "SUCCESS" ? "Success" : "Failed"}
                         </Badge>
                       </td>
                     </tr>
@@ -154,7 +154,7 @@ export default function WebhookLogsPage() {
               </table>
               {logs.length === 0 && (
                 <div className="py-12 text-center">
-                  <p className="text-sm text-slate-400">Belum ada webhook logs</p>
+                  <p className="text-sm text-slate-400">No webhook logs yet</p>
                 </div>
               )}
             </div>
@@ -183,11 +183,11 @@ export default function WebhookLogsPage() {
             </div>
             <div className="mt-4 space-y-3">
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-slate-400">Waktu</span>
+                <span className="text-sm text-slate-400">Time</span>
                 <span className="text-sm text-white">{formatTime(selectedLog.createdAt)}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
-                <span className="text-sm text-slate-400">Tipe</span>
+                <span className="text-sm text-slate-400">Type</span>
                 <span className="font-mono text-sm text-white">{selectedLog.type}</span>
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/[0.03] px-4 py-3">
@@ -212,7 +212,7 @@ export default function WebhookLogsPage() {
                 onClick={() => setSelectedLog(null)}
                 className="rounded-xl bg-white/[0.05] px-4 py-2 text-sm font-medium text-on-surface transition-colors hover:bg-white/[0.1]"
               >
-                Tutup
+                Close
               </button>
             </div>
           </div>

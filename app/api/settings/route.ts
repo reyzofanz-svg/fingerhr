@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error) {
     console.error("[API] Get settings error:", error);
     return NextResponse.json(
-      { error: "Gagal mengambil pengaturan" },
+      { error: "Failed to retrieve settings" },
       { status: 500 }
     );
   }
@@ -30,11 +30,11 @@ export async function PUT(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ message: "Pengaturan berhasil disimpan" });
+    return NextResponse.json({ message: "Settings saved successfully" });
   } catch (error) {
     console.error("[API] Update settings error:", error);
     return NextResponse.json(
-      { error: "Gagal menyimpan pengaturan" },
+      { error: "Failed to save settings" },
       { status: 500 }
     );
   }
