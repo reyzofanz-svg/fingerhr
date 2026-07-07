@@ -138,7 +138,7 @@ export default function RegisterPage() {
           Sudah punya akun?{" "}
           <Link
             href="/login"
-            className="text-indigo-400 hover:text-indigo-300 font-medium"
+            className="text-white/60 hover:text-white/80 font-medium"
           >
             Masuk di sini
           </Link>

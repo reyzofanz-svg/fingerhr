@@ -244,10 +244,10 @@ export function PermissionsClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-slate-400">Menunggu</p>
-                <p className="mt-1 text-2xl font-semibold text-amber-400">{pendingCount}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/50">{pendingCount}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
-                <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -260,10 +260,10 @@ export function PermissionsClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-slate-400">Disetujui</p>
-                <p className="mt-1 text-2xl font-semibold text-emerald-400">{approvedCount}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/60">{approvedCount}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-                <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -276,7 +276,7 @@ export function PermissionsClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-slate-400">Ditolak</p>
-                <p className="mt-1 text-2xl font-semibold text-red-400">{rejectedCount}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/50">{rejectedCount}</p>
               </div>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
                 <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -323,7 +323,7 @@ export function PermissionsClient({
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -374,7 +374,7 @@ export function PermissionsClient({
                             <button
                               type="button"
                               onClick={() => openConfirmDialog(perm.id, perm.employee.name, "APPROVED")}
-                              className="rounded-lg p-2 text-emerald-400 transition-colors hover:bg-emerald-500/10"
+                              className="rounded-lg p-2 text-white/60 transition-colors hover:bg-white/[0.06]"
                               title="Setujui"
                             >
                               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

@@ -79,10 +79,10 @@ export function NotificationBell() {
   }
 
   function typeIcon(type: string) {
-    if (type === "ATTENDANCE_IN") return { emoji: "\u2705", color: "text-emerald-400" };
-    if (type === "ATTENDANCE_OUT") return { emoji: "\u23F5\uFE0F", color: "text-amber-400" };
-    if (type === "PERMISSION_PENDING") return { emoji: "\u23F3", color: "text-sky-400" };
-    return { emoji: "\u2705", color: "text-emerald-400" };
+    if (type === "ATTENDANCE_IN") return { emoji: "\u2705", color: "text-white/60" };
+    if (type === "ATTENDANCE_OUT") return { emoji: "\u23F5\uFE0F", color: "text-white/50" };
+    if (type === "PERMISSION_PENDING") return { emoji: "\u23F3", color: "text-white/40" };
+    return { emoji: "\u2705", color: "text-white/60" };
   }
 
   return (
@@ -90,7 +90,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setIsOpen((o) => !o)}
-        className="relative rounded-full p-2 text-on-surface-variant transition-colors hover:bg-white/[0.05] hover:text-on-surface"
+        className="relative rounded-full p-2 text-white/40 transition-colors hover:bg-white/[0.05] hover:text-white/70"
         aria-label="Notifications"
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -101,22 +101,22 @@ export function NotificationBell() {
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white/20 px-1 text-[10px] font-bold text-white">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-white/[0.08] bg-surface-container-high shadow-2xl shadow-black/40">
+        <div className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-xl border border-white/[0.08] bg-[#0e0e10]/95 backdrop-blur-xl shadow-2xl shadow-black/40">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/[0.08] px-4 py-3">
-            <h3 className="text-sm font-semibold text-on-surface">Notifikasi</h3>
+            <h3 className="text-sm font-semibold text-white">Notifikasi</h3>
             {unreadCount > 0 && (
               <button
                 type="button"
                 onClick={markAllRead}
-                className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
+                className="text-xs font-medium text-white/50 transition-colors hover:text-white/70"
               >
                 Tandai sudah dibaca
               </button>
@@ -125,8 +125,8 @@ export function NotificationBell() {
 
           {/* Connection status */}
           <div className="flex items-center gap-1.5 px-4 py-1.5">
-            <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? "bg-emerald-500" : "bg-red-500"}`} />
-            <span className="text-[10px] text-on-surface-variant">
+            <span className={`h-1.5 w-1.5 rounded-full ${isConnected ? "bg-white/60" : "bg-white/20"}`} />
+            <span className="text-[10px] text-white/30">
               {isConnected ? "Live" : "Reconnecting..."}
             </span>
           </div>
@@ -134,7 +134,7 @@ export function NotificationBell() {
           {/* Notification list */}
           <div className="max-h-80 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-on-surface-variant">
+              <div className="px-4 py-8 text-center text-sm text-white/30">
                 Belum ada notifikasi
               </div>
             ) : (
@@ -148,10 +148,10 @@ export function NotificationBell() {
                     <div className="flex items-start gap-3">
                       <span className={`mt-0.5 text-sm ${color}`}>{emoji}</span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-on-surface">{n.title}</p>
-                        <p className="mt-0.5 text-xs text-on-surface-variant">{n.message}</p>
+                        <p className="text-sm font-medium text-white">{n.title}</p>
+                        <p className="mt-0.5 text-xs text-white/40">{n.message}</p>
                       </div>
-                      <span className="shrink-0 text-[10px] text-on-surface-variant">
+                      <span className="shrink-0 text-[10px] text-white/25">
                         {formatTime(n.timestamp)}
                       </span>
                     </div>

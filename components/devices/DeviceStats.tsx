@@ -10,7 +10,7 @@ export function DeviceStats({ stats, className }: DeviceStatsProps) {
   return (
     <div className={cn("flex items-center gap-3 text-sm", className)}>
       <span className="text-on-surface-variant">
-        <span className="font-semibold text-emerald-400">{stats.online} Online</span>
+        <span className="font-semibold text-white/60">{stats.online} Online</span>
         <span className="mx-2 text-outline">|</span>
         <span className="text-on-surface-variant">{stats.offline} Offline</span>
       </span>

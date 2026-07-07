@@ -32,14 +32,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-slate-300"
+            className="block text-sm font-medium text-white/70"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30">
               {leftIcon}
             </div>
           )}
@@ -48,11 +48,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              "h-11 w-full rounded-xl border bg-white/[0.03] text-sm text-white placeholder-slate-500 transition-all",
+              "h-11 w-full rounded-xl border bg-white/[0.03] text-sm text-white placeholder-white/20 transition-all",
               "focus:outline-none focus:ring-2",
               error
-                ? "border-red-500/40 focus:border-red-500/60 focus:ring-red-500/20"
-                : "border-white/[0.06] focus:border-indigo-500/40 focus:bg-white/[0.05] focus:ring-indigo-500/20",
+                ? "border-white/[0.15] focus:border-white/20 focus:ring-white/10"
+                : "border-white/[0.08] focus:border-white/[0.15] focus:bg-white/[0.05] focus:ring-white/10",
               leftIcon && "pl-10",
               rightIcon && "pr-10",
               !leftIcon && !rightIcon && "px-4",
@@ -61,14 +61,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30">
               {rightIcon}
             </div>
           )}
         </div>
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {error && <p className="text-xs text-white/50">{error}</p>}
         {helperText && !error && (
-          <p className="text-xs text-slate-500">{helperText}</p>
+          <p className="text-xs text-white/25">{helperText}</p>
         )}
       </div>
     );

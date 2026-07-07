@@ -443,8 +443,8 @@ export function EmployeesClient({
                 <p className="text-xs font-medium text-slate-400">Total Karyawan</p>
                 <p className="mt-1 text-2xl font-semibold text-white">{employees.length}</p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/10">
-                <svg className="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                 </svg>
               </div>
@@ -457,12 +457,12 @@ export function EmployeesClient({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-slate-400">Aktif</p>
-                <p className="mt-1 text-2xl font-semibold text-emerald-400">
+                <p className="mt-1 text-2xl font-semibold text-white/60">
                   {employees.filter((e) => e.isActive).length}
                 </p>
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-                <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -543,7 +543,7 @@ export function EmployeesClient({
                 <tr>
                     <td colSpan={8} className="px-4 py-12 text-center">
                     <div className="flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
                     </div>
                   </td>
                 </tr>
@@ -567,7 +567,7 @@ export function EmployeesClient({
                         className="h-4 w-4 rounded border-white/20 bg-white/5 text-primary focus:ring-primary/50"
                       />
                     </td>
-                    <td className="px-4 py-3 font-mono text-sm text-indigo-400">{emp.pin}</td>
+                    <td className="px-4 py-3 font-mono text-sm text-white/60">{emp.pin}</td>
                     <td className="px-4 py-3">
                       <div>
                         <p className="text-sm font-medium text-white">{emp.name}</p>
@@ -584,8 +584,8 @@ export function EmployeesClient({
                     </td>
                     <td className="px-4 py-3">
                       {emp.telegramChatId ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/60">
+                          <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
                           Terhubung
                         </span>
                       ) : (
@@ -684,7 +684,7 @@ export function EmployeesClient({
               {hasFaceDevice && (
                 <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-4 w-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                     </svg>
@@ -765,9 +765,9 @@ export function EmployeesClient({
               {loadingStep === "sending" && (
                 <div className="relative h-16 w-16 mb-4">
                   <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-white/20 border-t-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-6 w-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                     </svg>
                   </div>
@@ -777,9 +777,9 @@ export function EmployeesClient({
               {loadingStep === "registering" && (
                 <div className="relative h-16 w-16 mb-4">
                   <div className="absolute inset-0 rounded-full border-4 border-blue-500/20" />
-                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+                  <div className="absolute inset-0 animate-spin rounded-full border-4 border-white/20 border-t-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <svg className="h-6 w-6 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                     </svg>
@@ -788,8 +788,8 @@ export function EmployeesClient({
               )}
 
               {loadingStep === "done" && (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 mb-4">
-                  <svg className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06] mb-4">
+                  <svg className="h-8 w-8 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </div>
@@ -825,7 +825,7 @@ export function EmployeesClient({
               {(loadingStep === "sending" || loadingStep === "registering") && (
                 <div className="w-full space-y-2 mt-2">
                   <div className="flex items-center gap-3">
-                    <div className={`h-6 w-6 rounded-full flex items-center justify-center ${loadingStep === "sending" ? "bg-primary animate-pulse" : "bg-emerald-500"}`}>
+                    <div className={`h-6 w-6 rounded-full flex items-center justify-center ${loadingStep === "sending" ? "bg-white/20 animate-pulse" : "bg-white/40"}`}>
                       {loadingStep === "sending" ? (
                         <div className="h-2 w-2 rounded-full bg-white" />
                       ) : (
@@ -838,7 +838,7 @@ export function EmployeesClient({
                   </div>
                   {hasFaceDevice && (
                     <div className="flex items-center gap-3">
-                      <div className={`h-6 w-6 rounded-full flex items-center justify-center ${loadingStep === "registering" ? "bg-primary animate-pulse" : "bg-white/10"}`}>
+                      <div className={`h-6 w-6 rounded-full flex items-center justify-center ${loadingStep === "registering" ? "bg-white/20 animate-pulse" : "bg-white/10"}`}>
                         {loadingStep === "registering" ? (
                           <div className="h-2 w-2 rounded-full bg-white" />
                         ) : (
@@ -928,7 +928,7 @@ export function EmployeesClient({
             <div className="flex items-center gap-3 mb-6">
               {syncStatus === "requesting" && (
                 <>
-                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                  <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
                   <div>
                     <p className="text-sm font-medium text-white">Mengirim perintah...</p>
                     <p className="text-xs text-slate-400">Menghubungi mesin absensi</p>
@@ -939,9 +939,9 @@ export function EmployeesClient({
                 <>
                   <div className="relative h-10 w-10">
                     <div className="absolute inset-0 rounded-full border-2 border-primary/20" />
-                    <div className="absolute inset-0 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                    <div className="absolute inset-0 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                      <div className="h-2 w-2 rounded-full bg-white/20 animate-pulse" />
                     </div>
                   </div>
                   <div>
@@ -952,13 +952,13 @@ export function EmployeesClient({
               )}
               {syncStatus === "done" && (
                 <>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10">
-                    <svg className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                    <svg className="h-5 w-5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-emerald-400">Sync selesai!</p>
+                    <p className="text-sm font-medium text-white/60">Sync selesai!</p>
                     <p className="text-xs text-slate-400">{syncEmployeeCount} karyawan ditemukan</p>
                   </div>
                 </>

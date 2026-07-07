@@ -368,7 +368,7 @@ export default function RawReportsPage() {
             <div
               className={`mt-3 rounded-lg px-4 py-2 text-sm ${
                 downloadStatus.includes("Berhasil")
-                  ? "bg-emerald-500/10 text-emerald-400"
+                  ? "bg-white/[0.06] text-white/60"
                   : downloadStatus.includes("Gagal")
                   ? "bg-error/10 text-red-400"
                   : "bg-blue-500/10 text-blue-400"
@@ -394,13 +394,13 @@ export default function RawReportsPage() {
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
             <p className="text-xs font-medium text-slate-400">Scan Masuk</p>
-            <p className="mt-1 text-xl font-semibold text-emerald-400 sm:text-2xl">{totalIn}</p>
+            <p className="mt-1 text-xl font-semibold text-white/60 sm:text-2xl">{totalIn}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
           <CardContent className="py-3 sm:py-4">
             <p className="text-xs font-medium text-slate-400">Scan Keluar</p>
-            <p className="mt-1 text-xl font-semibold text-blue-400 sm:text-2xl">{totalOut}</p>
+            <p className="mt-1 text-xl font-semibold text-white/60 sm:text-2xl">{totalOut}</p>
           </CardContent>
         </Card>
         <Card variant="glass">
@@ -498,7 +498,7 @@ export default function RawReportsPage() {
           {/* Table */}
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
             </div>
           ) : logs.length === 0 ? (
             <div className="py-16 text-center">
@@ -724,7 +724,7 @@ export default function RawReportsPage() {
               </p>
             </div>
             {submitStatus && (
-              <div className={`mx-6 rounded-lg px-4 py-2 text-sm ${submitStatus.includes("berhasil") ? "bg-emerald-500/10 text-emerald-400" : "bg-error/10 text-red-400"}`}>
+              <div className={`mx-6 rounded-lg px-4 py-2 text-sm ${submitStatus.includes("berhasil") ? "bg-white/[0.06] text-white/60" : "bg-error/10 text-red-400"}`}>
                 {submitStatus}
               </div>
             )}

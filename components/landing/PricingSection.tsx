@@ -63,7 +63,7 @@ export function PricingSection() {
             key={i}
             className={`glass rounded-[2rem] p-8 flex flex-col transition-all duration-300 relative ${
               plan.featured
-                ? "border-primary/50 glow-indigo md:-translate-y-4 relative p-10 z-10"
+                ? "border-white/[0.15] md:-translate-y-4 relative p-10 z-10"
                 : "border-white/5 hover:border-white/10"
             }`}
           >

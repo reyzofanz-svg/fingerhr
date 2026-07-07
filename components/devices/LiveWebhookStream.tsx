@@ -14,11 +14,11 @@ export interface LiveWebhookStreamProps {
 }
 
 const statusColor: Record<number, string> = {
-  200: "text-emerald-400",
-  201: "text-emerald-400",
-  400: "text-amber-400",
+  200: "text-white/60",
+  201: "text-white/60",
+  400: "text-white/50",
   401: "text-red-400",
-  404: "text-amber-400",
+  404: "text-white/50",
   500: "text-red-400",
 };
 
@@ -28,7 +28,7 @@ export function LiveWebhookStream({ entries, className }: LiveWebhookStreamProps
       {/* Header */}
       <div className="flex items-center justify-between border-b border-white/[0.08] px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex h-2 w-2 rounded-full bg-white/60 animate-pulse" />
           <h3 className="text-sm font-semibold text-on-surface">Live Webhook Stream</h3>
         </div>
         <span className="rounded-full bg-white/[0.05] px-2.5 py-1 text-xs font-mono text-on-surface-variant">

@@ -164,25 +164,25 @@ export default function AutoReportsPage() {
             <Card variant="glass">
               <CardContent className="py-4 text-center">
                 <p className="text-xs font-medium text-slate-400">Total Hadir</p>
-                <p className="mt-1 text-2xl font-semibold text-emerald-400">{reportData.summary.totalPresent}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/60">{reportData.summary.totalPresent}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
                 <p className="text-xs font-medium text-slate-400">Total Terlambat</p>
-                <p className="mt-1 text-2xl font-semibold text-amber-400">{reportData.summary.totalLate}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/50">{reportData.summary.totalLate}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
                 <p className="text-xs font-medium text-slate-400">Total Lembur</p>
-                <p className="mt-1 text-2xl font-semibold text-blue-400">{reportData.summary.totalOvertime}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/60">{reportData.summary.totalOvertime}</p>
               </CardContent>
             </Card>
             <Card variant="glass">
               <CardContent className="py-4 text-center">
                 <p className="text-xs font-medium text-slate-400">Total Alpha</p>
-                <p className="mt-1 text-2xl font-semibold text-red-400">{reportData.summary.totalAbsent}</p>
+                <p className="mt-1 text-2xl font-semibold text-white/50">{reportData.summary.totalAbsent}</p>
               </CardContent>
             </Card>
           </div>
@@ -213,10 +213,10 @@ export default function AutoReportsPage() {
                       <td className="px-6 py-4 text-sm font-medium text-white">{row.employeeName}</td>
                       <td className="px-6 py-4 text-sm text-slate-400">{row.pin}</td>
                       <td className="px-6 py-4 text-sm text-slate-400">{row.department || "-"}</td>
-                      <td className="px-6 py-4 text-center text-sm text-emerald-400">{row.totalPresent}</td>
-                      <td className="px-6 py-4 text-center text-sm text-amber-400">{row.totalLate}</td>
-                      <td className="px-6 py-4 text-center text-sm text-blue-400">{row.totalOvertime}</td>
-                      <td className="px-6 py-4 text-center text-sm text-red-400">{row.totalAbsent}</td>
+                      <td className="px-6 py-4 text-center text-sm text-white/60">{row.totalPresent}</td>
+                      <td className="px-6 py-4 text-center text-sm text-white/50">{row.totalLate}</td>
+                      <td className="px-6 py-4 text-center text-sm text-white/60">{row.totalOvertime}</td>
+                      <td className="px-6 py-4 text-center text-sm text-white/50">{row.totalAbsent}</td>
                       <td className="px-6 py-4 text-center text-sm text-white">{row.totalWorkHours.toFixed(1)}j</td>
                     </tr>
                   ))}

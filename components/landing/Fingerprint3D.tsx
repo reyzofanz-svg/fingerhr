@@ -51,7 +51,7 @@ export function Fingerprint3D() {
         }}
       >
         {/* Glow backdrop */}
-        <div className="absolute -inset-16 bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-blue-500/30 blur-[80px] rounded-full" />
+        <div className="absolute -inset-16 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-white/[0.06] blur-[80px] rounded-full" />
         
         {/* Fingerprint SVG */}
         <svg
@@ -129,14 +129,14 @@ export function Fingerprint3D() {
         </svg>
 
         {/* Reflection */}
-        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-2/3 h-16 bg-indigo-500/15 blur-2xl rounded-full" />
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-2/3 h-16 bg-white/[0.06] blur-2xl rounded-full" />
       </motion.div>
 
       {/* Floating particles */}
       {[...Array(8)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 rounded-full bg-indigo-400/60"
+          className="absolute w-1 h-1 rounded-full bg-white/40"
           style={{
             left: `${20 + Math.random() * 60}%`,
             top: `${20 + Math.random() * 60}%`,

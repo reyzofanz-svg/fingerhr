@@ -384,7 +384,7 @@ export function ScheduleClient({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {loading ? (
               <div className="col-span-full flex justify-center py-12">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
               </div>
             ) : shifts.length === 0 ? (
               <Card variant="glass" className="col-span-full">
@@ -447,7 +447,7 @@ export function ScheduleClient({
                       {ws.days.slice().sort((a, b) => a.dayOfWeek - b.dayOfWeek).map((d) => (
                         <div key={d.dayOfWeek} className="rounded-lg border border-white/[0.06] p-2">
                           <div className="font-medium text-slate-400">{DAY_NAMES[d.dayOfWeek].slice(0, 3)}</div>
-                          <div className={`mt-1 ${d.isDayOff ? "text-red-400" : "text-indigo-400"}`}>
+                          <div className={`mt-1 ${d.isDayOff ? "text-red-400" : "text-white/60"}`}>
                             {d.isDayOff ? "Libur" : d.shift?.name || "-"}
                           </div>
                         </div>

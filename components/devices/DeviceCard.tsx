@@ -32,8 +32,8 @@ export function DeviceCard({ device, isSelected, onSelect, className }: DeviceCa
     <div
       className={cn(
         "group glass rounded-[2rem] p-6 transition-all",
-        "hover:border-primary/20 hover:glow-indigo-sm",
-        isSelected && "border-primary/30 glow-indigo",
+        "hover:border-white/[0.1]",
+        isSelected && "border-white/[0.12]",
         className
       )}
       onClick={() => onSelect?.(device.cloudId)}

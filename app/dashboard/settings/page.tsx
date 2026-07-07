@@ -201,7 +201,7 @@ export default function SettingsPage() {
           <CardContent className="p-6">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
               </div>
             ) : (
               <div className="space-y-4">
@@ -262,7 +262,7 @@ export default function SettingsPage() {
                 <p className="text-xs text-slate-400">
                   Webhook URL: Setelah deploy ke Railway, masukkan URL webhook ke dashboard Fingerspot.
                 </p>
-                <p className="mt-2 font-mono text-xs text-indigo-400">
+                <p className="mt-2 font-mono text-xs text-white/60">
                   https://[app-name].up.railway.app/api/webhook/fingerspot
                 </p>
               </div>
@@ -355,7 +355,7 @@ export default function SettingsPage() {
                   <li>1. Buat bot Telegram via @BotFather, copy token-nya</li>
                   <li>2. Paste token di atas, lalu simpan</li>
                   <li>3. Klik tombol "Set Webhook" di bawah</li>
-                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-indigo-400">/start &lt;PIN&gt;</span></li>
+                  <li>4. Karyawan kirim ke bot: <span className="font-mono text-white/60">/start &lt;PIN&gt;</span></li>
                 </ol>
               </div>
 

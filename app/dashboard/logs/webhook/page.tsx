@@ -113,7 +113,7 @@ export default function WebhookLogsPage() {
         <CardContent className="p-0">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
             </div>
           ) : (
             <div className="overflow-x-auto">

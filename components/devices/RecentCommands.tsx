@@ -15,9 +15,9 @@ const statusConfig: Record<CommandStatus, { label: string; dot: string; bg: stri
   },
   success: {
     label: "Success",
-    dot: "bg-emerald-500",
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-400",
+    dot: "bg-white/60",
+    bg: "bg-white/[0.06]",
+    text: "text-white/60",
   },
   failed: {
     label: "Failed",
@@ -27,9 +27,9 @@ const statusConfig: Record<CommandStatus, { label: string; dot: string; bg: stri
   },
   timeout: {
     label: "Timeout",
-    dot: "bg-amber-500",
-    bg: "bg-amber-500/10",
-    text: "text-amber-400",
+    dot: "bg-white/40",
+    bg: "bg-white/[0.06]",
+    text: "text-white/50",
   },
 };
 

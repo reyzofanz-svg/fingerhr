@@ -9,9 +9,9 @@ export interface DeviceStatusBadgeProps {
 const statusConfig: Record<DeviceStatus, { label: string; dot: string; bg: string; text: string }> = {
   online: {
     label: "Online",
-    dot: "bg-emerald-500",
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-400",
+    dot: "bg-white/60",
+    bg: "bg-white/[0.06]",
+    text: "text-white/60",
   },
   offline: {
     label: "Offline",
@@ -27,9 +27,9 @@ const statusConfig: Record<DeviceStatus, { label: string; dot: string; bg: strin
   },
   syncing: {
     label: "Syncing",
-    dot: "bg-amber-500",
-    bg: "bg-amber-500/10",
-    text: "text-amber-400",
+    dot: "bg-white/40",
+    bg: "bg-white/[0.06]",
+    text: "text-white/50",
   },
 };
 

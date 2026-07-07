@@ -12,8 +12,7 @@ const features = [
     ),
     title: "Real-time Sync",
     description: "Data flows instantly from terminals to the cloud. Webhooks notify your systems the millisecond a punch occurs.",
-    gradient: "from-blue-500 to-cyan-400",
-    glowColor: "rgba(59, 130, 246, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "sync",
   },
   {
@@ -24,8 +23,7 @@ const features = [
     ),
     title: "Enterprise Security",
     description: "End-to-end encryption, SOC2 compliance, and role-based access control. Your biometric data stays safe.",
-    gradient: "from-emerald-500 to-teal-400",
-    glowColor: "rgba(16, 185, 129, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "security",
   },
   {
@@ -36,8 +34,7 @@ const features = [
     ),
     title: "API First",
     description: "Modern REST endpoints, comprehensive docs, SDKs for major languages. Built for developers, by developers.",
-    gradient: "from-purple-500 to-pink-400",
-    glowColor: "rgba(168, 85, 247, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "api",
   },
   {
@@ -48,8 +45,7 @@ const features = [
     ),
     title: "Smart Reports",
     description: "Automated daily reports with Excel export. Track attendance, overtime, and schedules in one dashboard.",
-    gradient: "from-amber-500 to-orange-400",
-    glowColor: "rgba(245, 158, 11, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "reports",
   },
   {
@@ -60,8 +56,7 @@ const features = [
     ),
     title: "Telegram Alerts",
     description: "Instant notifications via Telegram when employees clock in or out. Customizable message templates.",
-    gradient: "from-sky-500 to-blue-400",
-    glowColor: "rgba(14, 165, 233, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "telegram",
   },
   {
@@ -72,8 +67,7 @@ const features = [
     ),
     title: "Flexible Schedules",
     description: "Create weekly schedules, assign shifts per day, set overtime rules. Works for any work pattern.",
-    gradient: "from-rose-500 to-red-400",
-    glowColor: "rgba(244, 63, 94, 0.4)",
+    glowColor: "rgba(255,255,255,0.06)",
     visual: "schedule",
   },
 ];
@@ -84,8 +78,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="sync-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#06b6d4" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <ellipse cx="60" cy="25" rx="25" ry="12" fill="url(#sync-g)" opacity="0.15" />
@@ -102,8 +96,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="sec-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#14b8a6" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <path d="M60 10 L90 25 L90 50 Q90 70 60 75 Q30 70 30 50 L30 25 Z" fill="url(#sec-g)" opacity="0.1" stroke="url(#sec-g)" strokeWidth="1" />
@@ -116,8 +110,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="api-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#a855f7" />
-            <stop offset="100%" stopColor="#ec4899" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <text x="20" y="50" fontFamily="monospace" fontSize="28" fill="url(#api-g)" opacity="0.3">{"{"}</text>
@@ -134,8 +128,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="rpt-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#f97316" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <rect x="15" y="45" width="12" height="25" rx="2" fill="url(#rpt-g)" opacity="0.15" />
@@ -150,8 +144,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="tg-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0ea5e9" />
-            <stop offset="100%" stopColor="#3b82f6" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <rect x="40" y="8" width="40" height="64" rx="8" fill="url(#tg-g)" opacity="0.1" stroke="url(#tg-g)" strokeWidth="0.8" />
@@ -166,8 +160,8 @@ function FeatureVisual({ type }: { type: string }) {
       <svg viewBox="0 0 120 80" className="w-full h-full">
         <defs>
           <linearGradient id="sch-g" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f43f5e" />
-            <stop offset="100%" stopColor="#ef4444" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.1" />
           </linearGradient>
         </defs>
         <rect x="20" y="15" width="80" height="55" rx="6" fill="url(#sch-g)" opacity="0.08" stroke="url(#sch-g)" strokeWidth="0.8" />
@@ -218,7 +212,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
           </div>
 
           {/* Icon */}
-          <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} text-white mb-5 shadow-xl`}>
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.06] border border-white/[0.08] text-white/80 mb-5">
             {feature.icon}
           </div>
 
@@ -226,7 +220,7 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
           <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
             {feature.title}
           </h3>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className="text-sm text-white/40 leading-relaxed">
             {feature.description}
           </p>
         </div>
@@ -242,16 +236,16 @@ export function FeaturesSection() {
   return (
     <section id="features" className="relative px-6 py-32 max-w-[1440px] mx-auto">
       {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-indigo-600/[0.04] blur-[200px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-white/[0.02] blur-[200px] pointer-events-none" />
 
       <div ref={headerRef} className="text-center mb-20 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           animate={headerInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-indigo-500/25 bg-indigo-500/[0.08] backdrop-blur-sm mb-8"
+          className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm mb-8"
         >
-          <span className="font-mono text-xs text-indigo-400 font-semibold tracking-wider">FEATURES</span>
+          <span className="font-mono text-xs text-white/60 font-semibold tracking-wider">FEATURES</span>
         </motion.div>
 
         <motion.h2
@@ -262,7 +256,7 @@ export function FeaturesSection() {
         >
           Enterprise-Grade
           <br />
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-white/80 to-white/40 bg-clip-text text-transparent">
             Infrastructure
           </span>
         </motion.h2>
@@ -271,7 +265,7 @@ export function FeaturesSection() {
           initial={{ opacity: 0, y: 25 }}
           animate={headerInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-lg text-slate-400 max-w-2xl mx-auto"
+          className="text-lg text-white/40 max-w-2xl mx-auto"
         >
           Built for scale, security, and developer experience. FingerHR handles the complexity of biometric hardware communication.
         </motion.p>

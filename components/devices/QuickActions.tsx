@@ -121,7 +121,7 @@ export function QuickActions({ deviceCloudId, deviceName, deviceId, disabled, cl
                 onClick={() => handleCommand(action.type)}
                 className={cn(
                   "group flex flex-col items-center gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 text-center transition-all",
-                  "hover:border-primary/30 hover:bg-primary/5 hover:glow-indigo-sm",
+                  "hover:border-white/[0.12] hover:bg-white/[0.03]",
                   "disabled:cursor-not-allowed disabled:opacity-50"
                 )}
               >

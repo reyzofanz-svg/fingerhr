@@ -9,9 +9,9 @@ export interface ApiConnectionStatusProps {
 const statusConfig = {
   connected: {
     label: "Connected",
-    dot: "bg-emerald-500",
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-400",
+    dot: "bg-white/60",
+    bg: "bg-white/[0.06]",
+    text: "text-white/60",
   },
   disconnected: {
     label: "Disconnected",

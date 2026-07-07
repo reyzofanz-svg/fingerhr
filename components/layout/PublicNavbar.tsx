@@ -53,7 +53,7 @@ export function PublicNavbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
+                className="text-sm text-white/40 hover:text-white transition-colors duration-200"
               >
                 {link.label}
               </a>
@@ -64,13 +64,13 @@ export function PublicNavbar() {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm text-slate-400 hover:text-white transition-colors"
+              className="text-sm text-white/40 hover:text-white transition-colors"
             >
               Login
             </Link>
             <Link
               href="/login"
-              className="rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 px-5 py-2 text-sm font-semibold text-white transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:-translate-y-0.5"
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:-translate-y-0.5"
             >
               Get Started
             </Link>
@@ -79,7 +79,7 @@ export function PublicNavbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
+            className="md:hidden p-2 text-white/40 hover:text-white transition-colors"
           >
             {mobileOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -108,7 +108,7 @@ export function PublicNavbar() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-lg text-slate-300 hover:text-white transition-colors py-2 border-b border-white/5"
+                className="text-lg text-white/60 hover:text-white transition-colors py-2 border-b border-white/[0.06]"
               >
                 {link.label}
               </a>
@@ -117,14 +117,14 @@ export function PublicNavbar() {
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="rounded-full border border-white/10 px-6 py-3 text-center text-sm font-semibold text-slate-300 hover:bg-white/5"
+                className="rounded-full border border-white/10 px-6 py-3 text-center text-sm font-semibold text-white/60 hover:bg-white/[0.04]"
               >
                 Login
               </Link>
               <Link
                 href="/login"
                 onClick={() => setMobileOpen(false)}
-                className="rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-3 text-center text-sm font-bold text-white"
+                className="rounded-full bg-white px-6 py-3 text-center text-sm font-bold text-black"
               >
                 Get Started
               </Link>

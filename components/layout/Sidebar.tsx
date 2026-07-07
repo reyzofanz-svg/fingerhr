@@ -140,7 +140,7 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
         )}
       >
         {/* Subtle gradient overlay at top */}
-        <div className="pointer-events-none absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-indigo-500/[0.03] to-transparent" />
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-white/[0.03] to-transparent" />
 
         {/* Logo */}
         <div className="relative flex h-16 items-center px-6">
@@ -167,16 +167,16 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
                         className={cn(
                           "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                           isActive
-                            ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-300 border border-indigo-500/10"
-                            : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                            ? "bg-white/[0.06] text-white border border-white/[0.08]"
+                            : "text-white/40 hover:bg-white/[0.04] hover:text-white/60"
                         )}
                       >
                         <span
                           className={cn(
                             "flex h-5 w-5 items-center justify-center transition-colors",
                             isActive
-                              ? "text-indigo-400"
-                              : "text-slate-500 group-hover:text-slate-300"
+                              ? "text-white"
+                              : "text-white/30 group-hover:text-white/60"
                           )}
                         >
                           {item.icon}
@@ -210,16 +210,16 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
                                   className={cn(
                                     "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-200",
                                     isChildActive
-                                      ? "font-medium text-indigo-300 bg-indigo-500/10"
-                                      : "text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]"
+                                      ? "font-medium text-white bg-white/[0.06]"
+                                      : "text-white/30 hover:text-white/60 hover:bg-white/[0.03]"
                                   )}
                                 >
                                   <span
                                     className={cn(
                                       "h-1.5 w-1.5 rounded-full transition-colors",
                                       isChildActive
-                                        ? "bg-indigo-400"
-                                        : "bg-slate-600"
+                                        ? "bg-white/60"
+                                        : "bg-white/20"
                                     )}
                                   />
                                   {child.label}
@@ -236,23 +236,23 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
                       className={cn(
                         "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "bg-gradient-to-r from-indigo-500/15 to-purple-500/10 text-indigo-300 border border-indigo-500/10"
-                          : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                          ? "bg-white/[0.06] text-white border border-white/[0.08]"
+                          : "text-white/40 hover:bg-white/[0.04] hover:text-white/60"
                       )}
                     >
                       <span
                         className={cn(
                           "flex h-5 w-5 items-center justify-center transition-colors",
                           isActive
-                            ? "text-indigo-400"
-                            : "text-slate-500 group-hover:text-slate-300"
+                            ? "text-white"
+                            : "text-white/30 group-hover:text-white/60"
                         )}
                       >
                         {item.icon}
                       </span>
                       {item.label}
                       {isActive && (
-                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_rgba(129,140,248,0.5)]" />
+                        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white/40" />
                       )}
                     </Link>
                   )}
@@ -268,7 +268,7 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
             <li>
               <button
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-400 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/40 transition-all duration-200 hover:bg-white/[0.04] hover:text-white/60"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
