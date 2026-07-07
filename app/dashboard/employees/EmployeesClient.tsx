@@ -34,10 +34,9 @@ export function EmployeesClient({
 }: {
   initialEmployees: Employee[];
 }) {
-  // Seed from server data so the list is present on first paint (no spinner).
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [devices, setDevices] = useState<Device[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);

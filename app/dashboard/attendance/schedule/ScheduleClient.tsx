@@ -96,7 +96,7 @@ export function ScheduleClient({
   const [workSchedules, setWorkSchedules] = useState<WorkSchedule[]>(initialWorkSchedules);
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   // Shift modal state

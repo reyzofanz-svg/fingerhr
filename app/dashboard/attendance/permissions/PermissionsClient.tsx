@@ -33,7 +33,7 @@ export function PermissionsClient({
   // Seed from server data so the list is present on first paint (no spinner).
   const [permissions, setPermissions] = useState<Permission[]>(initialPermissions);
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
