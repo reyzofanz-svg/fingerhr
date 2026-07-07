@@ -1,365 +1,865 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import type { CSSProperties } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import * as THREE from "three";
 import Link from "next/link";
 
-const ORBIT_WORDS = ["SECURITY", "BIOMETRIC", "CLOUD", "SYNC", "REAL-TIME"];
-const ORBIT_LOOP = 24; // seconds for full orbit
-const ORBIT_STEP = 360 / ORBIT_WORDS.length;
-const ORBIT_RADIUS = 320; // px
-const PERSPECTIVE_VAL = 1800;
+const SANS = "'Inter', 'Helvetica Neue', Arial, system-ui, sans-serif";
+const DISPLAY = "'Inter', 'Helvetica Neue', 'Arial Black', sans-serif";
 
-function AnimatedGlowOrbs() {
+/* Film grain overlay — dark version for our dark theme */
+const GRAIN =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E";
+
+/* Orbiting phrases — biometric/security themed */
+const PHRASES = ["SECURITY", "BIOMETRIC", "CLOUD", "SYNC", "REAL-TIME"];
+const LOOP = 20;
+const RING_N = PHRASES.length;
+const RING_STEP = 360 / RING_N;
+const RING_R = 660;
+const PERSP = 2200;
+
+const MANIFESTO =
+  "BRIDGING BIOMETRIC HARDWARE WITH MODERN CLOUD INFRASTRUCTURE — REAL-TIME ATTENDANCE, API-FIRST, ENTERPRISE-GRADE.";
+
+const TICK_LABELS = ["API", "3D", "IoT", "AI"];
+
+/* ═══════════════════════ The procedural 3D jellyfish ═══════════════════════ */
+
+function useTime() {
+  const t = useRef({ value: 0 });
+  useFrame((s) => (t.current.value = s.clock.elapsedTime));
+  return t.current;
+}
+
+/* ── The bell ───────────────────────────────────────────────────────────── */
+const BELL_VERT = /* glsl */ `
+  varying vec3 vPos; varying vec3 vNormal; varying vec3 vView;
+  void main(){
+    vPos = position;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 mv = modelViewMatrix * vec4(position,1.0);
+    vView = -mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const BELL_FRAG = /* glsl */ `
+  precision highp float;
+  uniform float uTime;
+  varying vec3 vPos; varying vec3 vNormal; varying vec3 vView;
+
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+  float noise(vec2 p){
+    vec2 i=floor(p), f=fract(p);
+    float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
+    vec2 u=f*f*(3.-2.*f);
+    return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);
+  }
+
+  void main(){
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(vView);
+    float fres = pow(1.0 - max(dot(N,V),0.0), 2.4);
+
+    float h = clamp((vPos.y + 0.40)/1.40, 0.0, 1.0);
+    float ang = atan(vPos.z, vPos.x);
+
+    // Indigo/violet gradient — matches FingerHR dark theme
+    vec3 top  = vec3(0.40, 0.30, 0.90);  // indigo
+    vec3 mid  = vec3(0.55, 0.35, 0.95);  // purple
+    vec3 edge = vec3(0.35, 0.45, 0.85);  // blue-indigo
+    vec3 col = mix(edge, mid, smoothstep(0.0,0.5,h));
+    col = mix(col, top, smoothstep(0.45,1.0,h));
+
+    // Radial ribs
+    float ribs = abs(fract(ang/(2.0*3.14159265)*18.0) - 0.5) * 2.0;
+    float ribLine = smoothstep(0.80, 0.99, ribs);
+    float ribMask = smoothstep(0.98,0.55,h) * smoothstep(-0.02,0.22,h);
+    col *= 1.0 - ribLine * 0.55 * ribMask;
+
+    float backw = gl_FrontFacing ? 1.0 : 0.0;
+
+    // Mottled band
+    float band = smoothstep(0.34, 0.02, h);
+    float spots = noise(vec2(ang*7.0, h*12.0));
+    float wart = smoothstep(0.58, 0.86, spots) * band;
+    col = mix(col, vec3(0.12,0.08,0.25), wart*0.85*backw);
+
+    // Iridescent rim + inner glow
+    col += fres * vec3(0.30, 0.20, 0.60);
+    col += (1.0 - fres) * vec3(0.15,0.08,0.35) * (0.5 + 0.5*h);
+
+    float alpha = 0.50 + fres*0.45 + ribLine*ribMask*0.22 + wart*0.35*backw;
+    alpha *= mix(0.30, 1.0, backw);
+    alpha = clamp(alpha, 0.0, 0.96);
+    gl_FragColor = vec4(col, alpha);
+  }
+`;
+
+function Bell({ time }: { time: { value: number } }) {
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: BELL_VERT,
+        fragmentShader: BELL_FRAG,
+        uniforms: { uTime: time },
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
+    [time]
+  );
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <motion.div
-        className="absolute -top-1/4 -left-1/4 w-[800px] h-[800px] rounded-full"
-        style={{
-          background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.06) 40%, transparent 70%)",
-        }}
-        animate={{ x: [0, 100, 0], y: [0, 50, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+    <mesh material={mat} scale={[1, 0.84, 1]}>
+      <sphereGeometry args={[1, 160, 160, 0, Math.PI * 2, 0, 1.98]} />
+    </mesh>
+  );
+}
+
+/* Inner bioluminescent core — additive glow */
+function Glow() {
+  return (
+    <mesh position={[0, 0.18, 0]}>
+      <sphereGeometry args={[0.5, 32, 32]} />
+      <meshBasicMaterial
+        color={"#818cf8"}
+        transparent
+        opacity={0.5}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        toneMapped={false}
       />
-      <motion.div
-        className="absolute -bottom-1/4 -right-1/4 w-[600px] h-[600px] rounded-full"
+    </mesh>
+  );
+}
+
+/* ── Undulating strands (tentacles + oral arms) ─────────────────────────── */
+const STRAND_VERT = /* glsl */ `
+  uniform float uTime; uniform float uLen; uniform float uPhase; uniform float uAmp; uniform float uFreq;
+  varying float vK; varying vec3 vNormal; varying vec3 vView; varying float vWorldY;
+  void main(){
+    vec3 p = position;
+    float k = clamp(-p.y / uLen, 0.0, 1.0);
+    float amp = k*k*uAmp;
+    p.x += sin(uTime*1.5 + k*uFreq + uPhase) * amp;
+    p.z += cos(uTime*1.2 + k*uFreq*0.9 + uPhase*1.3) * amp;
+    vK = k;
+    vWorldY = (modelMatrix * vec4(p,1.0)).y;
+    vNormal = normalize(normalMatrix * normal);
+    vec4 mv = modelViewMatrix * vec4(p,1.0);
+    vView = -mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const STRAND_FRAG = /* glsl */ `
+  precision highp float;
+  uniform vec3 uTop; uniform vec3 uTip; uniform float uOpacity; uniform vec2 uFade; uniform vec2 uFadeTop;
+  varying float vK; varying vec3 vNormal; varying vec3 vView; varying float vWorldY;
+  void main(){
+    float fres = pow(1.0 - max(dot(normalize(vNormal), normalize(vView)),0.0), 1.6);
+    float vis = smoothstep(uFade.x, uFade.y, vWorldY)
+              * smoothstep(uFadeTop.y, uFadeTop.x, vWorldY);
+    vec3 col = mix(uTop, uTip, vK) + fres*0.25;
+    float alpha = ((1.0 - vK*0.92) * uOpacity + fres*0.12) * vis;
+    gl_FragColor = vec4(col, clamp(alpha,0.0,1.0));
+  }
+`;
+
+function strandGeometry(length: number, thickness: number, curl: number) {
+  const seg = 40;
+  const radial = 6;
+  const spine: THREE.Vector3[] = [];
+  for (let i = 0; i <= seg; i++) {
+    const t = i / seg;
+    spine.push(new THREE.Vector3(Math.sin(t * 3) * curl * t, -t * length, Math.cos(t * 2) * curl * t));
+  }
+  const curve = new THREE.CatmullRomCurve3(spine);
+  const frames = curve.computeFrenetFrames(seg, false);
+  const pos: number[] = [];
+  const idx: number[] = [];
+  for (let i = 0; i <= seg; i++) {
+    const t = i / seg;
+    const p = curve.getPointAt(t);
+    const r = thickness * (1 - Math.pow(t, 0.75));
+    const Nf = frames.normals[i];
+    const Bf = frames.binormals[i];
+    for (let j = 0; j <= radial; j++) {
+      const a = (j / radial) * Math.PI * 2;
+      const c = Math.cos(a);
+      const s = Math.sin(a);
+      pos.push(
+        p.x + (c * Nf.x + s * Bf.x) * r,
+        p.y + (c * Nf.y + s * Bf.y) * r,
+        p.z + (c * Nf.z + s * Bf.z) * r
+      );
+    }
+  }
+  for (let i = 0; i < seg; i++)
+    for (let j = 0; j < radial; j++) {
+      const a = i * (radial + 1) + j;
+      const b = a + radial + 1;
+      idx.push(a, b, a + 1, b, b + 1, a + 1);
+    }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+function Strand({
+  time,
+  angle,
+  radius,
+  yOffset,
+  length,
+  thickness,
+  curl,
+  amp,
+  freq,
+  phase,
+  top,
+  tip,
+  opacity,
+}: {
+  time: { value: number };
+  angle: number;
+  radius: number;
+  yOffset: number;
+  length: number;
+  thickness: number;
+  curl: number;
+  amp: number;
+  freq: number;
+  phase: number;
+  top: string;
+  tip: string;
+  opacity: number;
+}) {
+  const geometry = useMemo(() => strandGeometry(length, thickness, curl), [length, thickness, curl]);
+  const mat = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: STRAND_VERT,
+        fragmentShader: STRAND_FRAG,
+        uniforms: {
+          uTime: time,
+          uLen: { value: length },
+          uPhase: { value: phase },
+          uAmp: { value: amp },
+          uFreq: { value: freq },
+          uTop: { value: new THREE.Color(top) },
+          uTip: { value: new THREE.Color(tip) },
+          uOpacity: { value: opacity },
+          uFade: { value: new THREE.Vector2(-1.85, -0.7) },
+          uFadeTop: { value: new THREE.Vector2(-0.62, -0.22) },
+        },
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
+    [time, length, phase, amp, freq, top, tip, opacity]
+  );
+  const x = Math.cos(angle) * radius;
+  const z = Math.sin(angle) * radius;
+  return <mesh geometry={geometry} material={mat} position={[x, yOffset, z]} />;
+}
+
+function Jelly({ loop }: { loop: number }) {
+  const time = useTime();
+  const grp = useRef<THREE.Group>(null!);
+  useFrame((s) => {
+    const t = s.clock.elapsedTime;
+    grp.current.rotation.y = -(t / loop) * Math.PI * 2;
+    grp.current.position.y = Math.sin(t * 0.6) * 0.08;
+    const k = Math.sin(t * 1.7);
+    grp.current.scale.set(1 + k * 0.05, 1 - k * 0.06, 1 + k * 0.05);
+  });
+
+  const tentacles = useMemo(
+    () => Array.from({ length: 28 }, (_, i) => ({ angle: (i / 28) * Math.PI * 2, phase: i * 0.5 })),
+    []
+  );
+  const arms = useMemo(
+    () => Array.from({ length: 8 }, (_, i) => ({ angle: (i / 8) * Math.PI * 2, phase: i * 1.0 + 0.4 })),
+    []
+  );
+
+  return (
+    <group ref={grp}>
+      <Bell time={time} />
+      <Glow />
+      {tentacles.map((s, i) => (
+        <Strand
+          key={`t${i}`}
+          time={time}
+          angle={s.angle}
+          radius={0.82}
+          yOffset={-0.25}
+          length={4.2}
+          thickness={0.016}
+          curl={0.05}
+          amp={0.5}
+          freq={7.0}
+          phase={s.phase}
+          top={"#a78bfa"}
+          tip={"#c4b5fd"}
+          opacity={0.55}
+        />
+      ))}
+      {arms.map((s, i) => (
+        <Strand
+          key={`a${i}`}
+          time={time}
+          angle={s.angle}
+          radius={0.22}
+          yOffset={-0.1}
+          length={2.0}
+          thickness={0.07}
+          curl={0.14}
+          amp={0.32}
+          freq={10.0}
+          phase={s.phase}
+          top={"#c4b5fd"}
+          tip={"#818cf8"}
+          opacity={0.72}
+        />
+      ))}
+    </group>
+  );
+}
+
+export function Jellyfish3D({ loop = 20 }: { loop?: number }) {
+  return (
+    <Canvas
+      flat
+      gl={{ alpha: true, antialias: true }}
+      dpr={[1, 2]}
+      camera={{ position: [0, 0.4, 6], fov: 34 }}
+      style={{ width: "100%", height: "100%", background: "transparent" }}
+    >
+      <ambientLight intensity={1} />
+      <Jelly loop={loop} />
+    </Canvas>
+  );
+}
+
+function SideRuler({ side }: { side: "left" | "right" }) {
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: "absolute",
+        [side]: "1.4vh",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 30,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "1.1vh",
+        height: "56vh",
+        justifyContent: "center",
+        pointerEvents: "none",
+      } as CSSProperties}
+    >
+      {Array.from({ length: 13 }).map((_, i) => (
+        <span
+          key={i}
+          style={{
+            width: i % 4 === 0 ? "1.4vh" : "0.7vh",
+            height: 1,
+            background: "rgba(255,255,255,0.2)",
+          }}
+        />
+      ))}
+      <span
         style={{
-          background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, rgba(59,130,246,0.05) 40%, transparent 70%)",
-        }}
-        animate={{ x: [0, -80, 0], y: [0, -60, 0], scale: [1, 1.15, 1] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-        }}
-      />
+          position: "absolute",
+          [side]: "-2.4vh",
+          writingMode: "vertical-rl",
+          transform: side === "left" ? "rotate(180deg)" : "none",
+          fontFamily: SANS,
+          fontSize: "0.95vh",
+          fontWeight: 600,
+          letterSpacing: "0.35em",
+          color: "rgba(255,255,255,0.3)",
+          textTransform: "uppercase",
+        } as CSSProperties}
+      >
+        {TICK_LABELS.join(" · ")}
+      </span>
     </div>
   );
 }
 
-function FingerprintCenter() {
+export default function HeroSection() {
   return (
-    <div className="relative z-20 flex items-center justify-center">
-      {/* Glow rings */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {[1, 2, 3, 4].map((i) => (
-          <motion.div
+    <section
+      className="hero-loop"
+      style={{
+        position: "relative",
+        height: "100vh",
+        width: "100%",
+        overflow: "hidden",
+        background:
+          "radial-gradient(125% 120% at 50% 28%, #0f0a1f 0%, #0a0818 46%, #060412 74%, #03020a 100%)",
+        fontFamily: SANS,
+      }}
+    >
+      <style>{HERO_CSS}</style>
+
+      {/* ── Top nav ───────────────────────────────────────────────────────── */}
+      <header
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 40,
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          padding: "2.4vh 2.6vw",
+          color: "#fff",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "baseline", gap: "0.4vw" }}>
+          <span style={{ fontWeight: 900, fontSize: "1.9vh", letterSpacing: "-0.02em" }}>
+            FINGER
+          </span>
+          <span style={{ fontStyle: "italic", fontWeight: 500, fontSize: "1.7vh", opacity: 0.85, color: "#818cf8" }}>
+            HR
+          </span>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            gap: "1.8vw",
+            fontSize: "1.05vh",
+            fontWeight: 600,
+            letterSpacing: "0.18em",
+            opacity: 0.75,
+          }}
+        >
+          <span>[ BIOMETRIC ATTENDANCE ]</span>
+          <span>[ GET IN TOUCH ]</span>
+        </div>
+      </header>
+
+      {/* ── Giant orbiting headline ──────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 10,
+          perspective: `${PERSP}px`,
+          perspectiveOrigin: "50% 46%",
+          overflow: "hidden",
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          className="hero-stage"
+          style={{
+            position: "absolute",
+            inset: 0,
+            transformStyle: "preserve-3d",
+            animation: `hero-orbit ${LOOP}s linear infinite`,
+            willChange: "transform",
+          }}
+        >
+          {PHRASES.map((p, i) => (
+            <span
+              key={p}
+              className="hero-phrase"
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "grid",
+                placeItems: "center",
+                fontFamily: DISPLAY,
+                fontWeight: 900,
+                fontSize: "28vh",
+                lineHeight: 1,
+                letterSpacing: "-0.05em",
+                whiteSpace: "nowrap",
+                color: "rgba(255,255,255,0.08)",
+                WebkitTextStroke: "1px rgba(129,140,248,0.3)",
+                opacity: 0,
+                transform: `rotateY(${(i * RING_STEP).toFixed(2)}deg) translateZ(${RING_R}px) rotateY(180deg)`,
+                backfaceVisibility: "hidden",
+                WebkitBackfaceVisibility: "hidden",
+                animation: `hero-fade ${LOOP}s linear ${(
+                  (-LOOP * ((RING_N - i) % RING_N)) / RING_N -
+                  LOOP / 2
+                ).toFixed(3)}s infinite`,
+                willChange: "opacity",
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  animation: `hero-rise ${LOOP}s linear ${(
+                    (-LOOP * ((RING_N - i) % RING_N)) / RING_N -
+                    LOOP / 2
+                  ).toFixed(3)}s infinite`,
+                  willChange: "transform",
+                }}
+              >
+                <span
+                  style={{
+                    display: "inline-block",
+                    transform: "scaleX(0.82)",
+                    transformOrigin: "center",
+                  }}
+                >
+                  {p}
+                </span>
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Floating particles ──────────────────────────────────────────── */}
+      {[
+        { left: "22%", size: "0.5vh", delay: "0s", dur: "18s" },
+        { left: "71%", size: "0.8vh", delay: "4s", dur: "22s" },
+        { left: "58%", size: "0.4vh", delay: "8s", dur: "15s" },
+        { left: "38%", size: "0.6vh", delay: "6s", dur: "20s" },
+        { left: "85%", size: "0.3vh", delay: "2s", dur: "16s" },
+        { left: "15%", size: "0.5vh", delay: "10s", dur: "19s" },
+      ].map((b, i) => (
+        <span
+          key={i}
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: "-4vh",
+            left: b.left,
+            width: b.size,
+            height: b.size,
+            borderRadius: "50%",
+            background: "rgba(129,140,248,0.4)",
+            boxShadow: "0 0 8px rgba(129,140,248,0.6)",
+            zIndex: 15,
+            animation: `hero-bubble ${b.dur} linear ${b.delay} infinite`,
+            willChange: "transform, opacity",
+          }}
+        />
+      ))}
+
+      {/* ── The jellyfish ─────────────────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          top: "44%",
+          transform: "translate(-50%, -50%)",
+          width: "min(58vh, 70vw)",
+          height: "78vh",
+          zIndex: 20,
+          pointerEvents: "none",
+        }}
+      >
+        <Jellyfish3D loop={LOOP} />
+      </div>
+
+      {/* ── CTA buttons overlay ──────────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          bottom: "14vh",
+          transform: "translateX(-50%)",
+          zIndex: 42,
+          display: "flex",
+          gap: "1.5vw",
+        }}
+      >
+        <Link
+          href="/login"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.8vw",
+            padding: "1.6vh 3vw",
+            borderRadius: "9999px",
+            background: "linear-gradient(135deg, #6366f1, #3b82f6)",
+            color: "#fff",
+            fontFamily: SANS,
+            fontWeight: 700,
+            fontSize: "1.2vh",
+            letterSpacing: "0.05em",
+            textDecoration: "none",
+            boxShadow: "0 0 40px rgba(99,102,241,0.4)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          GET STARTED
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </Link>
+        <a
+          href="#features"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "1.6vh 3vw",
+            borderRadius: "9999px",
+            border: "1px solid rgba(255,255,255,0.15)",
+            color: "rgba(255,255,255,0.8)",
+            fontFamily: SANS,
+            fontWeight: 700,
+            fontSize: "1.2vh",
+            letterSpacing: "0.05em",
+            textDecoration: "none",
+            transition: "all 0.3s ease",
+          }}
+        >
+          SEE HOW IT WORKS
+        </a>
+      </div>
+
+      {/* ── Manifesto ────────────────────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          right: "4vw",
+          top: "50%",
+          transform: "translateY(-50%)",
+          zIndex: 38,
+          width: "min(22vw, 30vh)",
+          textAlign: "right",
+          pointerEvents: "none",
+          animation: `hero-manifesto ${LOOP}s ease-in-out 0s infinite`,
+          willChange: "opacity, transform",
+        }}
+      >
+        <p
+          style={{
+            margin: "1.2vh 0 0",
+            fontFamily: SANS,
+            fontSize: "1.35vh",
+            fontWeight: 600,
+            letterSpacing: "0.1em",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.6)",
+            textTransform: "uppercase",
+          }}
+        >
+          {MANIFESTO}
+        </p>
+      </div>
+
+      {/* ── Side rulers ────────────────────────────────────────────────────── */}
+      <SideRuler side="left" />
+      <SideRuler side="right" />
+
+      {/* ── Rotating bottom caption ──────────────────────────────────────── */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "3.4vh",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 40,
+          width: "60vw",
+          textAlign: "center",
+          height: "3.4vh",
+        }}
+      >
+        {[
+          "SECURE BIOMETRIC ATTENDANCE — CLOUD-NATIVE, API-FIRST",
+          "REAL-TIME SYNC. ENTERPRISE-GRADE. BUILT FOR SCALE.",
+          "FROM FINGERSPOT TO CLOUD — ATTENDANCE REIMAGINED.",
+        ].map((c, i) => (
+          <p
             key={i}
-            className="absolute rounded-full border border-indigo-500/15"
-            style={{ width: `${140 + i * 50}px`, height: `${140 + i * 50}px` }}
-            animate={{ scale: [1, 1.06, 1], opacity: [0.15, 0.35, 0.15] }}
-            transition={{ duration: 3.5, repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }}
-          />
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              margin: 0,
+              fontSize: "1.15vh",
+              fontWeight: 700,
+              letterSpacing: "0.16em",
+              lineHeight: 1.5,
+              color: "rgba(255,255,255,0.5)",
+              opacity: 0,
+              animation: `hero-caption 18s ease-in-out ${i * 6}s infinite`,
+              willChange: "opacity",
+            }}
+          >
+            {c}
+          </p>
         ))}
       </div>
 
-      {/* Main fingerprint */}
-      <motion.div
-        className="relative"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      {/* ── Corner accents ──────────────────────────────────────────────── */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          bottom: "3vh",
+          left: "2.6vw",
+          zIndex: 40,
+          display: "flex",
+          alignItems: "center",
+          gap: "0.6vw",
+          padding: "0.7vh 1vh",
+          borderRadius: "999px",
+          background: "rgba(15,10,31,0.9)",
+          border: "1px solid rgba(129,140,248,0.2)",
+          color: "#fff",
+          fontSize: "0.9vh",
+          fontWeight: 700,
+          letterSpacing: "0.15em",
+        }}
       >
-        <div className="absolute -inset-20 bg-gradient-to-br from-indigo-500/25 via-purple-500/15 to-blue-500/25 blur-[70px] rounded-full" />
-        <svg
-          viewBox="0 0 200 200"
-          className="w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64 drop-shadow-[0_0_50px_rgba(99,102,241,0.5)]"
-          style={{ filter: "drop-shadow(0 0 40px rgba(99,102,241,0.4)) drop-shadow(0 0 80px rgba(139,92,246,0.2))" }}
-        >
-          <defs>
-            <linearGradient id="fp-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#818cf8" />
-              <stop offset="50%" stopColor="#a78bfa" />
-              <stop offset="100%" stopColor="#c084fc" />
-            </linearGradient>
-            <filter id="fp-glow">
-              <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          <g fill="none" stroke="url(#fp-grad)" strokeWidth="2" strokeLinecap="round" filter="url(#fp-glow)" opacity="0.9">
-            <circle cx="100" cy="100" r="3.5" fill="url(#fp-grad)" />
-            <path d="M100 87 Q113 87 113 100 Q113 113 100 113 Q87 113 87 100 Q87 87 100 87" />
-            <path d="M100 75 Q125 75 125 100 Q125 125 100 125 Q75 125 75 100 Q75 75 100 75" />
-            <path d="M100 63 Q137 63 137 100 Q137 137 100 137 Q63 137 63 100 Q63 63 100 63" />
-            <path d="M100 51 Q149 51 149 100 Q149 149 100 149" />
-            <path d="M100 149 Q51 149 51 100 Q51 51 100 51" />
-            <path d="M100 40 Q160 40 160 100 Q160 160 100 160" />
-            <path d="M100 160 Q40 160 40 100 Q40 40 100 40" />
-            <path d="M72 72 Q86 62 100 60" strokeWidth="1.5" />
-            <path d="M128 72 Q114 62 100 60" strokeWidth="1.5" />
-            <path d="M72 128 Q86 138 100 140" strokeWidth="1.5" />
-            <path d="M128 128 Q114 138 100 140" strokeWidth="1.5" />
-          </g>
-          <motion.line
-            x1="50" x2="150"
-            stroke="url(#fp-grad)" strokeWidth="1.5" opacity="0.7"
-            animate={{ y1: [50, 150, 50], y2: [50, 150, 50] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </svg>
-      </motion.div>
-    </div>
-  );
-}
-
-export function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end start"] });
-  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
-
-  return (
-    <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden">
-      <AnimatedGlowOrbs />
-
-      <div className="relative z-10 mx-auto max-w-[1440px] w-full px-6 pt-28 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        {/* Left: Text */}
-        <motion.div style={{ opacity, scale }} className="flex flex-col gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="inline-flex items-center gap-3 w-fit px-5 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 backdrop-blur-sm"
-          >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-indigo-500" />
-            </span>
-            <span className="font-mono text-xs text-indigo-400 font-semibold tracking-wider">REAL-TIME SYNC</span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 35 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35 }}
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight leading-[1.02]"
-          >
-            Biometrics
-            <br />
-            meets{" "}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              the Cloud.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 35 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.45 }}
-            className="text-lg sm:text-xl text-slate-400 max-w-lg leading-relaxed"
-          >
-            Bridge Fingerspot biometric hardware with modern cloud infrastructure.
-            Real-time sync, API-first architecture, enterprise-grade security.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 35 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
-            className="flex flex-wrap gap-5 mt-3"
-          >
-            <Link
-              href="/login"
-              className="group relative inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 px-9 py-4 text-sm font-bold text-white transition-all duration-300 hover:shadow-[0_0_40px_rgba(99,102,241,0.5)] hover:-translate-y-1"
-            >
-              <span>Get Started</span>
-              <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-            <a
-              href="#features"
-              className="inline-flex items-center gap-3 rounded-2xl border border-white/10 px-9 py-4 text-sm font-bold text-slate-300 transition-all duration-300 hover:bg-white/5 hover:border-white/20 hover:-translate-y-1"
-            >
-              See How It Works
-            </a>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.75 }}
-            className="flex items-center gap-8 mt-8 text-sm text-slate-500"
-          >
-            {["Free trial", "No credit card", "Setup in 5 min"].map((item) => (
-              <div key={item} className="flex items-center gap-2.5">
-                <svg className="h-4.5 w-4.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span>{item}</span>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* Right: 3D Orbiting Fingerprint */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative w-full aspect-square max-w-[550px] lg:max-w-none mx-auto"
-        >
-          {/* The orbiting stage */}
-          <div
-            className="absolute inset-0"
-            style={{ perspective: `${PERSPECTIVE_VAL}px`, perspectiveOrigin: "50% 46%" }}
-          >
-            <div
-              className="absolute inset-0 orbit-stage"
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {ORBIT_WORDS.map((word, i) => (
-                <span
-                  key={word}
-                  className="absolute inset-0 flex items-center justify-center orbit-word"
-                  style={{
-                    fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
-                    fontWeight: 900,
-                    fontSize: "clamp(3rem, 8vw, 6rem)",
-                    lineHeight: 1,
-                    letterSpacing: "-0.04em",
-                    whiteSpace: "nowrap",
-                    color: "transparent",
-                    WebkitTextStroke: "1px rgba(147, 130, 220, 0.25)",
-                    opacity: 0,
-                    transform: `rotateY(${i * ORBIT_STEP}deg) translateZ(${ORBIT_RADIUS}px) rotateY(180deg)`,
-                    backfaceVisibility: "hidden",
-                    WebkitBackfaceVisibility: "hidden",
-                  }}
-                >
-                  <span
-                    className="inline-block orbit-word-inner"
-                    style={{ transform: "scaleX(0.85)", transformOrigin: "center" }}
-                  >
-                    {word}
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Fingerprint at center */}
-          <FingerprintCenter />
-
-          {/* Floating badges */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="absolute -left-4 top-[15%] z-30 glass-strong rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl shadow-black/20"
-          >
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-white">Synced</p>
-              <p className="text-xs text-slate-400">Real-time</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="absolute -right-4 bottom-[25%] z-30 glass-strong rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl shadow-black/20"
-          >
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-white">Encrypted</p>
-              <p className="text-xs text-slate-400">E2E Security</p>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-30 glass-strong rounded-2xl px-6 py-4 flex items-center gap-5 shadow-2xl shadow-black/20"
-          >
-            <div className="flex items-center gap-3">
-              <div className="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] animate-pulse" />
-              <span className="text-sm font-bold text-white">Fingerspot Revo</span>
-            </div>
-            <div className="h-6 w-px bg-white/15" />
-            <span className="text-xs text-slate-400">Connected via Cloud</span>
-          </motion.div>
-        </motion.div>
+        <span style={{ width: "1vh", height: "1vh", borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
+        LIVE
+      </div>
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          bottom: "3vh",
+          right: "2.6vw",
+          zIndex: 40,
+          display: "grid",
+          placeItems: "center",
+          width: "3.4vh",
+          height: "3.4vh",
+          borderRadius: "50%",
+          background: "rgba(15,10,31,0.9)",
+          border: "1px solid rgba(129,140,248,0.2)",
+          color: "#fff",
+          fontSize: "1.1vh",
+        }}
+      >
+        &#9654;
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-30"
-      >
-        <span className="text-xs text-slate-500 font-mono tracking-wider">SCROLL</span>
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          className="h-7 w-4 rounded-full border-2 border-slate-600 flex justify-center pt-1.5"
-        >
-          <motion.div
-            animate={{ opacity: [1, 0.3, 1], y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="h-2 w-1 rounded-full bg-slate-500"
-          />
-        </motion.div>
-      </motion.div>
+      {/* ── Micro-graphics ──────────────────────────────────────────────── */}
+      {[
+        { left: "12%", top: "30%", size: 6, dur: "17s", delay: "0s" },
+        { left: "86%", top: "62%", size: 5, dur: "21s", delay: "-6s" },
+        { left: "78%", top: "26%", size: 4, dur: "14s", delay: "-3s" },
+      ].map((s, i) => (
+        <span
+          key={i}
+          aria-hidden
+          style={{
+            position: "absolute",
+            left: s.left,
+            top: s.top,
+            width: s.size,
+            height: s.size,
+            background: "rgba(129,140,248,0.3)",
+            zIndex: 35,
+            animation: `hero-mark ${s.dur} ease-in-out ${s.delay} infinite`,
+          }}
+        />
+      ))}
 
-      <style>{`
-        .orbit-stage {
-          animation: orbit-spin ${ORBIT_LOOP}s linear infinite;
-          will-change: transform;
-        }
-        .orbit-word {
-          animation: orbit-fade ${ORBIT_LOOP}s linear infinite;
-          will-change: opacity;
-        }
-        .orbit-word-inner {
-          animation: orbit-rise ${ORBIT_LOOP}s linear infinite;
-          will-change: transform;
-        }
-        @keyframes orbit-spin {
-          from { transform: rotateY(0deg); }
-          to { transform: rotateY(-360deg); }
-        }
-        @keyframes orbit-fade {
-          0% { opacity: 1; }
-          10% { opacity: 1; }
-          21% { opacity: 0; }
-          79% { opacity: 0; }
-          90% { opacity: 1; }
-          100% { opacity: 1; }
-        }
-        @keyframes orbit-rise {
-          0% { transform: scaleX(0.85) translateY(0); }
-          21% { transform: scaleX(0.85) translateY(0); }
-          50% { transform: scaleX(0.85) translateY(30vh); }
-          78% { transform: scaleX(0.85) translateY(30vh); animation-timing-function: ease-out; }
-          87% { transform: scaleX(0.85) translateY(0); }
-          100% { transform: scaleX(0.85) translateY(0); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .orbit-stage, .orbit-word, .orbit-word-inner {
-            animation: none !important;
-          }
-          .orbit-word { opacity: 0 !important; }
-          .orbit-word:first-of-type { opacity: 1 !important; }
-        }
-      `}</style>
+      {/* Corner label */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: "6.5vh",
+          left: "2.6vw",
+          zIndex: 35,
+          fontSize: "0.85vh",
+          fontWeight: 600,
+          letterSpacing: "0.22em",
+          color: "rgba(255,255,255,0.3)",
+          textTransform: "uppercase",
+        }}
+      >
+        Concept / 01 — Biometric Cloud
+      </div>
+
+      {/* ── Film grain ──────────────────────────────────────────────────── */}
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 60,
+          pointerEvents: "none",
+          backgroundImage: `url("${GRAIN}")`,
+          backgroundSize: "140px 140px",
+          opacity: 0.04,
+          mixBlendMode: "screen",
+        }}
+      />
     </section>
   );
 }
+
+const HERO_CSS = `
+@keyframes hero-orbit{
+  from{transform:rotateY(0deg)}
+  to{transform:rotateY(-360deg)}
+}
+@keyframes hero-fade{
+  0%{opacity:1}
+  10%{opacity:1}
+  21%{opacity:0}
+  79%{opacity:0}
+  90%{opacity:1}
+  100%{opacity:1}
+}
+@keyframes hero-rise{
+  0%{transform:translateY(0)}
+  21%{transform:translateY(0)}
+  50%{transform:translateY(32vh)}
+  78%{transform:translateY(32vh);animation-timing-function:ease-out}
+  87%{transform:translateY(0)}
+  100%{transform:translateY(0)}
+}
+@keyframes hero-manifesto{
+  0%,74%{opacity:0;transform:translateY(-50%) translateX(2vw)}
+  81%{opacity:1;transform:translateY(-50%) translateX(0)}
+  92%{opacity:1;transform:translateY(-50%) translateX(0)}
+  98%,100%{opacity:0;transform:translateY(-50%) translateX(2vw)}
+}
+@keyframes hero-mark{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(-1.4vw,2vh)}
+}
+@keyframes hero-bubble{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  12%{opacity:.7}
+  80%{opacity:.5}
+  100%{transform:translateY(-108vh) translateX(2vh);opacity:0}
+}
+@keyframes hero-caption{
+  0%{opacity:0}
+  4%,28%{opacity:1}
+  33%,100%{opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .hero-loop *{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+  }
+  .hero-loop .hero-stage{
+    animation:none !important;
+    transform:rotateY(0deg) !important;
+  }
+  .hero-loop .hero-phrase{
+    animation:none !important;
+    opacity:0 !important;
+  }
+  .hero-loop .hero-phrase:first-of-type{
+    opacity:1 !important;
+  }
+}
+`;

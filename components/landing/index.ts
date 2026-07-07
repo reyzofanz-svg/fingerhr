@@ -1,4 +1,4 @@
-export { HeroSection } from "./HeroSection";
+export { default as HeroSection } from "./HeroSection";
 export { FeaturesSection } from "./FeaturesSection";
 export { HowItWorks } from "./HowItWorks";
 export { StatsSection, CTASection } from "./StatsCTA";
