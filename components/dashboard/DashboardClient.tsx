@@ -1,17 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { cn } from "@/lib/utils/cn";
-import {
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-} from "recharts";
 import type { DashboardData } from "@/lib/server/queries";
+
+const DashboardChart = lazy(() =>
+  import("./DashboardChart").then((m) => ({ default: m.DashboardChart }))
+);
 
 interface DashboardStats {
   totalEmployees: number;
@@ -56,7 +51,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
   const [recentPermissions, setRecentPermissions] = useState<RecentPermission[]>(
     initialData.recentPermissions
   );
-  // Data arrives from the server, so first paint is never a loading state.
   const [loading, setLoading] = useState(false);
   const [weeklyData, setWeeklyData] = useState<
     { day: string; masuk: number; keluar: number }[]
@@ -75,7 +69,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
       const attRes = await fetch(`/api/attendance/logs?startDate=${today}&endDate=${today}`);
       const attendance = await attRes.json();
 
-      // Fetch last 7 days for chart
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 6);
       const weekStart = weekAgo.toISOString().split("T")[0];
@@ -100,7 +93,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
       setRecentAttendance(attendance.slice(0, 10));
       setRecentPermissions(recentPerms.slice(0, 5));
 
-      // Generate weekly chart data
       const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
       const now = new Date();
       const weekData = days.map((day, i) => {
@@ -123,7 +115,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
   };
 
   useEffect(() => {
-    // Initial data comes from the server; only keep the live auto-refresh.
     const interval = setInterval(fetchDashboardData, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -137,7 +128,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">
@@ -153,9 +143,7 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Karyawan */}
         <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-5 transition-all duration-300 hover:border-indigo-500/20 hover:bg-[#12121a]">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.03] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="relative flex items-center justify-between">
@@ -177,7 +165,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
           </div>
         </div>
 
-        {/* Hadir Hari Ini */}
         <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-5 transition-all duration-300 hover:border-emerald-500/20 hover:bg-[#12121a]">
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.03] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="relative flex items-center justify-between">
@@ -199,7 +186,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
           </div>
         </div>
 
-        {/* Perangkat Online */}
         <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-5 transition-all duration-300 hover:border-blue-500/20 hover:bg-[#12121a]">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="relative flex items-center justify-between">
@@ -221,7 +207,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
           </div>
         </div>
 
-        {/* Izin Pending */}
         <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-5 transition-all duration-300 hover:border-amber-500/20 hover:bg-[#12121a]">
           <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
           <div className="relative flex items-center justify-between">
@@ -247,7 +232,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         </div>
       </div>
 
-      {/* Attendance Chart */}
       <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15] p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-sm font-semibold text-white">Absensi Minggu Ini</h3>
@@ -267,63 +251,18 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
           </div>
         ) : (
-          <div className="h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={weeklyData}>
-                <defs>
-                  <linearGradient id="colorMasuk" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorKeluar" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis
-                  dataKey="day"
-                  tick={{ fill: "#64748b", fontSize: 12 }}
-                  axisLine={{ stroke: "rgba(255,255,255,0.06)" }}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fill: "#64748b", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1a1a24",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    borderRadius: "12px",
-                    color: "#fff",
-                    fontSize: "12px",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="masuk"
-                  stroke="#6366f1"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorMasuk)"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="keluar"
-                  stroke="#a855f7"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorKeluar)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center py-16">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+              </div>
+            }
+          >
+            <DashboardChart data={weeklyData} />
+          </Suspense>
         )}
       </div>
 
-      {/* Recent Attendance */}
       <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15]">
         <div className="border-b border-white/[0.06] px-6 py-4">
           <div className="flex items-center justify-between">
@@ -381,7 +320,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         )}
       </div>
 
-      {/* Recent Permissions */}
       <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-[#0f0f15]">
         <div className="border-b border-white/[0.06] px-6 py-4">
           <div className="flex items-center justify-between">
