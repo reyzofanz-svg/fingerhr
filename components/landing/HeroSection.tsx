@@ -2,8 +2,8 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import { Fingerprint3D } from "./Fingerprint3D";
 
 function AnimatedGlowOrbs() {
   return (
@@ -69,136 +69,6 @@ function AnimatedGlowOrbs() {
           backgroundSize: "60px 60px",
         }}
       />
-    </div>
-  );
-}
-
-function FloatingDevice() {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {/* Animated glow rings */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        {[1, 2, 3, 4].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full border border-indigo-500/20"
-            style={{
-              width: `${100 + i * 70}px`,
-              height: `${100 + i * 70}px`,
-            }}
-            animate={{
-              scale: [1, 1.08, 1],
-              opacity: [0.1, 0.3, 0.1],
-              rotate: [0, 5, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.5,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-
-      {/* 3D Floating device */}
-      <motion.div
-        className="relative z-10"
-        style={{
-          transformStyle: "preserve-3d",
-          perspective: "1200px",
-        }}
-        animate={{
-          y: [0, -15, 0],
-          rotateY: [-20, 20, -20],
-          rotateX: [8, -8, 8],
-        }}
-        transition={{
-          y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-          rotateY: { duration: 10, repeat: Infinity, ease: "easeInOut" },
-          rotateX: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-        }}
-      >
-        <div className="relative">
-          {/* Glow behind device */}
-          <div className="absolute -inset-12 bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-blue-500/40 blur-[60px] rounded-full" />
-
-          {/* Color overlay tint */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/15 via-transparent to-purple-500/15 rounded-3xl z-10 mix-blend-overlay" />
-
-          {/* Device image */}
-          <Image
-            src="/fingerspot-device.png"
-            alt="Fingerspot Revo W-202BNC"
-            width={380}
-            height={380}
-            priority
-            className="relative w-72 sm:w-80 lg:w-96 h-auto drop-shadow-[0_30px_80px_rgba(99,102,241,0.5)]"
-            style={{
-              filter: "drop-shadow(0 0 50px rgba(99,102,241,0.3)) saturate(1.15) brightness(1.08)",
-            }}
-          />
-
-          {/* Reflection effect */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-12 bg-indigo-500/20 blur-2xl rounded-full" />
-        </div>
-      </motion.div>
-
-      {/* Scanning line */}
-      <motion.div
-        className="absolute left-1/2 -translate-x-1/2 w-64 h-px bg-gradient-to-r from-transparent via-indigo-400/70 to-transparent z-20"
-        animate={{ y: [-150, 150, -150] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* Floating badges */}
-      <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-        className="absolute -left-8 top-[15%] glass-strong rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl shadow-black/20"
-      >
-        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-white">Synced</p>
-          <p className="text-xs text-slate-400">Real-time</p>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 1.4 }}
-        className="absolute -right-8 bottom-[20%] glass-strong rounded-2xl px-5 py-4 flex items-center gap-4 shadow-2xl shadow-black/20"
-      >
-        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-          </svg>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-white">Encrypted</p>
-          <p className="text-xs text-slate-400">E2E Security</p>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.6 }}
-        className="absolute -bottom-6 left-1/2 -translate-x-1/2 glass-strong rounded-2xl px-6 py-4 flex items-center gap-5 shadow-2xl shadow-black/20"
-      >
-        <div className="flex items-center gap-3">
-          <div className="h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.6)] animate-pulse" />
-          <span className="text-sm font-bold text-white">Fingerspot Revo</span>
-        </div>
-        <div className="h-6 w-px bg-white/15" />
-        <span className="text-xs text-slate-400">Connected via Cloud</span>
-      </motion.div>
     </div>
   );
 }
@@ -322,7 +192,7 @@ export function HeroSection() {
           {/* Main visual container */}
           <div className="relative w-full h-full rounded-[4rem] overflow-hidden glass glow-indigo">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/8 to-transparent" />
-            <FloatingDevice />
+            <Fingerprint3D />
           </div>
         </motion.div>
       </div>

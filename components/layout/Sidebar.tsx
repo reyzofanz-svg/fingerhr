@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils/cn";
+import { Logo } from "./Logo";
 
 interface NavItem {
   label: string;
@@ -142,16 +143,8 @@ export function Sidebar({ className, open = false, onClose }: SidebarProps) {
         <div className="pointer-events-none absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-indigo-500/[0.03] to-transparent" />
 
         {/* Logo */}
-        <div className="relative flex h-16 items-center gap-3 px-6">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/20">
-            <span className="text-sm font-bold text-white">F</span>
-          </div>
-          <div>
-            <span className="text-base font-bold text-white tracking-tight">FingerHR</span>
-            <span className="ml-1.5 rounded-full bg-indigo-500/15 px-2 py-0.5 text-[10px] font-semibold text-indigo-400 border border-indigo-500/20">
-              MODERN
-            </span>
-          </div>
+        <div className="relative flex h-16 items-center px-6">
+          <Logo size="md" />
         </div>
 
         {/* Navigation */}

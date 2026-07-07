@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
 
 export function PublicFooter() {
   return (
@@ -7,11 +8,8 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-4">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
-                <span className="text-xs font-bold text-white">F</span>
-              </div>
-              <span className="text-lg font-bold text-white tracking-tight">FingerHR</span>
+            <Link href="/" className="flex items-center mb-4">
+              <Logo size="md" />
             </Link>
             <p className="text-sm text-slate-500 leading-relaxed">
               Modern biometric attendance system. Cloud-first, API-driven, enterprise-grade.

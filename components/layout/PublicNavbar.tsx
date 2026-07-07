@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
+import { Logo } from "./Logo";
 
 export function PublicNavbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -42,11 +43,8 @@ export function PublicNavbar() {
         <div className="mx-auto max-w-[1440px] flex items-center justify-between px-6 transition-all duration-300"
           style={{ height: scrolled ? "56px" : "72px" }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
-              <span className="text-xs font-bold text-white">F</span>
-            </div>
-            <span className="text-lg font-bold text-white tracking-tight">FingerHR</span>
+          <Link href="/" className="flex items-center">
+            <Logo size="md" />
           </Link>
 
           {/* Desktop nav */}
