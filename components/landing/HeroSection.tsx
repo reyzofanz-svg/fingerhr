@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { SplineScene } from "@/components/ui/splite";
-import { Spotlight } from "@/components/ui/spotlight";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-[#0a0818]">
-      {/* Spotlight effect */}
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
-
       <div className="relative z-10 mx-auto max-w-[1440px] w-full px-6 pt-28 pb-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-screen">
         {/* Left: Text content */}
         <div className="flex flex-col gap-8 relative z-20">
@@ -65,29 +61,12 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right: 3D Spline Scene */}
-        <div className="relative h-[500px] lg:h-[600px] w-full rounded-3xl overflow-hidden border border-white/[0.06] bg-black/[0.96]">
-          <Spotlight className="-top-20 left-40 md:-top-10" fill="white" />
-
-          <div className="flex h-full">
-            {/* Optional: left panel inside card */}
-            <div className="hidden lg:flex flex-1 p-8 relative z-10 flex-col justify-center">
-              <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400">
-                Interactive 3D
-              </h2>
-              <p className="mt-4 text-neutral-300 max-w-sm text-sm leading-relaxed">
-                Explore your biometric device in real-time. Visualize attendance data with immersive 3D experiences.
-              </p>
-            </div>
-
-            {/* 3D Scene */}
-            <div className="flex-1 relative">
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="w-full h-full"
-              />
-            </div>
-          </div>
+        {/* Right: 3D Robot — no box, floating freely */}
+        <div className="relative h-[500px] lg:h-[700px] w-full z-10">
+          <SplineScene
+            scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+            className="w-full h-full"
+          />
         </div>
       </div>
     </section>
