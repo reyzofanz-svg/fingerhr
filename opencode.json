@@ -8,6 +8,14 @@
       "environment": {
         "API_KEY": "1364948d42a726b4879c7f4d3a34186aaa1b836138c46442ee759273170283e8"
       }
+    },
+    "21st": {
+      "type": "http",
+      "url": "https://21st.dev/api/mcp",
+      "headers": {
+        "x-api-key": "21st_sk_7e6e2138fdb9c4d5e67299aeca2256292ab1daa5353422d74f1f7450f3dd6961"
+      },
+      "enabled": true
     }
   }
 }
