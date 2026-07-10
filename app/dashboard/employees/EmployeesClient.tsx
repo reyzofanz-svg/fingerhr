@@ -105,7 +105,7 @@ export function EmployeesClient({
     try {
       const res = await fetch("/api/devices");
       const data = await res.json();
-      setDevices(data.devices || []);
+      setDevices(Array.isArray(data) ? data : data.devices || []);
     } catch (error) {
       console.error("Failed to fetch devices:", error);
     }
