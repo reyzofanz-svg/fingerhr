@@ -147,3 +147,62 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, ...data } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Employee ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const existing = await prisma.employee.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Employee not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check email uniqueness if changed
+    if (data.email && data.email !== existing.email) {
+      const emailTaken = await prisma.employee.findUnique({
+        where: { email: data.email },
+      });
+      if (emailTaken) {
+        return NextResponse.json(
+          { error: "Email is already used by another employee" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const employee = await prisma.employee.update({
+      where: { id },
+      data: {
+        name: data.name,
+        email: data.email || null,
+        phone: data.phone || null,
+        department: data.department || null,
+        position: data.position || null,
+        facePhoto: data.facePhoto || null,
+        isActive: data.isActive ?? true,
+      },
+    });
+
+    return NextResponse.json(employee);
+  } catch (error) {
+    console.error("[API] Update employee error:", error);
+    return NextResponse.json(
+      { error: "Failed to update employee" },
+      { status: 500 }
+    );
+  }
+}

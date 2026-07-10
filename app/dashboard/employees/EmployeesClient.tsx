@@ -52,6 +52,17 @@ export function EmployeesClient({
     employee: null,
     mode: null,
   });
+  const [editModal, setEditModal] = useState<{ show: boolean; employee: Employee | null }>({
+    show: false,
+    employee: null,
+  });
+  const [editForm, setEditForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    department: "",
+    position: "",
+  });
 
   // Loading popup state
   const [showLoadingPopup, setShowLoadingPopup] = useState(false);
@@ -336,6 +347,41 @@ export function EmployeesClient({
     }
   };
 
+  // Edit employee
+  const handleEdit = async () => {
+    if (!editModal.employee) return;
+    if (!editForm.name) {
+      alert("Name is required");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/employees", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editModal.employee.id,
+          name: editForm.name,
+          email: editForm.email || null,
+          phone: editForm.phone || null,
+          department: editForm.department || null,
+          position: editForm.position || null,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(`Failed to update: ${err.error}`);
+        return;
+      }
+
+      setEditModal({ show: false, employee: null });
+      fetchEmployees();
+    } catch (error) {
+      alert("Failed to update employee");
+    }
+  };
+
   // Delete employee
   const handleDelete = async (employee: Employee, deleteFromDevice: boolean) => {
     try {
@@ -616,6 +662,24 @@ export function EmployeesClient({
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
+                          onClick={() => {
+                            setEditForm({
+                              name: emp.name,
+                              email: emp.email || "",
+                              phone: emp.phone || "",
+                              department: emp.department || "",
+                              position: emp.position || "",
+                            });
+                            setEditModal({ show: true, employee: emp });
+                          }}
+                          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-white/[0.05] hover:text-white"
+                          title="Edit employee"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                          </svg>
+                        </button>
+                        <button
                           onClick={() => setDeleteModal({ show: true, employee: emp, mode: "website" })}
                           className="rounded-lg p-1.5 text-on-surface-variant hover:bg-white/[0.05] hover:text-white"
                           title="Delete from website"
@@ -894,6 +958,75 @@ export function EmployeesClient({
                   Do not close this page...
                 </p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModal.show && editModal.employee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setEditModal({ show: false, employee: null })}>
+          <div className="glass max-w-lg w-full rounded-[2rem] p-6 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-white">Edit Employee</h3>
+              <button onClick={() => setEditModal({ show: false, employee: null })} className="text-on-surface-variant hover:text-white">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-slate-400">PIN</label>
+                <input
+                  type="text"
+                  value={editModal.employee.pin}
+                  disabled
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-2.5 text-sm text-slate-500 cursor-not-allowed"
+                />
+              </div>
+              <Input
+                label="Name *"
+                placeholder="Employee name"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              />
+              <Input
+                label="Email"
+                placeholder="Email (optional)"
+                value={editForm.email}
+                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              />
+              <Input
+                label="Phone"
+                placeholder="Phone (optional)"
+                value={editForm.phone}
+                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Department"
+                  placeholder="Department"
+                  value={editForm.department}
+                  onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
+                />
+                <Input
+                  label="Position"
+                  placeholder="Position"
+                  value={editForm.position}
+                  onChange={(e) => setEditForm({ ...editForm, position: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button variant="secondary" size="md" onClick={() => setEditModal({ show: false, employee: null })} className="flex-1">
+                Cancel
+              </Button>
+              <Button variant="primary" size="md" onClick={handleEdit} className="flex-1">
+                Save Changes
+              </Button>
             </div>
           </div>
         </div>
