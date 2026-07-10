@@ -9,6 +9,7 @@ const employeeSchema = z.object({
   phone: z.string().optional().nullable(),
   department: z.string().optional().nullable(),
   position: z.string().optional().nullable(),
+  facePhoto: z.string().optional().nullable(),
   isActive: z.boolean().optional().default(true),
 });
 
@@ -67,6 +68,7 @@ export async function GET(request: NextRequest) {
       phone: emp.phone,
       department: emp.department,
       position: emp.position,
+      facePhoto: emp.facePhoto || null,
       isActive: emp.isActive,
       telegramChatId: emp.telegramChatId || null,
       telegramUsername: emp.telegramUsername || null,
@@ -125,6 +127,7 @@ export async function POST(request: NextRequest) {
         phone: validated.phone,
         department: validated.department,
         position: validated.position,
+        facePhoto: validated.facePhoto,
         isActive: validated.isActive ?? true,
       },
     });

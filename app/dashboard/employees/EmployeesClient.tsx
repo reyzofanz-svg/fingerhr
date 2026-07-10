@@ -12,6 +12,7 @@ interface Employee {
   phone: string | null;
   department: string | null;
   position: string | null;
+  facePhoto: string | null;
   isActive: boolean;
   telegramChatId: string | null;
   telegramUsername: string | null;
@@ -21,10 +22,11 @@ interface Employee {
 
 interface Device {
   id: string;
+  cloudId: string;
   name: string;
-  model: string;
-  ipAddress: string;
-  isActive: boolean;
+  type: string;
+  ip: string | null;
+  status: string;
 }
 
 type SyncStep = "sending" | "registering" | "done" | "error";
@@ -62,6 +64,9 @@ export function EmployeesClient({
   const [facePreview, setFacePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Device selection state
+  const [selectedDevice, setSelectedDevice] = useState<string>("");
+
   // Form state
   const [form, setForm] = useState({
     pin: "",
@@ -74,9 +79,11 @@ export function EmployeesClient({
   const [formLoading, setFormLoading] = useState(false);
 
   // Device type detection for face support
-  const supportsFace = (model: string) => {
-    const m = model.toUpperCase();
-    return m.includes("VIVO") || m.includes("VIDA") || m.includes("DS") || m.includes("DT");
+  const supportsFace = (device: Device) => {
+    const name = device.name.toUpperCase();
+    const type = device.type.toUpperCase();
+    return name.includes("VIVO") || name.includes("VIDA") || name.includes("DS") || name.includes("DT")
+      || type.includes("FACE") || type.includes("HYBRID");
   };
 
   const fetchEmployees = useCallback(async () => {
@@ -230,6 +237,11 @@ export function EmployeesClient({
       return;
     }
 
+    if (!selectedDevice) {
+      alert("Please select a target device");
+      return;
+    }
+
     setFormLoading(true);
     setShowLoadingPopup(true);
     setLoadingStep("sending");
@@ -250,6 +262,7 @@ export function EmployeesClient({
           department: form.department || null,
           position: form.position || null,
           face: facePhoto || null,
+          deviceCloudId: selectedDevice,
         }),
       });
 
@@ -261,8 +274,9 @@ export function EmployeesClient({
         return;
       }
 
-      // Step 2: If face photo, register face
-      if (facePhoto && devices.some((d) => supportsFace(d.model))) {
+      // Step 2: If face photo on face-capable device, wait for processing
+      const targetDevice = devices.find((d) => d.cloudId === selectedDevice);
+      if (facePhoto && targetDevice && supportsFace(targetDevice)) {
         setLoadingStep("registering");
         setLoadingMessage("Registering face photo to device...");
 
@@ -287,6 +301,7 @@ export function EmployeesClient({
             phone: form.phone || null,
             department: form.department || null,
             position: form.position || null,
+            facePhoto: facePhoto || null,
           }),
         });
 
@@ -316,6 +331,7 @@ export function EmployeesClient({
     if (loadingStep === "done") {
       setShowAddModal(false);
       setForm({ pin: "", name: "", email: "", phone: "", department: "", position: "" });
+      setSelectedDevice("");
       removeFacePhoto();
     }
   };
@@ -388,7 +404,7 @@ export function EmployeesClient({
     }
   };
 
-  const hasFaceDevice = devices.some((d) => supportsFace(d.model));
+  const hasFaceDevice = devices.some((d) => supportsFace(d));
 
   return (
     <div className="space-y-6">
@@ -641,6 +657,21 @@ export function EmployeesClient({
             </div>
 
             <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-white">Target Device *</label>
+                <select
+                  value={selectedDevice}
+                  onChange={(e) => setSelectedDevice(e.target.value)}
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25"
+                >
+                  <option value="" className="bg-[#1a1a2e]">Pilih device...</option>
+                  {devices.map((d) => (
+                    <option key={d.cloudId} value={d.cloudId} className="bg-[#1a1a2e]">
+                      {d.name} ({d.cloudId}) - {d.type}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <Input
                 label="PIN *"
                 placeholder="PIN from attendance device"

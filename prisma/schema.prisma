@@ -45,6 +45,7 @@ model Employee {
   phone      String?
   department String?
   position   String?
+  facePhoto  String?  @map("face_photo") // Base64 face photo for VIVO/VIDA devices
   isActive   Boolean  @default(true) @map("is_active")
   // Telegram (untuk notifikasi absensi) — chatId didapat saat karyawan /start ke bot
   telegramChatId   String? @unique @map("telegram_chat_id")

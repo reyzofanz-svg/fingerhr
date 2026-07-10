@@ -9,9 +9,13 @@ import { getAllPin, getUserInfo, setUserInfo, deleteUserInfo, registerOnline } f
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, employeeId, pin, name, password, card, privilege, transId } = body;
+    const { action, employeeId, pin, name, password, card, privilege, transId, deviceCloudId } = body;
 
-    const device = await prisma.device.findFirst();
+    // Find device by cloudId (multi-device support)
+    const device = deviceCloudId
+      ? await prisma.device.findUnique({ where: { cloudId: deviceCloudId } })
+      : await prisma.device.findFirst();
+
     if (!device) {
       return NextResponse.json(
         { error: "No devices registered" },
@@ -19,10 +23,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const targetCloudId = device.cloudId;
+
     switch (action) {
       case "sync-from-device": {
         // Trigger GetAllPin - response via webhook
-        const result = await getAllPin(transId || "1");
+        const result = await getAllPin(transId || "1", targetCloudId);
         
         if (!result.success) {
           return NextResponse.json(
@@ -35,7 +41,7 @@ export async function POST(request: NextRequest) {
         await prisma.apiLog.create({
           data: {
             command: "GET_ALL_PIN",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: "SUCCESS",
             requestPayload: { action: "sync-from-device" },
             responsePayload: result.data,
@@ -58,12 +64,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const result = await getUserInfo(pin);
+        const result = await getUserInfo(pin, "1", targetCloudId);
         
         await prisma.apiLog.create({
           data: {
             command: "GET_USERINFO",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: result.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin },
             responsePayload: result.data,
@@ -93,12 +99,13 @@ export async function POST(request: NextRequest) {
           password: password || "",
           card: card || "",
           privilege: privilege || "1", // 1 = user, 2 = admin, 3 = subadmin
+          cloudId: targetCloudId,
         });
 
         await prisma.apiLog.create({
           data: {
             command: "SET_USERINFO",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: result.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin, name, privilege },
             responsePayload: result.data,
@@ -122,12 +129,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const result = await registerOnline(pin);
+        const result = await registerOnline(pin, "0", targetCloudId);
         
         await prisma.apiLog.create({
           data: {
             command: "REG_ONLINE",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: result.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin },
             responsePayload: result.data,
@@ -151,12 +158,12 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const result = await deleteUserInfo(pin);
+        const result = await deleteUserInfo(pin, targetCloudId);
         
         await prisma.apiLog.create({
           data: {
             command: "DELETE_USERINFO",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: result.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin },
             responsePayload: result.data,
@@ -200,12 +207,13 @@ export async function POST(request: NextRequest) {
           card: card || "",
           privilege: privilege || "1", // 1 = user, 2 = admin, 3 = subadmin
           face: body.face || undefined,
+          cloudId: targetCloudId,
         });
 
         await prisma.apiLog.create({
           data: {
             command: "SET_USERINFO",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: setResult.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin, name, privilege, hasFace: !!body.face },
             responsePayload: setResult.data,
@@ -221,12 +229,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Register online (verification: 0 = fingerprint)
-        const regResult = await registerOnline(pin, "0");
+        // Skip for VIVO/VIDA/DS/DT series (they don't support reg_online)
+        const regResult = await registerOnline(pin, "0", targetCloudId);
         
         await prisma.apiLog.create({
           data: {
             command: "REG_ONLINE",
-            deviceCloudId: device.cloudId,
+            deviceCloudId: targetCloudId,
             status: regResult.success ? "SUCCESS" : "FAILED",
             requestPayload: { pin },
             responsePayload: regResult.data,
@@ -243,6 +252,7 @@ export async function POST(request: NextRequest) {
             phone: body.phone || null,
             department: body.department || null,
             position: body.position || null,
+            facePhoto: body.face || null,
             isActive: true,
           },
         });

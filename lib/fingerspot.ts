@@ -20,7 +20,8 @@ interface FingerspotResponse<T = any> {
  */
 async function callFingerspotAPI(
   endpoint: string,
-  body: Record<string, any>
+  body: Record<string, any>,
+  cloudId?: string
 ): Promise<FingerspotResponse> {
   try {
     const response = await fetch(`${FINGERSPOT_API_URL}/${endpoint}`, {
@@ -30,7 +31,7 @@ async function callFingerspotAPI(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        cloud_id: FINGERSPOT_CLOUD_ID,
+        cloud_id: cloudId || FINGERSPOT_CLOUD_ID,
         ...body,
       }),
     });
@@ -88,11 +89,11 @@ export async function getAttendanceLog(
 /**
  * Get User Info (Response via webhook)
  */
-export async function getUserInfo(pin: string, transId: string = "1") {
+export async function getUserInfo(pin: string, transId: string = "1", cloudId?: string) {
   return callFingerspotAPI("get_userinfo", {
     pin,
     trans_id: transId,
-  });
+  }, cloudId);
 }
 
 /**
@@ -105,6 +106,7 @@ export async function setUserInfo(userData: {
   card?: string;
   privilege?: string; // "1" = user, "2" = admin, "3" = subadmin
   face?: string; // Base64 face photo for VIVO/VIDA/DS/DT series
+  cloudId?: string; // Target device cloud ID (multi-device support)
 }) {
   const dataBody: Record<string, any> = {
     pin: userData.pin,
@@ -117,42 +119,44 @@ export async function setUserInfo(userData: {
 
   // For VIVO/VIDA/DS/DT series, include face photo in template
   if (userData.face) {
-    // Format: {"face":"<base64>"} then encode again to base64
-    const faceJson = JSON.stringify({ face: userData.face });
+    // Strip data URL prefix (data:image/jpeg;base64,...) → raw base64 only
+    const base64Data = userData.face.replace(/^data:image\/\w+;base64,/, "");
+    // Format: {"face":"<base64-jpeg>"} then encode again to base64
+    const faceJson = JSON.stringify({ face: base64Data });
     const templateBase64 = Buffer.from(faceJson).toString("base64");
     dataBody.template = templateBase64;
   }
 
   // Fingerspot API requires user data wrapped in "data" object + trans_id
-  return callFingerspotAPI("set_userinfo", { trans_id: "1", data: dataBody });
+  return callFingerspotAPI("set_userinfo", { trans_id: "1", data: dataBody }, userData.cloudId);
 }
 
 /**
  * Delete User Info (Response via webhook)
  */
-export async function deleteUserInfo(pin: string) {
+export async function deleteUserInfo(pin: string, cloudId?: string) {
   return callFingerspotAPI("delete_userinfo", {
     trans_id: "1",
     pin,
-  });
+  }, cloudId);
 }
 
 /**
  * Get All PIN from device (Response via webhook)
  */
-export async function getAllPin(transId: string = "1") {
+export async function getAllPin(transId: string = "1", cloudId?: string) {
   return callFingerspotAPI("get_all_pin", {
     trans_id: transId,
-  });
+  }, cloudId);
 }
 
 /**
  * Set Time on device (Response via webhook)
  */
-export async function setDeviceTime(timezone: string = "Asia/Jakarta") {
+export async function setDeviceTime(timezone: string = "Asia/Jakarta", cloudId?: string) {
   return callFingerspotAPI("set_time", {
     timezone,
-  });
+  }, cloudId);
 }
 
 /**
@@ -161,30 +165,30 @@ export async function setDeviceTime(timezone: string = "Asia/Jakarta") {
  * Note: Only supported on REVO, VEGA, and "Mesin Absensi Lain" series.
  *       VIDA/VIVO/DS/DT series do NOT support reg_online.
  */
-export async function registerOnline(pin: string, verification: string = "0") {
+export async function registerOnline(pin: string, verification: string = "0", cloudId?: string) {
   return callFingerspotAPI("reg_online", {
     trans_id: "1",
     pin,
     verification,
-  });
+  }, cloudId);
 }
 
 /**
  * Restart Device
  */
-export async function restartDevice(transId: string = "1") {
+export async function restartDevice(transId: string = "1", cloudId?: string) {
   return callFingerspotAPI("restart_device", {
     trans_id: transId,
-  });
+  }, cloudId);
 }
 
 /**
  * Get Device Info
  */
-export async function getDevice(transId: string = "1") {
+export async function getDevice(transId: string = "1", cloudId?: string) {
   return callFingerspotAPI("get_device", {
     trans_id: transId,
-  });
+  }, cloudId);
 }
 
 /**
