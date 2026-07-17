@@ -52,6 +52,8 @@ const navItems: NavItem[] = [
     children: [
       { label: "Shift & Jadwal", href: "/dashboard/attendance/schedule" },
       { label: "Izin", href: "/dashboard/attendance/permissions" },
+      { label: "Titik Absensi", href: "/dashboard/attendance/spots" },
+      { label: "Approval Mobile", href: "/dashboard/attendance/approvals" },
     ],
   },
   {

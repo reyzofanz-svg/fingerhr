@@ -82,26 +82,59 @@ model Device {
 }
 
 // ============================================
-// ATTENDANCE LOG (Data Absensi dari Mesin)
+// ATTENDANCE SPOT (Titik Absensi GPS)
+// ============================================
+
+model AttendanceSpot {
+  id          String   @id @default(cuid())
+  name        String
+  latitude    Float
+  longitude   Float
+  radius      Int      @default(100) // radius dalam meter
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  attendanceLogs AttendanceLog[]
+
+  @@map("attendance_spots")
+}
+
+// ============================================
+// ATTENDANCE LOG (Data Absensi dari Mesin/Mobile)
 // ============================================
 
 model AttendanceLog {
-  id           String   @id @default(cuid())
-  employeeId   String   @map("employee_id")
-  deviceId     String   @map("device_id")
-  scanTime     DateTime @map("scan_time")
-  verifyMethod String?  @map("verify_method") // 1=Password, 2=Fingerprint, 3=Card
-  status       String // "IN" atau "OUT"
-  type         String   @default("manual") // "realtime" atau "manual"
-  rawPayload   Json?    @map("raw_payload")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id             String    @id @default(cuid())
+  employeeId     String    @map("employee_id")
+  deviceId       String?   @map("device_id") // nullable untuk mobile attendance
+  scanTime       DateTime  @map("scan_time")
+  verifyMethod   String?   @map("verify_method") // 1=Password, 2=Fingerprint, 3=Card, FACE=Face scan
+  status         String    // "IN" atau "OUT"
+  type           String    @default("manual") // "realtime", "manual", "mobile"
+  rawPayload     Json?     @map("raw_payload")
 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  device   Device   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  // Mobile attendance fields
+  selfieUrl      String?   @map("selfie_url")
+  backgroundUrl  String?   @map("background_url")
+  latitude       Float?
+  longitude      Float?
+  spotId         String?   @map("spot_id")
+  isInSpot       Boolean?  @map("is_in_spot")
+  approvalStatus String    @default("APPROVED") @map("approval_status") // "PENDING", "APPROVED", "REJECTED"
+  approvedBy     String?   @map("approved_by")
+  approvalNote   String?   @map("approval_note") @db.Text
+
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  employee Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  device   Device?       @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  spot     AttendanceSpot? @relation(fields: [spotId], references: [id], onDelete: SetNull)
 
   @@index([employeeId])
   @@index([deviceId])
   @@index([scanTime])
+  @@index([approvalStatus])
   @@map("attendance_logs")
 }
 

@@ -95,7 +95,7 @@ export async function getDashboardData() {
         name: log.employee.name,
         department: log.employee.department,
       },
-      device: { name: log.device.name },
+      device: { name: log.device?.name || "Mobile" },
     })),
     recentPermissions: recentPermsRaw.map((p) => ({
       id: p.id,
