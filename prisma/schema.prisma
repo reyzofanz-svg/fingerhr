@@ -118,6 +118,8 @@ model AttendanceLog {
   // Mobile attendance fields
   selfieUrl      String?   @map("selfie_url")
   backgroundUrl  String?   @map("background_url")
+  attachmentUrl  String?   @map("attachment_url")
+  notes          String?   @map("notes") @db.Text
   latitude       Float?
   longitude      Float?
   spotId         String?   @map("spot_id")

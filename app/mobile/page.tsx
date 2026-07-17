@@ -36,6 +36,8 @@ interface Employee {
   pin: string;
 }
 
+type PhotoField = "selfie" | "background" | "attachment";
+
 export default function MobileAttendancePage() {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -47,12 +49,22 @@ export default function MobileAttendancePage() {
   const [spots, setSpots] = useState<Spot[]>([]);
   const [isInSpot, setIsInSpot] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [attendanceType, setAttendanceType] = useState<"IN" | "OUT">("IN");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<AttendanceResult | null>(null);
-  const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string>("");
+
+  // Photo states
+  const [selfie, setSelfie] = useState<string | null>(null);
+  const [background, setBackground] = useState<string | null>(null);
+  const [attachment, setAttachment] = useState<string | null>(null);
+  const [notes, setNotes] = useState("");
+
+  // Camera popup
+  const [showCamera, setShowCamera] = useState(false);
+  const [activeField, setActiveField] = useState<PhotoField | null>(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
 
   // Check authentication on mount
   useEffect(() => {
@@ -79,7 +91,7 @@ export default function MobileAttendancePage() {
       .catch(console.error);
   }, []);
 
-  // Get GPS location + auto-start camera
+  // Get GPS location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -90,7 +102,6 @@ export default function MobileAttendancePage() {
           };
           setLocation(userLoc);
 
-          // Check if user is in any spot
           if (spots.length > 0) {
             const inSpot = spots.some((spot) => {
               const distance = calculateDistance(
@@ -114,12 +125,11 @@ export default function MobileAttendancePage() {
     }
   }, [spots]);
 
-  // Calculate distance between two GPS coordinates
   const calculateDistance = (
     lat1: number, lon1: number,
     lat2: number, lon2: number
   ): number => {
-    const R = 6371000; // Earth's radius in meters
+    const R = 6371000;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -132,33 +142,46 @@ export default function MobileAttendancePage() {
     return R * c;
   };
 
+  // Open camera popup
+  const openCamera = useCallback((field: PhotoField) => {
+    setActiveField(field);
+    setShowCamera(true);
+    setCameraError("");
+    setFacingMode(field === "selfie" ? "user" : "environment");
+  }, []);
+
   // Start camera
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 640, height: 480 },
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setCameraActive(true);
-        setCameraError("");
+  useEffect(() => {
+    if (!showCamera || !videoRef.current) return;
+
+    let stream: MediaStream | null = null;
+
+    const start = async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode, width: 640, height: 480 },
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          setCameraActive(true);
+          setCameraError("");
+        }
+      } catch (error) {
+        setCameraError("Kamera tidak bisa diakses. Berikan izin kamera.");
       }
-    } catch (error) {
-      setCameraError("Kamera tidak bisa diakses. Pastikan izin kamera diberikan dan gunakan HTTPS.");
-    }
-  }, []);
+    };
 
-  // Stop camera
-  const stopCamera = useCallback(() => {
-    if (videoRef.current?.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach((track) => track.stop());
-      videoRef.current.srcObject = null;
+    start();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
       setCameraActive(false);
-    }
-  }, []);
+    };
+  }, [showCamera, facingMode]);
 
-  // Capture photo
+  // Capture photo from popup
   const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return;
 
@@ -173,21 +196,39 @@ export default function MobileAttendancePage() {
     if (ctx) {
       ctx.drawImage(video, 0, 0);
       const photoData = canvas.toDataURL("image/jpeg", 0.8);
-      setCapturedPhoto(photoData);
-      stopCamera();
-    }
-    setIsCapturing(false);
-  }, [stopCamera]);
 
-  // Retake photo
-  const retakePhoto = useCallback(() => {
-    setCapturedPhoto(null);
-    startCamera();
-  }, [startCamera]);
+      if (activeField === "selfie") setSelfie(photoData);
+      else if (activeField === "background") setBackground(photoData);
+      else if (activeField === "attachment") setAttachment(photoData);
+    }
+
+    setIsCapturing(false);
+    setShowCamera(false);
+    setActiveField(null);
+  }, [activeField]);
+
+  // Close camera popup
+  const closeCamera = useCallback(() => {
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setCameraActive(false);
+    setShowCamera(false);
+    setActiveField(null);
+  }, []);
+
+  // Delete photo
+  const deletePhoto = useCallback((field: PhotoField) => {
+    if (field === "selfie") setSelfie(null);
+    else if (field === "background") setBackground(null);
+    else if (field === "attachment") setAttachment(null);
+  }, []);
 
   // Submit attendance
   const submitAttendance = useCallback(async () => {
-    if (!capturedPhoto || !location || !employee) return;
+    if (!selfie || !location || !employee) return;
 
     setIsSubmitting(true);
     try {
@@ -196,8 +237,10 @@ export default function MobileAttendancePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           employeeId: employee.id,
-          selfieUrl: capturedPhoto,
-          backgroundUrl: null,
+          selfieUrl: selfie,
+          backgroundUrl: background,
+          attachmentUrl: attachment,
+          notes: notes || null,
           latitude: location.latitude,
           longitude: location.longitude,
           type: attendanceType,
@@ -214,6 +257,10 @@ export default function MobileAttendancePage() {
           nearestSpot: data.nearestSpot,
           isInSpot: data.isInSpot,
         });
+        setSelfie(null);
+        setBackground(null);
+        setAttachment(null);
+        setNotes("");
       } else {
         setResult({
           success: false,
@@ -230,15 +277,7 @@ export default function MobileAttendancePage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [capturedPhoto, location, attendanceType, employee]);
-
-  // Auto-start camera on mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startCamera();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [startCamera]);
+  }, [selfie, background, attachment, notes, location, attendanceType, employee]);
 
   // Redirect if not logged in
   if (!employee) {
@@ -251,6 +290,74 @@ export default function MobileAttendancePage() {
 
   return (
     <div className="min-h-screen bg-[#08080c] p-4 pb-24">
+      {/* Camera Popup Modal */}
+      {showCamera && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black">
+          {/* Camera Header */}
+          <div className="flex items-center justify-between p-4">
+            <button onClick={closeCamera} className="text-white text-sm">
+              Batal
+            </button>
+            <p className="text-sm font-medium text-white">
+              {activeField === "selfie" ? "Foto Depan" : activeField === "background" ? "Foto Belakang" : "Lampiran"}
+            </p>
+            <div className="w-12" />
+          </div>
+
+          {/* Camera View */}
+          <div className="relative flex-1">
+            {cameraActive ? (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
+              </div>
+            )}
+
+            {cameraError && (
+              <div className="absolute bottom-24 left-0 right-0 px-8">
+                <p className="rounded-xl bg-red-500/20 p-3 text-center text-xs text-red-400">{cameraError}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Capture Button */}
+          <div className="flex items-center justify-center gap-6 p-6">
+            {activeField === "selfie" && (
+              <button
+                onClick={() => setFacingMode(f => f === "user" ? "environment" : "user")}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10"
+              >
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+              </button>
+            )}
+            <button
+              onClick={capturePhoto}
+              disabled={isCapturing || !cameraActive}
+              className="flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg transition-transform active:scale-95 disabled:opacity-40"
+            >
+              {isCapturing ? (
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-black border-t-transparent" />
+              ) : (
+                <svg className="h-8 w-8 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              )}
+            </button>
+            <div className="w-12" />
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -406,67 +513,127 @@ export default function MobileAttendancePage() {
         </button>
       </div>
 
-      {/* Camera Section */}
-      <div className="mb-4 overflow-hidden rounded-2xl bg-white/[0.03]">
-        {cameraActive ? (
-          <div className="relative aspect-[4/3]">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 flex items-end justify-center pb-4">
+      {/* Photo Buttons Grid */}
+      <div className="mb-4 grid grid-cols-3 gap-3">
+        {/* Selfie */}
+        <button
+          onClick={() => openCamera("selfie")}
+          className={`relative overflow-hidden rounded-2xl ${
+            selfie ? "ring-2 ring-green-500" : ""
+          }`}
+        >
+          {selfie ? (
+            <div className="relative aspect-[3/4]">
+              <img src={selfie} alt="Selfie" className="h-full w-full object-cover" />
               <button
-                onClick={capturePhoto}
-                disabled={isCapturing}
-                className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform active:scale-95"
+                onClick={(e) => { e.stopPropagation(); deletePhoto("selfie"); }}
+                className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60"
               >
-                {isCapturing ? (
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-black border-t-transparent" />
-                ) : (
-                  <svg className="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                )}
+                <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
+              <div className="absolute bottom-1 left-1 rounded bg-black/60 px-1 py-0.5">
+                <svg className="h-3 w-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
             </div>
-          </div>
-        ) : capturedPhoto ? (
-          <div className="relative aspect-[4/3]">
-            <img
-              src={capturedPhoto}
-              alt="Selfie"
-              className="h-full w-full object-cover"
-            />
-            <button
-              onClick={retakePhoto}
-              className="absolute right-2 top-2 rounded-lg bg-black/60 px-3 py-1.5 text-xs text-white"
-            >
-              Ambil Ulang
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={startCamera}
-            className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3"
-          >
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/[0.06]">
-              <svg className="h-8 w-8 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-              </svg>
+          ) : (
+            <div className="flex aspect-[3/4] flex-col items-center justify-center gap-2 bg-white/[0.03]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+              </div>
+              <span className="text-[10px] text-white/40">Foto Depan</span>
             </div>
-            <span className="text-sm text-white/40">
-              {cameraError ? "Klik untuk coba lagi" : "Klik untuk ambil selfie"}
-            </span>
-          </button>
-        )}
-        {cameraError && (
-          <p className="p-3 text-center text-xs text-red-400">{cameraError}</p>
-        )}
+          )}
+        </button>
+
+        {/* Background */}
+        <button
+          onClick={() => openCamera("background")}
+          className={`relative overflow-hidden rounded-2xl ${
+            background ? "ring-2 ring-green-500" : ""
+          }`}
+        >
+          {background ? (
+            <div className="relative aspect-[3/4]">
+              <img src={background} alt="Background" className="h-full w-full object-cover" />
+              <button
+                onClick={(e) => { e.stopPropagation(); deletePhoto("background"); }}
+                className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60"
+              >
+                <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="absolute bottom-1 left-1 rounded bg-black/60 px-1 py-0.5">
+                <svg className="h-3 w-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <div className="flex aspect-[3/4] flex-col items-center justify-center gap-2 bg-white/[0.03]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+                </svg>
+              </div>
+              <span className="text-[10px] text-white/40">Foto Belakang</span>
+            </div>
+          )}
+        </button>
+
+        {/* Attachment */}
+        <button
+          onClick={() => openCamera("attachment")}
+          className={`relative overflow-hidden rounded-2xl ${
+            attachment ? "ring-2 ring-green-500" : ""
+          }`}
+        >
+          {attachment ? (
+            <div className="relative aspect-[3/4]">
+              <img src={attachment} alt="Lampiran" className="h-full w-full object-cover" />
+              <button
+                onClick={(e) => { e.stopPropagation(); deletePhoto("attachment"); }}
+                className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60"
+              >
+                <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="absolute bottom-1 left-1 rounded bg-black/60 px-1 py-0.5">
+                <svg className="h-3 w-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <div className="flex aspect-[3/4] flex-col items-center justify-center gap-2 bg-white/[0.03]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06]">
+                <svg className="h-5 w-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                </svg>
+              </div>
+              <span className="text-[10px] text-white/40">Lampiran</span>
+            </div>
+          )}
+        </button>
+      </div>
+
+      {/* Notes */}
+      <div className="mb-4">
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Catatan (opsional)"
+          rows={3}
+          className="w-full rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/25 resize-none"
+        />
       </div>
 
       <canvas ref={canvasRef} className="hidden" />
@@ -474,7 +641,7 @@ export default function MobileAttendancePage() {
       {/* Submit Button */}
       <button
         onClick={submitAttendance}
-        disabled={!capturedPhoto || !location || isSubmitting}
+        disabled={!selfie || !location || isSubmitting}
         className="w-full rounded-xl bg-white py-4 text-sm font-bold text-black transition-all disabled:opacity-40 disabled:active:scale-100"
       >
         {isSubmitting ? (

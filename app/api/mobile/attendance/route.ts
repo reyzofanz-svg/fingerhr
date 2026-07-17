@@ -26,7 +26,9 @@ export async function POST(request: NextRequest) {
     const { 
       employeeId, 
       selfieUrl, 
-      backgroundUrl, 
+      backgroundUrl,
+      attachmentUrl,
+      notes,
       latitude, 
       longitude, 
       type // "IN" or "OUT"
@@ -92,6 +94,8 @@ export async function POST(request: NextRequest) {
         type: "mobile",
         selfieUrl,
         backgroundUrl,
+        attachmentUrl,
+        notes,
         latitude,
         longitude,
         spotId: nearestSpot?.id || null,
