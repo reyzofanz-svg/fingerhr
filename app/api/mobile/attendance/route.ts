@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-
-// Utility to get WIB time
-function getWIBTime(): Date {
-  const now = new Date();
-  // Create proper WIB time by adding 7 hours to UTC
-  const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
-  return wibTime;
-}
+import { getCurrentWIBTime } from "@/lib/timezone";
 
 // Calculate distance between two GPS coordinates (Haversine formula)
 function calculateDistance(
@@ -99,7 +92,7 @@ export async function POST(request: NextRequest) {
     const approvalStatus = isInSpot ? "APPROVED" : "PENDING";
 
     // Create attendance log with WIB timezone
-    const wibTime = getWIBTime();
+    const wibTime = getCurrentWIBTime();
     
     const log = await prisma.attendanceLog.create({
       data: {

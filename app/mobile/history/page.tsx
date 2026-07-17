@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { formatWIBTime } from "@/lib/timezone";
 
 interface AttendanceRecord {
   date: string;
@@ -76,15 +77,7 @@ export default function MobileHistoryPage() {
   }, [employee, fetchHistory]);
 
   const formatTime = (dateStr: string) => {
-    // Parse ISO string and convert to WIB if needed
-    const date = new Date(dateStr);
-    
-    // Return formatted time in WIB
-    return date.toLocaleTimeString("id-ID", {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Asia/Jakarta", // Force WIB timezone
-    });
+    return formatWIBTime(dateStr);
   };
 
   const formatDate = (dateStr: string) => {

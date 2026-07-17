@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-
-// Utility to handle WIB timezone
-function toWIBString(date: Date): string {
-  // Add 7 hours for WIB timezone if date is in UTC
-  const wibTime = new Date(date.getTime() + (7 * 60 * 60 * 1000));
-  return wibTime.toISOString();
-}
+import { getWIBDateString, toWIBTime } from "@/lib/timezone";
 
 // GET attendance history for mobile
 export async function GET(request: NextRequest) {
@@ -43,20 +37,19 @@ export async function GET(request: NextRequest) {
       orderBy: { scanTime: "desc" },
     });
 
-    // Group by date
+    // Group by date in WIB timezone
     const groupedByDate: Record<string, any[]> = {};
     
     for (const log of logs) {
-      // Convert to WIB for grouping by date
-      const wibTime = new Date(log.scanTime.getTime() + 7 * 60 * 60 * 1000);
-      const dateStr = wibTime.toISOString().split("T")[0];
+      // Use WIB date string for proper grouping
+      const dateStr = getWIBDateString(log.scanTime);
       
       if (!groupedByDate[dateStr]) {
         groupedByDate[dateStr] = [];
       }
       groupedByDate[dateStr].push({
         ...log,
-        scanTimeWIB: toWIBString(log.scanTime),
+        scanTimeWIB: log.scanTime.toISOString(),
       });
     }
 
