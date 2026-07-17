@@ -7,18 +7,41 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+function isIOS() {
+  return (
+    typeof navigator !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+    !(window as any).MSStream
+  );
+}
+
+function isStandalone() {
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as any).standalone === true
+  );
+}
+
 export function PWAInstallBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showBanner, setShowBanner] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // Check if already installed
-    if (window.matchMedia("(display-mode: standalone)").matches) {
+    // Already installed or dismissed
+    if (isStandalone() || sessionStorage.getItem("pwa-install-dismissed")) {
       setIsInstalled(true);
       return;
     }
 
+    // iOS: show manual instructions
+    if (isIOS()) {
+      setShowBanner(true);
+      return;
+    }
+
+    // Android/Chrome: listen for install prompt
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -26,7 +49,6 @@ export function PWAInstallBanner() {
     };
 
     window.addEventListener("beforeinstallprompt", handler);
-
     window.addEventListener("appinstalled", () => {
       setIsInstalled(true);
       setShowBanner(false);
@@ -39,26 +61,24 @@ export function PWAInstallBanner() {
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
-
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-
     if (outcome === "accepted") {
       setShowBanner(false);
     }
     setDeferredPrompt(null);
   };
 
+  const handleShowIOS = () => {
+    setShowIOSInstructions(true);
+  };
+
   const handleDismiss = () => {
     setShowBanner(false);
-    // Remember dismissal for this session
     sessionStorage.setItem("pwa-install-dismissed", "true");
   };
 
-  // Don't show if already installed or dismissed
-  if (isInstalled || !showBanner || sessionStorage.getItem("pwa-install-dismissed")) {
-    return null;
-  }
+  if (isInstalled || !showBanner) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 p-4 sm:hidden">
@@ -72,10 +92,40 @@ export function PWAInstallBanner() {
           <div className="flex-1">
             <p className="text-sm font-medium text-white">Install FingerHR</p>
             <p className="mt-0.5 text-xs text-white/40">
-              Tambahkan ke layar utama untuk akses cepat
+              {isIOS()
+                ? "Tap bagikan lalu 'Add to Home Screen'"
+                : "Tambahkan ke layar utama untuk akses cepat"}
             </p>
           </div>
         </div>
+
+        {/* iOS Instructions Overlay */}
+        {showIOSInstructions && (
+          <div className="mt-3 rounded-xl bg-black/40 p-4">
+            <p className="mb-3 text-xs font-medium text-white">Cara Install di iPhone:</p>
+            <ol className="space-y-2 text-xs text-white/60">
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-bold text-white">1</span>
+                <span>Klik tombol <strong className="text-white">Share</strong> (kotak dengan panah) di Safari</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-bold text-white">2</span>
+                <span>Gulir ke bawah, pilih <strong className="text-white">Add to Home Screen</strong></span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-[10px] font-bold text-white">3</span>
+                <span>Klik <strong className="text-white">Add</strong> di pojok kanan atas</span>
+              </li>
+            </ol>
+            <button
+              onClick={() => setShowIOSInstructions(false)}
+              className="mt-3 w-full rounded-lg bg-white/[0.06] px-4 py-2 text-xs text-white/60"
+            >
+              Tutup
+            </button>
+          </div>
+        )}
+
         <div className="mt-3 flex gap-2">
           <button
             onClick={handleDismiss}
@@ -83,12 +133,21 @@ export function PWAInstallBanner() {
           >
             Nanti Saja
           </button>
-          <button
-            onClick={handleInstall}
-            className="flex-1 rounded-xl bg-white px-4 py-2.5 text-xs font-medium text-black transition-colors hover:bg-white/90"
-          >
-            Install
-          </button>
+          {isIOS() ? (
+            <button
+              onClick={handleShowIOS}
+              className="flex-1 rounded-xl bg-white px-4 py-2.5 text-xs font-medium text-black transition-colors hover:bg-white/90"
+            >
+              Lihat Cara Install
+            </button>
+          ) : (
+            <button
+              onClick={handleInstall}
+              className="flex-1 rounded-xl bg-white px-4 py-2.5 text-xs font-medium text-black transition-colors hover:bg-white/90"
+            >
+              Install
+            </button>
+          )}
         </div>
       </div>
     </div>
