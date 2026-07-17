@@ -7,20 +7,24 @@ export const WIB_TIMEZONE = 'Asia/Jakarta';
 
 /**
  * Get current time in WIB timezone
+ * More robust approach - calculate WIB time directly
  */
 export function getCurrentWIBTime(): Date {
-  return new Date(new Date().toLocaleString('en-US', { 
-    timeZone: WIB_TIMEZONE 
-  }));
+  const now = new Date();
+  // Get current UTC time and add 7 hours for WIB
+  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const wibTime = new Date(utcTime + (7 * 60 * 60 * 1000));
+  return wibTime;
 }
 
 /**
  * Convert any date to WIB timezone  
+ * More robust approach - calculate WIB time directly
  */
 export function toWIBTime(date: Date): Date {
-  return new Date(date.toLocaleString('en-US', { 
-    timeZone: WIB_TIMEZONE 
-  }));
+  const utcTime = date.getTime() + (date.getTimezoneOffset() * 60000);
+  const wibTime = new Date(utcTime + (7 * 60 * 60 * 1000));
+  return wibTime;
 }
 
 /**

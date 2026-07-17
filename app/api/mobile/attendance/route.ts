@@ -91,14 +91,15 @@ export async function POST(request: NextRequest) {
     // Determine approval status
     const approvalStatus = isInSpot ? "APPROVED" : "PENDING";
 
-    // Create attendance log with WIB timezone
-    const wibTime = getCurrentWIBTime();
+    // Create attendance log with current time
+    // Let the database handle the timezone - we'll convert on display
+    const now = new Date();
     
     const log = await prisma.attendanceLog.create({
       data: {
         employeeId,
         deviceId: null, // Mobile attendance
-        scanTime: wibTime,
+        scanTime: now,
         verifyMethod: "FACE",
         status: type,
         type: "mobile",
@@ -114,7 +115,8 @@ export async function POST(request: NextRequest) {
         rawPayload: {
           distance: minDistance,
           nearestSpot: nearestSpot?.name,
-          timestamp: wibTime.toISOString(),
+          timestamp: now.toISOString(),
+          timezoneOffset: now.getTimezoneOffset(), // Store timezone info
         },
       },
       include: {
