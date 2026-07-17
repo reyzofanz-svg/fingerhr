@@ -76,9 +76,14 @@ export default function MobileHistoryPage() {
   }, [employee, fetchHistory]);
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString("id-ID", {
+    // Parse ISO string and convert to WIB if needed
+    const date = new Date(dateStr);
+    
+    // Return formatted time in WIB
+    return date.toLocaleTimeString("id-ID", {
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: "Asia/Jakarta", // Force WIB timezone
     });
   };
 

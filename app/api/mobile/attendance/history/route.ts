@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 
+// Utility to handle WIB timezone
+function toWIBString(date: Date): string {
+  // Add 7 hours for WIB timezone if date is in UTC
+  const wibTime = new Date(date.getTime() + (7 * 60 * 60 * 1000));
+  return wibTime.toISOString();
+}
+
 // GET attendance history for mobile
 export async function GET(request: NextRequest) {
   try {
@@ -40,16 +47,16 @@ export async function GET(request: NextRequest) {
     const groupedByDate: Record<string, any[]> = {};
     
     for (const log of logs) {
-      // Convert to WIB
-      const wibDate = new Date(log.scanTime.getTime() + 7 * 60 * 60 * 1000);
-      const dateStr = wibDate.toISOString().split("T")[0];
+      // Convert to WIB for grouping by date
+      const wibTime = new Date(log.scanTime.getTime() + 7 * 60 * 60 * 1000);
+      const dateStr = wibTime.toISOString().split("T")[0];
       
       if (!groupedByDate[dateStr]) {
         groupedByDate[dateStr] = [];
       }
       groupedByDate[dateStr].push({
         ...log,
-        scanTimeWIB: wibDate.toISOString(),
+        scanTimeWIB: toWIBString(log.scanTime),
       });
     }
 

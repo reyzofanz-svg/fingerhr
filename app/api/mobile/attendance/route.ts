@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 
+// Utility to get WIB time
+function getWIBTime(): Date {
+  const now = new Date();
+  // Create proper WIB time by adding 7 hours to UTC
+  const wibTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+  return wibTime;
+}
+
 // Calculate distance between two GPS coordinates (Haversine formula)
 function calculateDistance(
   lat1: number, lon1: number,
@@ -25,6 +33,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { 
       employeeId, 
+      facePhotoUrl,
+      surroundingPhotoUrl,
+      // Legacy field support
       selfieUrl, 
       backgroundUrl,
       attachmentUrl,
@@ -40,6 +51,10 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Use new field names or fallback to legacy
+    const finalFacePhoto = facePhotoUrl || selfieUrl;
+    const finalSurroundingPhoto = surroundingPhotoUrl || backgroundUrl;
 
     // Get employee
     const employee = await prisma.employee.findUnique({
@@ -83,17 +98,19 @@ export async function POST(request: NextRequest) {
     // Determine approval status
     const approvalStatus = isInSpot ? "APPROVED" : "PENDING";
 
-    // Create attendance log
+    // Create attendance log with WIB timezone
+    const wibTime = getWIBTime();
+    
     const log = await prisma.attendanceLog.create({
       data: {
         employeeId,
         deviceId: null, // Mobile attendance
-        scanTime: new Date(),
+        scanTime: wibTime,
         verifyMethod: "FACE",
         status: type,
         type: "mobile",
-        selfieUrl,
-        backgroundUrl,
+        selfieUrl: finalFacePhoto,
+        backgroundUrl: finalSurroundingPhoto,
         attachmentUrl,
         notes,
         latitude,
@@ -104,7 +121,7 @@ export async function POST(request: NextRequest) {
         rawPayload: {
           distance: minDistance,
           nearestSpot: nearestSpot?.name,
-          timestamp: new Date().toISOString(),
+          timestamp: wibTime.toISOString(),
         },
       },
       include: {
