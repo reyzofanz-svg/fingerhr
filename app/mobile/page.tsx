@@ -79,7 +79,7 @@ export default function MobileAttendancePage() {
       .catch(console.error);
   }, []);
 
-  // Get GPS location
+  // Get GPS location + auto-start camera
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -144,7 +144,7 @@ export default function MobileAttendancePage() {
         setCameraError("");
       }
     } catch (error) {
-      setCameraError("Tidak bisa mengakses kamera. Berikan izin kamera.");
+      setCameraError("Kamera tidak bisa diakses. Pastikan izin kamera diberikan dan gunakan HTTPS.");
     }
   }, []);
 
@@ -231,6 +231,14 @@ export default function MobileAttendancePage() {
       setIsSubmitting(false);
     }
   }, [capturedPhoto, location, attendanceType, employee]);
+
+  // Auto-start camera on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      startCamera();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [startCamera]);
 
   // Redirect if not logged in
   if (!employee) {
@@ -451,7 +459,9 @@ export default function MobileAttendancePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
               </svg>
             </div>
-            <span className="text-sm text-white/40">Klik untuk ambil selfie</span>
+            <span className="text-sm text-white/40">
+              {cameraError ? "Klik untuk coba lagi" : "Klik untuk ambil selfie"}
+            </span>
           </button>
         )}
         {cameraError && (

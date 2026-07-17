@@ -18,6 +18,7 @@ interface Employee {
   telegramUsername: string | null;
   lastAttendance: string | null;
   createdAt: string;
+  mobileDevice: { name: string; lastUsed: string } | null;
 }
 
 interface Device {
@@ -595,6 +596,7 @@ export function EmployeesClient({
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Dept</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Mobile</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Telegram</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-slate-400">Last Attendance</th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-slate-400">Actions</th>
@@ -603,7 +605,7 @@ export function EmployeesClient({
             <tbody>
               {loading ? (
                 <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center">
+                    <td colSpan={9} className="px-4 py-12 text-center">
                     <div className="flex items-center justify-center">
                       <div className="h-6 w-6 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
                     </div>
@@ -643,6 +645,16 @@ export function EmployeesClient({
                       <Badge variant={emp.isActive ? "success" : "default"}>
                         {emp.isActive ? "Active" : "Inactive"}
                       </Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      {emp.mobileDevice ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-400">
+                          <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                          {emp.mobileDevice.name || "Connected"}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-400">Belum</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {emp.telegramChatId ? (

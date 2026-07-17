@@ -49,6 +49,11 @@ export async function GET(request: NextRequest) {
           orderBy: { scanTime: "desc" },
           select: { scanTime: true },
         },
+        mobileDevices: {
+          where: { isActive: true },
+          take: 1,
+          select: { deviceName: true, lastUsedAt: true },
+        },
       },
     });
 
@@ -74,6 +79,9 @@ export async function GET(request: NextRequest) {
       telegramUsername: emp.telegramUsername || null,
       lastAttendance: emp.attendanceLogs[0]?.scanTime?.toISOString() || null,
       createdAt: emp.createdAt.toISOString(),
+      mobileDevice: emp.mobileDevices[0]
+        ? { name: emp.mobileDevices[0].deviceName, lastUsed: emp.mobileDevices[0].lastUsedAt.toISOString() }
+        : null,
     }));
 
     return NextResponse.json({
