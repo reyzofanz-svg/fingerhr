@@ -78,9 +78,22 @@ async function callFingerspotAPI(
  */
 export async function getAttendanceLog(
   startDate: string, // Format: YYYY-MM-DD
-  endDate: string     // Format: YYYY-MM-DD
+  endDate: string,    // Format: YYYY-MM-DD
+  transId: string = "1"
 ) {
+  // Validate max 2 days range per Fingerspot API docs
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays > 2) {
+    return {
+      success: false,
+      error: `Date range must not exceed 2 days (got ${diffDays} days). Please select a smaller range.`,
+    };
+  }
+
   return callFingerspotAPI("get_attlog", {
+    trans_id: transId,
     start_date: startDate,
     end_date: endDate,
   });

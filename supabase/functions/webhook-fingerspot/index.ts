@@ -97,7 +97,10 @@ async function handleAttlog(supabase: any, deviceId: string, data: Record<string
     .select("id, name, telegram_chat_id")
     .eq("pin", pin)
     .single();
-  if (!employee) return;
+  if (!employee) {
+    console.log("[Webhook] SKIP attlog: employee not found for PIN:", pin);
+    return;
+  }
 
   // Parse scan time - device sends local time in WIB (Asia/Jakarta, UTC+7)
   const scanTimeStr = String(scan).replace(" ", "T") + "+07:00";
