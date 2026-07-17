@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface Permission {
@@ -14,9 +13,15 @@ interface Permission {
   createdAt: string;
 }
 
+interface Employee {
+  id: string;
+  name: string;
+  pin: string;
+}
+
 export default function MobilePermissionsPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -28,10 +33,29 @@ export default function MobilePermissionsPage() {
     reason: "",
   });
 
+  // Check authentication
+  useEffect(() => {
+    const token = localStorage.getItem("fingerhr_token");
+    const employeeData = localStorage.getItem("fingerhr_employee");
+
+    if (!token || !employeeData) {
+      router.push("/mobile/login");
+      return;
+    }
+
+    try {
+      setEmployee(JSON.parse(employeeData));
+    } catch {
+      router.push("/mobile/login");
+    }
+  }, [router]);
+
   const fetchPermissions = useCallback(async () => {
+    if (!employee) return;
+
     try {
       const res = await fetch(
-        `/api/permissions?employeeId=${(session?.user as any)?.employeeId}`
+        `/api/permissions?employeeId=${employee.id}`
       );
       const data = await res.json();
       setPermissions(data.permissions || []);
@@ -40,16 +64,16 @@ export default function MobilePermissionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [session]);
+  }, [employee]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (employee) {
       fetchPermissions();
     }
-  }, [status, fetchPermissions]);
+  }, [employee, fetchPermissions]);
 
   const handleSubmit = async () => {
-    if (!form.reason) return;
+    if (!form.reason || !employee) return;
 
     setSubmitting(true);
     try {
@@ -57,7 +81,7 @@ export default function MobilePermissionsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employeeId: (session?.user as any)?.employeeId,
+          employeeId: employee.id,
           type: form.type,
           startDate: form.startDate,
           endDate: form.endDate,
@@ -108,9 +132,12 @@ export default function MobilePermissionsPage() {
     }
   };
 
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
+  if (!employee) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#08080c]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
+      </div>
+    );
   }
 
   return (

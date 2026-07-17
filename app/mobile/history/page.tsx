@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 interface AttendanceRecord {
@@ -20,9 +19,15 @@ interface AttendanceRecord {
   logs: any[];
 }
 
+interface Employee {
+  id: string;
+  name: string;
+  pin: string;
+}
+
 export default function MobileHistoryPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [history, setHistory] = useState<AttendanceRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState(
@@ -30,11 +35,30 @@ export default function MobileHistoryPage() {
   );
   const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
 
+  // Check authentication
+  useEffect(() => {
+    const token = localStorage.getItem("fingerhr_token");
+    const employeeData = localStorage.getItem("fingerhr_employee");
+
+    if (!token || !employeeData) {
+      router.push("/mobile/login");
+      return;
+    }
+
+    try {
+      setEmployee(JSON.parse(employeeData));
+    } catch {
+      router.push("/mobile/login");
+    }
+  }, [router]);
+
   const fetchHistory = useCallback(async () => {
+    if (!employee) return;
+
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/mobile/attendance/history?employeeId=${(session?.user as any)?.employeeId}&startDate=${startDate}&endDate=${endDate}`
+        `/api/mobile/attendance/history?employeeId=${employee.id}&startDate=${startDate}&endDate=${endDate}`
       );
       const data = await res.json();
       setHistory(data);
@@ -43,13 +67,13 @@ export default function MobileHistoryPage() {
     } finally {
       setLoading(false);
     }
-  }, [session, startDate, endDate]);
+  }, [employee, startDate, endDate]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (employee) {
       fetchHistory();
     }
-  }, [status, fetchHistory]);
+  }, [employee, fetchHistory]);
 
   const formatTime = (dateStr: string) => {
     return new Date(dateStr).toLocaleTimeString("id-ID", {
@@ -66,9 +90,12 @@ export default function MobileHistoryPage() {
     });
   };
 
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
+  if (!employee) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#08080c]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
+      </div>
+    );
   }
 
   return (

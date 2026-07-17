@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -31,12 +30,18 @@ interface AttendanceResult {
   isInSpot: boolean;
 }
 
+interface Employee {
+  id: string;
+  name: string;
+  pin: string;
+}
+
 export default function MobileAttendancePage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [locationError, setLocationError] = useState<string>("");
   const [spots, setSpots] = useState<Spot[]>([]);
@@ -48,6 +53,23 @@ export default function MobileAttendancePage() {
   const [result, setResult] = useState<AttendanceResult | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string>("");
+
+  // Check authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem("fingerhr_token");
+    const employeeData = localStorage.getItem("fingerhr_employee");
+
+    if (!token || !employeeData) {
+      router.push("/mobile/login");
+      return;
+    }
+
+    try {
+      setEmployee(JSON.parse(employeeData));
+    } catch {
+      router.push("/mobile/login");
+    }
+  }, [router]);
 
   // Fetch attendance spots
   useEffect(() => {
@@ -165,7 +187,7 @@ export default function MobileAttendancePage() {
 
   // Submit attendance
   const submitAttendance = useCallback(async () => {
-    if (!capturedPhoto || !location) return;
+    if (!capturedPhoto || !location || !employee) return;
 
     setIsSubmitting(true);
     try {
@@ -173,7 +195,7 @@ export default function MobileAttendancePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employeeId: (session?.user as any)?.id,
+          employeeId: employee.id,
           selfieUrl: capturedPhoto,
           backgroundUrl: null,
           latitude: location.latitude,
@@ -208,15 +230,10 @@ export default function MobileAttendancePage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [capturedPhoto, location, attendanceType, session]);
+  }, [capturedPhoto, location, attendanceType, employee]);
 
   // Redirect if not logged in
-  if (status === "unauthenticated") {
-    router.push("/login");
-    return null;
-  }
-
-  if (status === "loading") {
+  if (!employee) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#08080c]">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-transparent" />
@@ -227,16 +244,31 @@ export default function MobileAttendancePage() {
   return (
     <div className="min-h-screen bg-[#08080c] p-4 pb-24">
       {/* Header */}
-      <div className="mb-6 text-center">
-        <h1 className="text-xl font-bold text-white">Absensi</h1>
-        <p className="mt-1 text-sm text-white/40">
-          {new Date().toLocaleDateString("id-ID", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          })}
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-white">Absensi</h1>
+          <p className="mt-1 text-sm text-white/40">
+            {new Date().toLocaleDateString("id-ID", {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-medium text-white">{employee.name}</p>
+          <button
+            onClick={() => {
+              localStorage.removeItem("fingerhr_token");
+              localStorage.removeItem("fingerhr_employee");
+              router.push("/mobile/login");
+            }}
+            className="text-xs text-white/40"
+          >
+            Keluar
+          </button>
+        </div>
       </div>
 
       {/* Result Message */}

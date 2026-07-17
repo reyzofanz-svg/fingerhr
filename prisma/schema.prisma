@@ -56,6 +56,7 @@ model Employee {
   attendanceLogs AttendanceLog[]
   schedules      EmployeeSchedule[]
   permissions    Permission[]
+  mobileDevices  MobileDeviceBinding[]
 
   @@map("employees")
 }
@@ -282,6 +283,25 @@ model WebhookLog {
   @@index([deviceCloudId])
   @@index([createdAt])
   @@map("webhook_logs")
+}
+
+// ============================================
+// MOBILE DEVICE BINDING (Binding HP Karyawan)
+// ============================================
+
+model MobileDeviceBinding {
+  id               String   @id @default(cuid())
+  employeeId       String   @map("employee_id")
+  deviceFingerprint String  @unique @map("device_fingerprint")
+  deviceName       String?  @map("device_name")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+  lastUsedAt       DateTime @default(now()) @map("last_used_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("mobile_device_bindings")
 }
 
 // ============================================
