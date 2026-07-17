@@ -1,12 +1,5 @@
 {
   "env": {
     "TZ": "Asia/Jakarta"
-  },
-  "functions": {
-    "app/api/**/*.ts": {
-      "env": {
-        "TZ": "Asia/Jakarta"
-      }
-    }
   }
 }
