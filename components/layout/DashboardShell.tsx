@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
+import { PWAInstallBanner } from "@/components/layout/PWAInstallBanner";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -37,6 +38,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </div>
         </main>
       </div>
+      <PWAInstallBanner />
     </div>
   );
 }
