@@ -99,37 +99,74 @@ export default function MobileHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#08080c] p-4 pb-24">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <button
-          onClick={() => router.back()}
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06]"
-        >
-          <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
-        </button>
-        <div>
-          <h1 className="text-lg font-bold text-white">Riwayat Absensi</h1>
-          <p className="text-xs text-white/40">7 hari terakhir</p>
+      <div className="mb-6 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <button
+            onClick={() => router.back()}
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container"
+          >
+            <svg className="h-5 w-5 text-on-surface" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+          <div className="flex-1">
+            <h1 className="text-lg font-bold text-on-surface">Riwayat Absensi</h1>
+            <p className="text-xs text-on-surface-variant">{employee.name}</p>
+          </div>
+          <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container">
+            <svg className="h-5 w-5 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+            </svg>
+          </button>
         </div>
-      </div>
 
-      {/* Date Filter */}
-      <div className="mb-4 flex gap-2">
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="flex-1 rounded-xl bg-white/[0.06] px-3 py-2.5 text-xs text-white"
-        />
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="flex-1 rounded-xl bg-white/[0.06] px-3 py-2.5 text-xs text-white"
-        />
+        {/* Quick Stats */}
+        <div className="glass rounded-xl p-4 mb-4">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <p className="text-lg font-bold text-on-surface">{history.length}</p>
+              <p className="text-xs text-on-surface-variant">Hari</p>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-bold text-green-400">
+                {history.filter(r => r.clockIn && r.clockOut).length}
+              </p>
+              <p className="text-xs text-on-surface-variant">Lengkap</p>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-bold text-yellow-400">
+                {history.filter(r => r.clockIn && !r.clockOut || !r.clockIn && r.clockOut).length}
+              </p>
+              <p className="text-xs text-on-surface-variant">Tidak Lengkap</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Date Filter */}
+        <div className="glass rounded-xl p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <svg className="h-4 w-4 text-on-surface-variant" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0121 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            <p className="text-sm font-medium text-on-surface">Filter Periode</p>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="flex-1 rounded-lg bg-surface-container border border-outline px-3 py-2.5 text-sm text-on-surface focus:border-primary focus:outline-none"
+            />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="flex-1 rounded-lg bg-surface-container border border-outline px-3 py-2.5 text-sm text-on-surface focus:border-primary focus:outline-none"
+            />
+          </div>
+        </div>
       </div>
 
       {/* History List */}
@@ -239,13 +276,22 @@ export default function MobileHistoryPage() {
         </div>
       )}
 
-      {/* Back to Attendance */}
-      <button
-        onClick={() => router.push("/mobile")}
-        className="mt-6 w-full rounded-xl bg-white py-3 text-sm font-medium text-black"
-      >
-        Kembali ke Absensi
-      </button>
+      {/* Fixed Bottom Actions */}
+      <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-outline p-4">
+        <div className="mx-auto max-w-md">
+          <button
+            onClick={() => router.push("/mobile")}
+            className="w-full rounded-xl bg-primary py-4 text-sm font-bold text-on-primary transition-all active:scale-[0.98]"
+          >
+            <div className="flex items-center justify-center gap-2">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Kembali ke Absensi
+            </div>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
