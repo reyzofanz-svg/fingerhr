@@ -3,10 +3,24 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const LocationMap = dynamic(
+  () => import("@/components/mobile/LocationMap").then((mod) => mod.LocationMap),
+  { ssr: false }
+);
 
 interface Location {
   latitude: number;
   longitude: number;
+}
+
+interface Spot {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  radius: number;
 }
 
 interface AttendanceResult {
@@ -25,6 +39,8 @@ export default function MobileAttendancePage() {
 
   const [location, setLocation] = useState<Location | null>(null);
   const [locationError, setLocationError] = useState<string>("");
+  const [spots, setSpots] = useState<Spot[]>([]);
+  const [isInSpot, setIsInSpot] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [attendanceType, setAttendanceType] = useState<"IN" | "OUT">("IN");
@@ -33,15 +49,38 @@ export default function MobileAttendancePage() {
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string>("");
 
+  // Fetch attendance spots
+  useEffect(() => {
+    fetch("/api/attendance/spots")
+      .then((res) => res.json())
+      .then((data) => setSpots(data.filter((s: Spot & { isActive: boolean }) => s.isActive)))
+      .catch(console.error);
+  }, []);
+
   // Get GPS location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setLocation({
+          const userLoc = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          });
+          };
+          setLocation(userLoc);
+
+          // Check if user is in any spot
+          if (spots.length > 0) {
+            const inSpot = spots.some((spot) => {
+              const distance = calculateDistance(
+                userLoc.latitude,
+                userLoc.longitude,
+                spot.latitude,
+                spot.longitude
+              );
+              return distance <= spot.radius;
+            });
+            setIsInSpot(inSpot);
+          }
         },
         (error) => {
           setLocationError("Tidak bisa mendapatkan lokasi. Aktifkan GPS.");
@@ -51,7 +90,25 @@ export default function MobileAttendancePage() {
     } else {
       setLocationError("Browser tidak mendukung geolocation.");
     }
-  }, []);
+  }, [spots]);
+
+  // Calculate distance between two GPS coordinates
+  const calculateDistance = (
+    lat1: number, lon1: number,
+    lat2: number, lon2: number
+  ): number => {
+    const R = 6371000; // Earth's radius in meters
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
 
   // Start camera
   const startCamera = useCallback(async () => {
@@ -112,16 +169,13 @@ export default function MobileAttendancePage() {
 
     setIsSubmitting(true);
     try {
-      // Upload selfie to a temporary storage (for now, we'll use base64)
-      // In production, you'd upload to Supabase Storage or similar
-      
       const res = await fetch("/api/mobile/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employeeId: (session?.user as any)?.employeeId,
-          selfieUrl: capturedPhoto, // In production, upload to storage first
-          backgroundUrl: null, // Could capture background photo
+          employeeId: (session?.user as any)?.id,
+          selfieUrl: capturedPhoto,
+          backgroundUrl: null,
           latitude: location.latitude,
           longitude: location.longitude,
           type: attendanceType,
@@ -242,6 +296,15 @@ export default function MobileAttendancePage() {
         </div>
       )}
 
+      {/* Map Section */}
+      <div className="mb-4">
+        <LocationMap
+          userLocation={location}
+          spots={spots}
+          isInSpot={isInSpot}
+        />
+      </div>
+
       {/* Location Status */}
       <div className="mb-4 rounded-xl bg-white/[0.03] p-3">
         <div className="flex items-center gap-2">
@@ -252,10 +315,31 @@ export default function MobileAttendancePage() {
           />
           <span className="text-xs text-white/60">
             {location
-              ? `Lokasi: ${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`
+              ? isInSpot
+                ? "Anda berada di dalam area absensi"
+                : "Anda berada di luar area absensi"
               : locationError || "Mendapatkan lokasi..."}
           </span>
         </div>
+        {location && spots.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {spots.map((spot) => {
+              const distance = calculateDistance(
+                location.latitude,
+                location.longitude,
+                spot.latitude,
+                spot.longitude
+              );
+              return (
+                <div key={spot.id} className="rounded-lg bg-white/[0.06] px-2 py-1">
+                  <span className="text-[10px] text-white/60">
+                    {spot.name}: {Math.round(distance)}m
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Attendance Type Toggle */}
