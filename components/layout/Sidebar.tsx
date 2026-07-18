@@ -65,6 +65,7 @@ const navItems: NavItem[] = [
     ),
     children: [
       { label: "Absensi Perangkat", href: "/dashboard/reports/raw" },
+      { label: "Absensi GPS", href: "/dashboard/reports/gps-attendance" },
       { label: "Detail Kehadiran", href: "/dashboard/reports/detail" },
       { label: "Laporan Otomatis", href: "/dashboard/reports/auto" },
     ],

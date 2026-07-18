@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { SWRegistration } from "@/components/layout/SWRegistration";
 import { MobileProviders } from "@/components/layout/MobileProviders";
+import { MobileShell } from "@/components/mobile/MobileShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +49,7 @@ export default function MobileLayout({
       <body className="bg-[#08080c]">
         <MobileProviders>
           <SWRegistration />
-          {children}
+          <MobileShell>{children}</MobileShell>
         </MobileProviders>
       </body>
     </html>

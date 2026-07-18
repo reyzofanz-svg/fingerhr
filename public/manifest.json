@@ -2,11 +2,11 @@
   "name": "FingerHR - Cloud Attendance Management",
   "short_name": "FingerHR",
   "description": "Connect Fingerspot biometric devices with modern cloud infrastructure. Real-time attendance sync and employee management.",
-  "start_url": "/dashboard",
+  "start_url": "/mobile",
   "display": "standalone",
   "background_color": "#08080c",
   "theme_color": "#08080c",
-  "orientation": "any",
+  "orientation": "portrait",
   "scope": "/",
   "lang": "id",
   "categories": ["business", "productivity"],
@@ -27,15 +27,21 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "url": "/dashboard",
+      "name": "Absensi GPS",
+      "short_name": "Absen",
+      "url": "/mobile/absen",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Absensi Perangkat",
-      "short_name": "Absensi",
-      "url": "/dashboard/reports/raw",
+      "name": "Riwayat",
+      "short_name": "Riwayat",
+      "url": "/mobile/history",
+      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dashboard Admin",
+      "short_name": "Admin",
+      "url": "/dashboard",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ]
